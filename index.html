@@ -8,15 +8,16 @@
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-body{background:#0a0a12;overflow:hidden;font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0;touch-action:pan-y}
+body{background:#0a0a12;overflow:hidden;font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;overscroll-behavior:none}
 ::-webkit-scrollbar{display:none}
-#root{width:100vw;height:100dvh;display:flex;align-items:center;justify-content:center}
+#root{width:100vw;height:100dvh;display:flex;align-items:center;justify-content:center;overflow:hidden}
 @media(min-width:520px){
   .phone-outer{width:390px!important;height:844px!important;border-radius:52px!important;
   box-shadow:0 0 0 10px #1a1a2e,0 0 0 12px #2d2d44,0 40px 80px rgba(0,0,0,.7)!important;}
 }
 .phone-outer{width:100vw;height:100dvh;border-radius:0;overflow:hidden;position:relative;}
+.no-select{user-select:none;-webkit-user-select:none;}
 </style>
 </head>
 <body>
@@ -25,215 +26,274 @@ body{background:#0a0a12;overflow:hidden;font-family:-apple-system,'SF Pro Displa
 const {useState,useEffect,useCallback,useRef}=React;
 const h=React.createElement;
 const ALL_APPS=[
-  {id:'chat',name:'聊天',emoji:'💬',available:false},
-  {id:'memory',name:'记忆',emoji:'🧠',available:false},
-  {id:'photos',name:'相册',emoji:'📸',available:false},
-  {id:'music',name:'音乐',emoji:'🎵',available:false},
-  {id:'pet',name:'宠物',emoji:'🐾',available:false},
-  {id:'shop',name:'商店',emoji:'🛍️',available:false},
-  {id:'wallet',name:'钱包',emoji:'💰',available:false},
-  {id:'calendar',name:'日历',emoji:'📅',available:false},
-  {id:'diary',name:'日记',emoji:'📔',available:false},
-  {id:'social',name:'社交',emoji:'👥',available:false},
-  {id:'browser',name:'浏览器',emoji:'🌐',available:false},
-  {id:'studio',name:'画室',emoji:'🎨',available:false},
-  {id:'settings',name:'设置',emoji:'⚙️',available:true},
+  {id:'chat',name:'聊天',emoji:'💬'},
+  {id:'memory',name:'记忆',emoji:'🧠'},
+  {id:'photos',name:'相册',emoji:'📸'},
+  {id:'music',name:'音乐',emoji:'🎵'},
+  {id:'pet',name:'宠物',emoji:'🐾'},
+  {id:'shop',name:'商店',emoji:'🛍️'},
+  {id:'wallet',name:'钱包',emoji:'💰'},
+  {id:'calendar',name:'日历',emoji:'📅'},
+  {id:'diary',name:'日记',emoji:'📔'},
+  {id:'social',name:'社交',emoji:'👥'},
+  {id:'browser',name:'浏览器',emoji:'🌐'},
+  {id:'studio',name:'画室',emoji:'🎨'},
+  {id:'settings',name:'设置',emoji:'⚙️'},
 ];
 const DOCK_IDS=['chat','browser','music','settings'];
-const GRADIENTS={
-  chat:'linear-gradient(145deg,#34c759,#30d158)',
-  memory:'linear-gradient(145deg,#5e5ce6,#7c7cf6)',
-  photos:'linear-gradient(145deg,#ff9f0a,#ffcc00)',
-  music:'linear-gradient(145deg,#ff2d55,#ff375f)',
-  pet:'linear-gradient(145deg,#ff6b35,#ff9f0a)',
-  shop:'linear-gradient(145deg,#0a84ff,#34aadc)',
-  wallet:'linear-gradient(145deg,#32d74b,#30d158)',
-  calendar:'linear-gradient(145deg,#ff3b30,#ff6b60)',
-  diary:'linear-gradient(145deg,#bf5af2,#d988fb)',
-  social:'linear-gradient(145deg,#0a84ff,#5ac8fa)',
-  browser:'linear-gradient(145deg,#636366,#8e8e93)',
-  studio:'linear-gradient(145deg,#ff9f0a,#ff6b35)',
-  settings:'linear-gradient(145deg,#636366,#48484a)',
-};
-const WP=`radial-gradient(ellipse at 20% 10%,rgba(138,92,246,.7) 0%,transparent 55%),radial-gradient(ellipse at 80% 90%,rgba(59,130,246,.6) 0%,transparent 55%),radial-gradient(ellipse at 60% 30%,rgba(236,72,153,.4) 0%,transparent 50%),linear-gradient(160deg,#0f0c29 0%,#1a1040 40%,#0d1b3e 100%)`;
+const GRID_APPS=ALL_APPS.filter(a=>!DOCK_IDS.includes(a.id));
+const PAGE1=GRID_APPS.slice(0,9);
+const PAGE2=GRID_APPS.slice(9);
+const GRADIENTS={chat:'linear-gradient(145deg,#34c759,#30d158)',memory:'linear-gradient(145deg,#5e5ce6,#7c7cf6)',photos:'linear-gradient(145deg,#ff9f0a,#ffcc00)',music:'linear-gradient(145deg,#ff2d55,#ff375f)',pet:'linear-gradient(145deg,#ff6b35,#ff9f0a)',shop:'linear-gradient(145deg,#0a84ff,#34aadc)',wallet:'linear-gradient(145deg,#32d74b,#30d158)',calendar:'linear-gradient(145deg,#ff3b30,#ff6b60)',diary:'linear-gradient(145deg,#bf5af2,#d988fb)',social:'linear-gradient(145deg,#0a84ff,#5ac8fa)',browser:'linear-gradient(145deg,#636366,#8e8e93)',studio:'linear-gradient(145deg,#ff9f0a,#ff6b35)',settings:'linear-gradient(145deg,#636366,#48484a)'};
+const WALLPAPERS=[
+  'radial-gradient(ellipse at 20% 10%,rgba(138,92,246,.7) 0%,transparent 55%),radial-gradient(ellipse at 80% 90%,rgba(59,130,246,.6) 0%,transparent 55%),radial-gradient(ellipse at 60% 30%,rgba(236,72,153,.4) 0%,transparent 50%),linear-gradient(160deg,#0f0c29 0%,#1a1040 40%,#0d1b3e 100%)',
+  'radial-gradient(ellipse at 80% 20%,rgba(236,72,153,.7) 0%,transparent 55%),radial-gradient(ellipse at 20% 80%,rgba(239,68,68,.5) 0%,transparent 55%),linear-gradient(160deg,#1a0520 0%,#2d0a3a 50%,#0d0520 100%)',
+  'radial-gradient(ellipse at 50% 0%,rgba(16,185,129,.6) 0%,transparent 55%),radial-gradient(ellipse at 20% 80%,rgba(59,130,246,.5) 0%,transparent 55%),linear-gradient(160deg,#021a12 0%,#051a2e 100%)',
+  'radial-gradient(ellipse at 30% 30%,rgba(251,191,36,.5) 0%,transparent 55%),radial-gradient(ellipse at 70% 70%,rgba(239,68,68,.4) 0%,transparent 55%),linear-gradient(160deg,#1a1000 0%,#2a1500 100%)',
+  'linear-gradient(160deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)',
+];
+function loadSettings(){try{const s=localStorage.getItem('mochi_settings');return s?JSON.parse(s):{};}catch{return{};}}
+function saveSettings(s){try{localStorage.setItem('mochi_settings',JSON.stringify(s));}catch{}}
+const DEFAULT_SETTINGS={wallpaperIndex:0,theme:'dark',notifications:true,sound:true,dnd:false};
+function getSettings(){return{...DEFAULT_SETTINGS,...loadSettings()};}
+const pad=n=>n.toString().padStart(2,'0');
 
-function StatusBar({battery}){
+function StatusBar({battery,light}){
   const [now,setNow]=useState(new Date());
   useEffect(()=>{const t=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(t);},[]);
-  const pad=n=>n.toString().padStart(2,'0');
-  const c='#fff';
-  return h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 20px 6px',fontSize:'15px',fontWeight:600,color:c,letterSpacing:'-0.3px',flexShrink:0,userSelect:'none'}},
+  const c=light?'rgba(0,0,0,0.8)':'#fff';
+  const dim=light?'rgba(0,0,0,0.25)':'rgba(255,255,255,0.32)';
+  return h('div',{className:'no-select',style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 20px 4px',fontSize:'15px',fontWeight:600,color:c,letterSpacing:'-0.3px',flexShrink:0}},
     h('span',null,`${pad(now.getHours())}:${pad(now.getMinutes())}`),
     h('div',{style:{display:'flex',alignItems:'center',gap:'5px'}},
-      h('div',{style:{display:'flex',gap:'2px',alignItems:'flex-end'}},
-        ...[3,5,7,9].map((ht,i)=>h('div',{key:i,style:{width:'3px',height:ht+'px',borderRadius:'1px',background:i<3?c:'rgba(255,255,255,0.3)'}}))
-      ),
-      h('svg',{width:16,height:12,viewBox:'0 0 16 12',fill:'none'},
-        h('path',{d:'M8 9.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2z',fill:c}),
-        h('path',{d:'M5.17 7.17a4 4 0 0 1 5.66 0',stroke:c,strokeWidth:'1.5',strokeLinecap:'round',fill:'none'}),
-        h('path',{d:'M2.34 4.34a8 8 0 0 1 11.32 0',stroke:c,strokeWidth:'1.5',strokeLinecap:'round',fill:'none',opacity:'0.5'})
-      ),
-      h('div',{style:{display:'flex',alignItems:'center',gap:'2px'}},
-        h('div',{style:{width:'25px',height:'12px',border:`1.5px solid ${c}`,borderRadius:'3px',padding:'1.5px',display:'flex',alignItems:'center'}},
-          h('div',{style:{width:Math.max(5,battery*0.22)+'px',height:'100%',background:battery<20?'#ff3b30':c,borderRadius:'1.5px'}})
-        ),
-        h('div',{style:{width:'2px',height:'6px',background:c,borderRadius:'0 1px 1px 0',opacity:0.7}})
-      )
+      h('div',{style:{display:'flex',gap:'2px',alignItems:'flex-end'}},...[3,5,7,9].map((ht,i)=>h('div',{key:i,style:{width:'3px',height:ht+'px',borderRadius:'1px',background:i<3?c:dim}}))),
+      h('svg',{width:16,height:12,viewBox:'0 0 16 12',fill:'none'},h('path',{d:'M8 9.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2z',fill:c}),h('path',{d:'M5.17 7.17a4 4 0 0 1 5.66 0',stroke:c,strokeWidth:'1.5',strokeLinecap:'round',fill:'none'}),h('path',{d:'M2.34 4.34a8 8 0 0 1 11.32 0',stroke:c,strokeWidth:'1.5',strokeLinecap:'round',fill:'none',opacity:'0.4'})),
+      h('div',{style:{display:'flex',alignItems:'center',gap:'2px'}},h('div',{style:{width:'25px',height:'12px',border:`1.5px solid ${c}`,borderRadius:'3px',padding:'1.5px',display:'flex',alignItems:'center'}},h('div',{style:{width:Math.max(5,battery*0.22)+'px',height:'100%',background:battery<20?'#ff3b30':c,borderRadius:'1.5px'}})),h('div',{style:{width:'2px',height:'6px',background:c,borderRadius:'0 1px 1px 0',opacity:0.6}}))
     )
   );
 }
 
-function LockScreen({battery,onUnlock}){
+function LockScreen({battery,wallpaper,onUnlock}){
   const [now,setNow]=useState(new Date());
   const [unlocking,setUnlocking]=useState(false);
-  const [swipeY,setSwipeY]=useState(0);
+  const [dy,setDy]=useState(0);
   const sy=useRef(0);
   useEffect(()=>{const t=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(t);},[]);
   const days=['周日','周一','周二','周三','周四','周五','周六'];
-  const pad=n=>n.toString().padStart(2,'0');
-  const doUnlock=()=>{setUnlocking(true);setTimeout(onUnlock,350);};
-  return h('div',{
-    onClick:doUnlock,
-    onTouchStart:e=>{sy.current=e.touches[0].clientY;},
-    onTouchMove:e=>{const d=sy.current-e.touches[0].clientY;if(d>0)setSwipeY(d);},
-    onTouchEnd:()=>{if(swipeY>60)doUnlock();else setSwipeY(0);},
-    style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',cursor:'pointer',userSelect:'none',
-      opacity:unlocking?0:1,
-      transform:unlocking?'scale(1.05)':swipeY>0?`translateY(-${Math.min(swipeY*.4,40)}px)`:'none',
-      transition:unlocking?'opacity 0.35s,transform 0.35s':'transform 0.2s'}
-  },
+  const doUnlock=()=>{if(unlocking)return;setUnlocking(true);setTimeout(onUnlock,350);};
+  return h('div',{onClick:doUnlock,onTouchStart:e=>{sy.current=e.touches[0].clientY;},onTouchMove:e=>{const d=sy.current-e.touches[0].clientY;if(d>0)setDy(d);},onTouchEnd:()=>{if(dy>60)doUnlock();else setDy(0);},style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',cursor:'pointer',background:wallpaper,opacity:unlocking?0:1,transform:unlocking?'scale(1.04)':dy>0?`translateY(-${Math.min(dy*.35,36)}px)`:'none',transition:unlocking?'opacity 0.35s,transform 0.35s':'transform 0.15s'}},
     h(StatusBar,{battery}),
     h('div',{style:{flex:1}}),
     h('div',{style:{textAlign:'center',padding:'0 24px 8px'}},
-      h('div',{style:{fontSize:'82px',fontWeight:200,color:'#fff',lineHeight:1,letterSpacing:'-4px',textShadow:'0 2px 20px rgba(0,0,0,0.3)'}},`${pad(now.getHours())}:${pad(now.getMinutes())}`),
-      h('div',{style:{fontSize:'18px',color:'rgba(255,255,255,.75)',marginTop:'8px'}},`${days[now.getDay()]}，${now.getMonth()+1}月${now.getDate()}日`)
+      h('div',{style:{fontSize:'80px',fontWeight:200,color:'#fff',lineHeight:1,letterSpacing:'-4px',textShadow:'0 2px 24px rgba(0,0,0,.35)'}},`${pad(now.getHours())}:${pad(now.getMinutes())}`),
+      h('div',{style:{fontSize:'17px',color:'rgba(255,255,255,.75)',marginTop:'10px'}},`${days[now.getDay()]}，${now.getMonth()+1}月${now.getDate()}日`)
     ),
     h('div',{style:{flex:1}}),
-    h('div',{style:{textAlign:'center',padding:'0 0 32px',display:'flex',flexDirection:'column',alignItems:'center',gap:'8px'}},
-      h('div',{style:{color:'rgba(255,255,255,.55)',fontSize:'13px'}},'上滑或点击解锁'),
-      h('svg',{width:20,height:12,viewBox:'0 0 20 12',fill:'none'},
-        h('path',{d:'M10 2 L18 10 M10 2 L2 10',stroke:'rgba(255,255,255,.4)',strokeWidth:'2',strokeLinecap:'round'})
-      )
+    h('div',{style:{textAlign:'center',padding:'0 0 36px',display:'flex',flexDirection:'column',alignItems:'center',gap:'8px'}},
+      h('div',{style:{color:'rgba(255,255,255,.5)',fontSize:'13px'}},'上滑或点击解锁'),
+      h('svg',{width:20,height:12,viewBox:'0 0 20 12',fill:'none'},h('path',{d:'M10 2 L18 10 M10 2 L2 10',stroke:'rgba(255,255,255,.4)',strokeWidth:'2',strokeLinecap:'round'}))
     )
   );
 }
 
-function AppIcon({app,onOpen,dock}){
+function AppIcon({app,onOpen,dock,light}){
   const [pressed,setPressed]=useState(false);
-  const sz=dock?58:60,esz=dock?26:28;
-  const go=()=>{setPressed(true);setTimeout(()=>{setPressed(false);onOpen(app.id);},130);};
-  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'6px',cursor:'pointer',userSelect:'none'},
-    onMouseDown:()=>setPressed(true),onMouseUp:go,onMouseLeave:()=>setPressed(false),
-    onTouchStart:()=>setPressed(true),onTouchEnd:go},
-    h('div',{style:{width:sz+'px',height:sz+'px',borderRadius:'22px',
-      background:GRADIENTS[app.id]||'linear-gradient(145deg,#636366,#48484a)',
-      display:'flex',alignItems:'center',justifyContent:'center',fontSize:esz+'px',
-      transform:pressed?'scale(0.87)':'scale(1)',
-      transition:'transform 0.12s cubic-bezier(0.34,1.56,0.64,1)',
-      boxShadow:pressed?'0 2px 8px rgba(0,0,0,.25)':'0 4px 16px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.25)'}},
-      h('span',{style:{lineHeight:1}},app.emoji)
-    ),
-    !dock&&h('span',{style:{fontSize:'11px',color:'#fff',textShadow:'0 1px 4px rgba(0,0,0,.5)',textAlign:'center',maxWidth:'64px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},app.name)
+  const sz=dock?56:58;
+  const go=useCallback(()=>{setPressed(true);setTimeout(()=>{setPressed(false);onOpen(app.id);},140);},[app.id,onOpen]);
+  const lc=light?'rgba(0,0,0,0.82)':'#fff';
+  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'5px',cursor:'pointer',userSelect:'none',WebkitUserSelect:'none',minWidth:0},onTouchStart:e=>{e.stopPropagation();setPressed(true);},onTouchEnd:e=>{e.stopPropagation();go();},onMouseDown:e=>{e.stopPropagation();setPressed(true);},onMouseUp:e=>{e.stopPropagation();go();},onMouseLeave:()=>setPressed(false)},
+    h('div',{style:{width:sz+'px',height:sz+'px',borderRadius:'22px',background:GRADIENTS[app.id]||GRADIENTS.settings,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'26px',transform:pressed?'scale(0.86)':'scale(1)',transition:'transform 0.13s cubic-bezier(0.34,1.56,0.64,1)',boxShadow:pressed?'0 2px 8px rgba(0,0,0,.2)':'0 4px 14px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.22)',flexShrink:0}},h('span',{style:{lineHeight:1,pointerEvents:'none'}},app.emoji)),
+    !dock&&h('span',{style:{fontSize:'11px',color:lc,fontWeight:400,textShadow:light?'none':'0 1px 4px rgba(0,0,0,.55)',textAlign:'center',width:'64px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},app.name)
   );
 }
 
-function Dock({onOpen}){
-  const apps=DOCK_IDS.map(id=>ALL_APPS.find(a=>a.id===id)).filter(Boolean);
-  return h('div',{style:{padding:'0 16px 8px',flexShrink:0}},
-    h('div',{style:{background:'rgba(255,255,255,.18)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderRadius:'28px',border:'1px solid rgba(255,255,255,.22)',padding:'12px 16px',display:'flex',justifyContent:'space-around',alignItems:'center'}},
-      ...apps.map(app=>h(AppIcon,{key:app.id,app,onOpen,dock:true}))
+function HomeGrid({onOpen,light}){
+  const pages=[PAGE1,PAGE2];
+  const [page,setPage]=useState(0);
+  const [dragX,setDragX]=useState(0);
+  const [dragging,setDragging]=useState(false);
+  const sx=useRef(0),sy=useRef(0),locked=useRef(null),W=useRef(Math.min(window.innerWidth,390));
+  const goTo=p=>{const t=Math.max(0,Math.min(pages.length-1,p));setPage(t);setDragX(0);setDragging(false);};
+  const onTS=useCallback(e=>{sx.current=e.touches[0].clientX;sy.current=e.touches[0].clientY;locked.current=null;setDragging(true);},[]);
+  const onTM=useCallback(e=>{
+    if(!dragging)return;
+    const dx=e.touches[0].clientX-sx.current,dabs=Math.abs(dx),dyabs=Math.abs(e.touches[0].clientY-sy.current);
+    if(!locked.current){if(dabs>7||dyabs>7)locked.current=dabs>dyabs?'h':'v';}
+    if(locked.current==='h'){e.preventDefault();let c=dx;if(page===0&&dx>0)c=dx*.18;if(page===pages.length-1&&dx<0)c=dx*.18;setDragX(c);}
+  },[dragging,page,pages.length]);
+  const onTE=useCallback(()=>{
+    if(locked.current==='h'){if(dragX<-60)goTo(page+1);else if(dragX>60)goTo(page-1);else{setDragX(0);setDragging(false);}}
+    else{setDragX(0);setDragging(false);}locked.current=null;
+  },[dragX,page]);
+  const offset=(-page*W.current)+dragX;
+  return h('div',{style:{flex:1,overflow:'hidden',position:'relative',touchAction:'pan-y'},onTouchStart:onTS,onTouchMove:onTM,onTouchEnd:onTE},
+    h('div',{style:{display:'flex',width:pages.length*100+'%',height:'100%',transform:`translateX(${offset}px)`,transition:!dragging?'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94)':'none',willChange:'transform'}},
+      ...pages.map((apps,pi)=>h('div',{key:pi,style:{width:W.current+'px',flexShrink:0,display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'14px 4px',padding:'10px 12px 4px',alignContent:'start'}},
+        ...apps.map(app=>h('div',{key:app.id,style:{display:'flex',justifyContent:'center'}},h(AppIcon,{app,onOpen,light})))
+      ))
+    ),
+    h('div',{style:{position:'absolute',bottom:'6px',left:0,right:0,display:'flex',justifyContent:'center',gap:'6px',pointerEvents:'none'}},
+      ...pages.map((_,i)=>h('div',{key:i,style:{width:i===page?'20px':'6px',height:'6px',borderRadius:'3px',background:i===page?'rgba(255,255,255,.92)':'rgba(255,255,255,.38)',transition:'width 0.25s,background 0.25s'}}))
     )
   );
 }
 
-function HomeScreen({battery,onOpen,visible}){
-  const grid=ALL_APPS.filter(a=>!DOCK_IDS.includes(a.id));
-  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',opacity:visible?1:0,transform:visible?'scale(1)':'scale(1.05)',transition:'opacity 0.35s,transform 0.35s',pointerEvents:visible?'auto':'none'}},
-    h(StatusBar,{battery}),
-    h('div',{style:{flex:1,overflowY:'auto',padding:'8px 12px 4px'}},
-      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'16px 8px',padding:'4px 0'}},
-        ...grid.map(app=>h('div',{key:app.id,style:{display:'flex',justifyContent:'center'}},h(AppIcon,{app,onOpen})))
-      )
-    ),
-    h('div',{style:{display:'flex',justifyContent:'center',gap:'6px',padding:'6px 0',flexShrink:0}},
-      ...[0,1].map(i=>h('div',{key:i,style:{width:i===0?'20px':'6px',height:'6px',borderRadius:'3px',background:i===0?'rgba(255,255,255,.9)':'rgba(255,255,255,.35)'}}))
-    ),
-    h(Dock,{onOpen})
+function Dock({onOpen,light}){
+  const apps=DOCK_IDS.map(id=>ALL_APPS.find(a=>a.id===id)).filter(Boolean);
+  return h('div',{style:{padding:'0 14px 10px',flexShrink:0}},
+    h('div',{style:{background:light?'rgba(0,0,0,0.1)':'rgba(255,255,255,.16)',backdropFilter:'blur(24px)',WebkitBackdropFilter:'blur(24px)',borderRadius:'28px',border:`1px solid ${light?'rgba(0,0,0,.1)':'rgba(255,255,255,.2)'}`,padding:'10px 12px',display:'flex',justifyContent:'space-around',alignItems:'center'}},
+      ...apps.map(app=>h(AppIcon,{key:app.id,app,onOpen,dock:true,light}))
+    )
   );
 }
 
-function SettingsApp(){
-  const rows=[
-    {icon:'🔔',label:'通知',color:'#ff3b30'},
-    {icon:'🔊',label:'声音',color:'#ff9f0a'},
-    {icon:'🌙',label:'勿扰',color:'#5e5ce6'},
-    {icon:'🖼️',label:'壁纸',color:'#0a84ff'},
-    {icon:'🌓',label:'外观',color:'#636366',value:'深色'},
-    {icon:'🔋',label:'电池',color:'#32d74b'},
-    {icon:'ℹ️',label:'关于 MochiPhone',color:'#636366',value:'V0.1'},
-  ];
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'rgba(20,20,30,.7)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)'}},
-    h('div',{style:{padding:'20px 20px 12px',borderBottom:'1px solid rgba(255,255,255,.22)',flexShrink:0}},
-      h('h1',{style:{fontSize:'22px',fontWeight:700,color:'#fff',letterSpacing:'-0.5px',margin:0}},'设置')
+function HomeScreen({battery,onOpen,visible,light,wallpaper}){
+  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',opacity:visible?1:0,transform:visible?'scale(1)':'scale(1.04)',transition:'opacity 0.32s,transform 0.32s',pointerEvents:visible?'auto':'none',background:wallpaper}},
+    h(StatusBar,{battery,light}),
+    h(HomeGrid,{onOpen,light}),
+    h(Dock,{onOpen,light})
+  );
+}
+
+function Toggle({value,onChange}){
+  return h('div',{onClick:()=>onChange(!value),style:{width:'50px',height:'28px',borderRadius:'14px',background:value?'#34c759':'rgba(120,120,128,0.36)',position:'relative',cursor:'pointer',transition:'background 0.25s',flexShrink:0}},
+    h('div',{style:{position:'absolute',top:'2px',left:value?'22px':'2px',width:'24px',height:'24px',borderRadius:'50%',background:'#fff',boxShadow:'0 1px 4px rgba(0,0,0,.3)',transition:'left 0.22s cubic-bezier(0.34,1.3,0.64,1)'}})
+  );
+}
+
+function WallpaperPage({current,onSelect,onBack}){
+  const names=['深紫宇宙','玫瑰暮色','翡翠深海','琥珀熔岩','午夜蓝'];
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'rgba(14,14,24,.92)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)'}},
+    h('div',{style:{display:'flex',alignItems:'center',padding:'14px 16px',borderBottom:'1px solid rgba(255,255,255,.1)',flexShrink:0}},
+      h('button',{onClick:onBack,style:{background:'none',border:'none',color:'#a78bfa',fontSize:'16px',cursor:'pointer',padding:'4px 12px 4px 0'}},'\u2190 返回'),
+      h('span',{style:{fontSize:'17px',fontWeight:600,color:'#fff'}},'壁纸')
     ),
-    h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px'}},
-      h('div',{style:{background:'rgba(255,255,255,.18)',backdropFilter:'blur(8px)',WebkitBackdropFilter:'blur(8px)',borderRadius:'20px',border:'1px solid rgba(255,255,255,.22)',overflow:'hidden'}},
-        ...rows.map((row,i)=>h('div',{key:row.label,style:{display:'flex',alignItems:'center',padding:'13px 16px',gap:'14px',borderBottom:i<rows.length-1?'1px solid rgba(255,255,255,.12)':'none',cursor:'pointer'}},
-          h('div',{style:{width:'32px',height:'32px',borderRadius:'8px',background:row.color,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px',flexShrink:0}},row.icon),
-          h('span',{style:{flex:1,fontSize:'16px',color:'#fff'}},row.label),
-          row.value&&h('span',{style:{fontSize:'15px',color:'rgba(255,255,255,.5)'}},row.value),
-          h('svg',{width:8,height:13,viewBox:'0 0 8 13',fill:'none'},h('path',{d:'M1 1l6 5.5L1 12',stroke:'rgba(255,255,255,.3)',strokeWidth:'1.8',strokeLinecap:'round',strokeLinejoin:'round'}))
-        ))
+    h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
+      ...WALLPAPERS.map((wp,i)=>h('div',{key:i,onClick:()=>onSelect(i),style:{height:'88px',borderRadius:'14px',background:wp,border:current===i?'2.5px solid #a78bfa':'2px solid rgba(255,255,255,.1)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 14px',position:'relative',overflow:'hidden'}},
+        h('span',{style:{color:'rgba(255,255,255,.85)',fontSize:'13px',fontWeight:500,textShadow:'0 1px 6px rgba(0,0,0,.6)'}},names[i]),
+        current===i&&h('span',{style:{color:'#a78bfa',fontSize:'20px'}},'✓')
+      )),
+      h('div',{style:{background:'rgba(255,255,255,.07)',borderRadius:'14px',padding:'16px',textAlign:'center',color:'rgba(255,255,255,.35)',fontSize:'14px'}},'从手机相册选取（即将开放）')
+    )
+  );
+}
+
+function ThemePage({current,onSelect,onBack}){
+  const opts=[{id:'dark',label:'深色',desc:'深色背景，护眼'},{id:'light',label:'浅色',desc:'浅色背景，清爽'},{id:'auto',label:'跟随系统',desc:'随手机主题自动切换'}];
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'rgba(14,14,24,.92)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)'}},
+    h('div',{style:{display:'flex',alignItems:'center',padding:'14px 16px',borderBottom:'1px solid rgba(255,255,255,.1)',flexShrink:0}},
+      h('button',{onClick:onBack,style:{background:'none',border:'none',color:'#a78bfa',fontSize:'16px',cursor:'pointer',padding:'4px 12px 4px 0'}},'\u2190 返回'),
+      h('span',{style:{fontSize:'17px',fontWeight:600,color:'#fff'}},'外观')
+    ),
+    h('div',{style:{flex:1,padding:'12px 16px',display:'flex',flexDirection:'column',gap:'8px'}},
+      ...opts.map(o=>h('div',{key:o.id,onClick:()=>onSelect(o.id),style:{background:'rgba(255,255,255,.08)',borderRadius:'14px',padding:'14px 16px',cursor:'pointer',border:current===o.id?'2px solid #a78bfa':'2px solid transparent',display:'flex',justifyContent:'space-between',alignItems:'center'}},
+        h('div',null,h('div',{style:{color:'#fff',fontSize:'16px',fontWeight:500}},o.label),h('div',{style:{color:'rgba(255,255,255,.4)',fontSize:'13px',marginTop:'2px'}},o.desc)),
+        current===o.id&&h('span',{style:{color:'#a78bfa',fontSize:'20px'}},'✓')
+      ))
+    )
+  );
+}
+
+function AboutPage({onBack}){
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'rgba(14,14,24,.92)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)'}},
+    h('div',{style:{display:'flex',alignItems:'center',padding:'14px 16px',borderBottom:'1px solid rgba(255,255,255,.1)',flexShrink:0}},
+      h('button',{onClick:onBack,style:{background:'none',border:'none',color:'#a78bfa',fontSize:'16px',cursor:'pointer',padding:'4px 12px 4px 0'}},'\u2190 返回'),
+      h('span',{style:{fontSize:'17px',fontWeight:600,color:'#fff'}},'关于')
+    ),
+    h('div',{style:{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'16px',padding:'32px'}},
+      h('div',{style:{fontSize:'60px'}},'🍡'),
+      h('div',{style:{fontSize:'24px',fontWeight:700,color:'#fff',letterSpacing:'-0.5px'}},'MochiPhone'),
+      h('div',{style:{background:'rgba(255,255,255,.08)',borderRadius:'14px',padding:'16px',width:'100%',display:'flex',flexDirection:'column',gap:'10px'}},
+        ...[['版本','V0.1'],['阶段','开发中'],['作者','rainj5435-wq'],['框架','React 18']].map(([k,v])=>
+          h('div',{key:k,style:{display:'flex',justifyContent:'space-between'}},h('span',{style:{color:'rgba(255,255,255,.45)',fontSize:'14px'}},k),h('span',{style:{color:'#fff',fontSize:'14px'}},v))
+        )
       ),
-      h('p',{style:{textAlign:'center',color:'rgba(255,255,255,.4)',fontSize:'12px',marginTop:'20px'}},'MochiPhone V0.1 · 更多功能即将开放')
+      h('div',{style:{color:'rgba(255,255,255,.28)',fontSize:'12px',textAlign:'center'}},'更多功能持续开发中')
+    )
+  );
+}
+
+function SettingsApp({settings,onSettingsChange}){
+  const [sub,setSub]=useState(null);
+  const update=(k,v)=>{const n={...settings,[k]:v};onSettingsChange(n);saveSettings(n);};
+  if(sub==='wallpaper')return h(WallpaperPage,{current:settings.wallpaperIndex,onSelect:i=>{update('wallpaperIndex',i);setSub(null);},onBack:()=>setSub(null)});
+  if(sub==='theme')return h(ThemePage,{current:settings.theme,onSelect:t=>{update('theme',t);setSub(null);},onBack:()=>setSub(null)});
+  if(sub==='about')return h(AboutPage,{onBack:()=>setSub(null)});
+  const themeLabel={dark:'深色',light:'浅色',auto:'跟随系统'}[settings.theme];
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'rgba(14,14,24,.88)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)'}},
+    h('div',{style:{padding:'18px 20px 12px',borderBottom:'1px solid rgba(255,255,255,.1)',flexShrink:0}},h('h1',{style:{fontSize:'22px',fontWeight:700,color:'#fff',letterSpacing:'-0.5px',margin:0}},'设置')),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px'}},
+      h('div',{style:{background:'rgba(255,255,255,.07)',borderRadius:'18px',border:'1px solid rgba(255,255,255,.09)',overflow:'hidden'}},
+        ...[
+          {icon:'🔔',label:'通知',color:'#ff3b30',toggle:true,key:'notifications'},
+          {icon:'🔊',label:'声音',color:'#ff9f0a',toggle:true,key:'sound'},
+          {icon:'🌙',label:'勿扰',color:'#5e5ce6',toggle:true,key:'dnd'},
+          {icon:'🖼️',label:'壁纸',color:'#0a84ff',sub:'wallpaper'},
+          {icon:'🌓',label:'外观',color:'#636366',sub:'theme',value:themeLabel},
+          {icon:'ℹ️',label:'关于 MochiPhone',color:'#636366',sub:'about',value:'V0.1'},
+        ].map((row,i,arr)=>h('div',{key:row.label,onClick:row.toggle?undefined:()=>setSub(row.sub),style:{display:'flex',alignItems:'center',padding:'13px 16px',gap:'14px',borderBottom:i<arr.length-1?'1px solid rgba(255,255,255,.08)':'none',cursor:row.toggle?'default':'pointer'}},
+          h('div',{style:{width:'32px',height:'32px',borderRadius:'8px',background:row.color,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px',flexShrink:0}},row.icon),
+          h('span',{style:{flex:1,fontSize:'16px',color:'#fff',fontWeight:400}},row.label),
+          row.toggle
+            ?h(Toggle,{value:settings[row.key],onChange:v=>update(row.key,v)})
+            :h('div',{style:{display:'flex',alignItems:'center',gap:'6px'}},
+              row.value&&h('span',{style:{fontSize:'14px',color:'rgba(255,255,255,.4)'}},row.value),
+              h('svg',{width:8,height:13,viewBox:'0 0 8 13',fill:'none'},h('path',{d:'M1 1l6 5.5L1 12',stroke:'rgba(255,255,255,.28)',strokeWidth:'1.8',strokeLinecap:'round',strokeLinejoin:'round'}))
+            )
+        ))
+      )
     )
   );
 }
 
 function ComingSoon({app}){
-  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',gap:'16px',padding:'40px',background:'rgba(20,20,30,.7)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)'}},
+  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',gap:'16px',padding:'40px',background:'rgba(14,14,24,.88)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)'}},
     h('div',{style:{fontSize:'64px',lineHeight:1}},app.emoji),
     h('div',{style:{fontSize:'22px',fontWeight:600,color:'#fff',letterSpacing:'-0.4px'}},app.name),
-    h('div',{style:{background:'rgba(255,255,255,.18)',backdropFilter:'blur(8px)',WebkitBackdropFilter:'blur(8px)',border:'1px solid rgba(255,255,255,.22)',borderRadius:'20px',padding:'14px 24px',color:'rgba(255,255,255,.8)',fontSize:'15px',textAlign:'center'}},'此 App 即将开放 ✨')
+    h('div',{style:{background:'rgba(255,255,255,.1)',border:'1px solid rgba(255,255,255,.15)',borderRadius:'18px',padding:'14px 24px',color:'rgba(255,255,255,.72)',fontSize:'15px',textAlign:'center',lineHeight:1.7}},'此 App 即将开放 ✨')
   );
 }
 
-function AppWindow({app,battery,onClose}){
+function AppWindow({app,battery,settings,onSettingsChange,onClose,wallpaper}){
   const [visible,setVisible]=useState(false);
   const [mounted,setMounted]=useState(false);
-  useEffect(()=>{if(app){setMounted(true);const t=setTimeout(()=>setVisible(true),10);return()=>clearTimeout(t);}}, [app]);
-  const handleClose=()=>{setVisible(false);setTimeout(()=>{setMounted(false);onClose();},320);};
+  useEffect(()=>{if(app){setMounted(true);const t=setTimeout(()=>setVisible(true),12);return()=>clearTimeout(t);}},[app]);
+  const handleClose=()=>{setVisible(false);setTimeout(()=>{setMounted(false);onClose();},290);};
   if(!mounted)return null;
-  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',transform:visible?'scale(1)':'scale(0.92)',opacity:visible?1:0,transformOrigin:'center bottom',transition:'transform 0.32s cubic-bezier(0.34,1.2,0.64,1),opacity 0.28s ease',overflow:'hidden',borderRadius:'inherit'}},
-    h(StatusBar,{battery}),
-    h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'4px 16px 10px',flexShrink:0,background:'rgba(0,0,0,.15)',backdropFilter:'blur(8px)',WebkitBackdropFilter:'blur(8px)'}},
-      h('span',{style:{fontSize:'17px',fontWeight:600,color:'#fff',letterSpacing:'-0.3px'}},app&&app.name),
-      h('button',{onClick:handleClose,style:{background:'rgba(255,255,255,.15)',border:'none',borderRadius:'50%',width:'28px',height:'28px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'#fff',fontSize:'14px',fontWeight:600}},'✕')
+  const light=settings.theme==='light';
+  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',transform:visible?'scale(1)':'scale(0.93)',opacity:visible?1:0,transformOrigin:'center bottom',transition:'transform 0.3s cubic-bezier(0.34,1.1,0.64,1),opacity 0.25s',overflow:'hidden',borderRadius:'inherit',background:wallpaper}},
+    h(StatusBar,{battery,light}),
+    h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'4px 16px 10px',flexShrink:0,background:light?'rgba(240,240,245,.88)':'rgba(0,0,0,.18)',backdropFilter:'blur(12px)',WebkitBackdropFilter:'blur(12px)',borderBottom:`1px solid ${light?'rgba(0,0,0,.08)':'rgba(255,255,255,.08)'}`}},
+      h('span',{style:{fontSize:'17px',fontWeight:600,color:light?'rgba(0,0,0,.85)':'#fff',letterSpacing:'-0.3px'}},app&&app.name),
+      h('button',{onClick:handleClose,style:{background:light?'rgba(0,0,0,.08)':'rgba(255,255,255,.15)',border:'none',borderRadius:'50%',width:'28px',height:'28px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:light?'rgba(0,0,0,.7)':'#fff',fontSize:'14px',fontWeight:600,flexShrink:0}},'✕')
     ),
     h('div',{style:{flex:1,overflow:'hidden',position:'relative'}},
-      app&&(app.id==='settings'?h(SettingsApp):h(ComingSoon,{app}))
+      app&&(app.id==='settings'?h(SettingsApp,{settings,onSettingsChange}):h(ComingSoon,{app}))
     ),
-    h('div',{style:{padding:'8px 0 6px',display:'flex',justifyContent:'center',flexShrink:0,background:'rgba(0,0,0,.1)'}},
-      h('div',{onClick:handleClose,style:{width:'120px',height:'5px',background:'rgba(255,255,255,.5)',borderRadius:'3px',cursor:'pointer'}})
+    h('div',{style:{padding:'8px 0 6px',display:'flex',justifyContent:'center',flexShrink:0,background:light?'rgba(240,240,245,.5)':'rgba(0,0,0,.12)'}},
+      h('div',{onClick:handleClose,style:{width:'120px',height:'5px',background:light?'rgba(0,0,0,.22)':'rgba(255,255,255,.42)',borderRadius:'3px',cursor:'pointer'}})
     )
   );
 }
 
 function PhoneShell(){
+  const [settings,setSettings]=useState(getSettings);
   const [screen,setScreen]=useState('lock');
   const [openAppId,setOpenAppId]=useState(null);
   const [homeVisible,setHomeVisible]=useState(false);
   const battery=82;
-  const handleUnlock=useCallback(()=>{setScreen('home');setTimeout(()=>setHomeVisible(true),10);},[]);
+  const resolved=settings.theme==='auto'?(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'):settings.theme;
+  const light=resolved==='light';
+  const wallpaper=WALLPAPERS[settings.wallpaperIndex]||WALLPAPERS[0];
+  const handleUnlock=useCallback(()=>{setScreen('home');setTimeout(()=>setHomeVisible(true),12);},[]);
   const handleOpen=useCallback(id=>{setOpenAppId(id);setScreen('app');},[]);
   const handleClose=useCallback(()=>{setOpenAppId(null);setScreen('home');},[]);
   const openApp=openAppId?ALL_APPS.find(a=>a.id===openAppId)||null:null;
-  return h('div',{style:{width:'100%',height:'100%',position:'relative',borderRadius:'inherit',overflow:'hidden',background:WP}},
-    h('div',{style:{position:'absolute',inset:0,pointerEvents:'none',zIndex:0,background:'radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.06) 0%,transparent 60%)'}}),
-    screen==='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:10}},h(LockScreen,{battery,onUnlock:handleUnlock})),
-    screen!=='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:1}},h(HomeScreen,{battery,onOpen:handleOpen,visible:screen==='home'&&homeVisible})),
-    (screen==='app'||openAppId)&&h('div',{style:{position:'absolute',inset:0,zIndex:5,background:WP}},h(AppWindow,{app:openApp,battery,onClose:handleClose})),
-    h('div',{style:{position:'absolute',inset:0,pointerEvents:'none',zIndex:20,borderRadius:'inherit',background:'radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.25) 100%)'}})
+  return h('div',{style:{width:'100%',height:'100%',position:'relative',borderRadius:'inherit',overflow:'hidden'}},
+    screen==='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:10}},h(LockScreen,{battery,wallpaper,onUnlock:handleUnlock})),
+    screen!=='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:1}},h(HomeScreen,{battery,onOpen:handleOpen,visible:screen==='home'&&homeVisible,light,wallpaper})),
+    (screen==='app'||openAppId)&&h('div',{style:{position:'absolute',inset:0,zIndex:5}},h(AppWindow,{app:openApp,battery,settings,onSettingsChange:setSettings,onClose:handleClose,wallpaper})),
+    h('div',{style:{position:'absolute',inset:0,pointerEvents:'none',zIndex:20,borderRadius:'inherit',background:'radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.2) 100%)'}})
   );
 }
 
@@ -242,7 +302,6 @@ function App(){
     h('div',{className:'phone-outer'},h(PhoneShell))
   );
 }
-
 ReactDOM.createRoot(document.getElementById('root')).render(h(App));
 </script>
 </body>
