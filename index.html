@@ -4,277 +4,384 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <title>萌萌机</title>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
-body{background:#000;font-family:var(--mochi-font);}
+body{background:#000;font-family:var(--mf);}
 ::-webkit-scrollbar{display:none}
 #root{width:100vw;height:100dvh;display:flex;align-items:center;justify-content:center;overflow:hidden}
 :root{
-  --mochi-font:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
-  --bg:#0f0f0f;--bg2:#1a1a1a;
-  --card:rgba(255,255,255,0.055);--card2:rgba(255,255,255,0.09);
+  --mf:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
+  --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#222;
+  --card:rgba(255,255,255,0.055);--card2:rgba(255,255,255,0.09);--card3:rgba(255,255,255,0.13);
   --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.15);
-  --text:#f0f0f0;--text2:rgba(255,255,255,0.6);--text3:rgba(255,255,255,0.3);
-  --toggle-on:#555;--dock-bg:rgba(22,22,22,0.82);
-  --status-color:#f0f0f0;--header-bg:rgba(15,15,15,0.92);
-  --divider:rgba(255,255,255,0.07);--shadow:rgba(0,0,0,0.6);
-  --input-bg:rgba(255,255,255,0.07);
-  --bubble-me:#1c1c1e;--bubble-them:rgba(255,255,255,0.1);
-  --bubble-me-text:#fff;--bubble-them-text:#f0f0f0;
+  --text:#f0f0f0;--text2:rgba(255,255,255,0.58);--text3:rgba(255,255,255,0.28);
+  --toggle:#555;--dock:rgba(20,20,20,0.78);
+  --sc:#f0f0f0;--hbg:rgba(15,15,15,0.92);
+  --div:rgba(255,255,255,0.07);--shad:rgba(0,0,0,0.6);
+  --ibg:rgba(255,255,255,0.07);
+  --bme:#1c1c1e;--bthem:rgba(255,255,255,0.1);
+  --bmet:#fff;--bthemt:#f0f0f0;
 }
 [data-theme="light"]{
-  --bg:#f5f5f5;--bg2:#ffffff;
-  --card:rgba(0,0,0,0.038);--card2:rgba(0,0,0,0.065);
+  --bg:#f2f2f7;--bg2:#fff;--bg3:#e8e8ed;
+  --card:rgba(0,0,0,0.038);--card2:rgba(0,0,0,0.065);--card3:rgba(0,0,0,0.095);
   --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);
   --text:#111;--text2:rgba(0,0,0,0.5);--text3:rgba(0,0,0,0.28);
-  --toggle-on:#888;--dock-bg:rgba(215,215,215,0.82);
-  --status-color:#111;--header-bg:rgba(245,245,245,0.94);
-  --divider:rgba(0,0,0,0.065);--shadow:rgba(0,0,0,0.1);
-  --input-bg:rgba(0,0,0,0.05);
-  --bubble-me:#1c1c1e;--bubble-them:rgba(0,0,0,0.07);
-  --bubble-me-text:#fff;--bubble-them-text:#111;
+  --toggle:#888;--dock:rgba(210,210,215,0.82);
+  --sc:#111;--hbg:rgba(242,242,247,0.94);
+  --div:rgba(0,0,0,0.065);--shad:rgba(0,0,0,0.1);
+  --ibg:rgba(0,0,0,0.05);
+  --bme:#1c1c1e;--bthem:rgba(0,0,0,0.07);
+  --bmet:#fff;--bthemt:#111;
 }
 @media(min-width:520px){
-  .phone-outer{width:390px!important;height:844px!important;border-radius:52px!important;
-  box-shadow:0 0 0 9px #181818,0 0 0 11px #252525,0 40px 100px rgba(0,0,0,0.85)!important;}
+  .po{width:390px!important;height:844px!important;border-radius:52px!important;
+  box-shadow:0 0 0 9px #181818,0 0 0 11px #252525,0 40px 100px rgba(0,0,0,.85)!important;}
 }
-.phone-outer{width:100vw;height:100dvh;border-radius:0;overflow:hidden;position:relative;background:var(--bg);font-family:var(--mochi-font);}
+.po{width:100vw;height:100dvh;border-radius:0;overflow:hidden;position:relative;background:var(--bg);font-family:var(--mf);}
 </style>
 </head>
-<body>
-<div id="root"></div>
+<body><div id="root"></div>
 <script>
 const {useState,useEffect,useCallback,useRef,useMemo}=React;
 const h=React.createElement;
 
-const WALLPAPERS=[
+const WPS=[
   {name:'墨夜',css:'#0a0a0a',light:false},
-  {name:'霜白',css:'linear-gradient(160deg,#e8e8e8,#f5f5f5)',light:true},
-  {name:'玄铁',css:'linear-gradient(145deg,#111,#2a2a2a)',light:false},
-  {name:'烟灰',css:'linear-gradient(160deg,#252525,#383838)',light:false},
-  {name:'银雾',css:'linear-gradient(160deg,#d0d0d0,#e8e8e8)',light:true},
-  {name:'深空',css:'radial-gradient(ellipse at 30% 20%,#1a1a1a,#080808)',light:false},
-  {name:'月光',css:'radial-gradient(ellipse at 50% 30%,#e5e5e5,#c8c8c8)',light:true},
-  {name:'炭灰',css:'linear-gradient(180deg,#0d0d0d,#1c1c1c)',light:false},
+  {name:'霜白',css:'linear-gradient(160deg,#e0e0e0,#f5f5f5)',light:true},
+  {name:'玄铁',css:'linear-gradient(145deg,#0e0e0e,#252525)',light:false},
+  {name:'银雾',css:'linear-gradient(160deg,#c8c8c8,#e5e5e5)',light:true},
+  {name:'深空',css:'radial-gradient(ellipse at 30% 20%,#181818,#060606)',light:false},
+  {name:'月光',css:'radial-gradient(ellipse at 50% 30%,#e8e8e8,#c0c0c0)',light:true},
+  {name:'炭灰',css:'linear-gradient(180deg,#0a0a0a,#1a1a1a)',light:false},
+  {name:'晨雾',css:'linear-gradient(160deg,#d8d8d8,#efefef)',light:true},
 ];
 
-const ALL_APPS=[
-  {id:'chat',name:'聊天',emoji:'💬'},
-  {id:'memory',name:'记忆',emoji:'🧠'},
-  {id:'photos',name:'相册',emoji:'📸'},
-  {id:'music',name:'音乐',emoji:'🎵'},
-  {id:'pet',name:'宠物',emoji:'🐾'},
-  {id:'shop',name:'商店',emoji:'🛍️'},
-  {id:'wallet',name:'钱包',emoji:'💰'},
-  {id:'calendar',name:'日历',emoji:'📅'},
-  {id:'diary',name:'日记',emoji:'📔'},
-  {id:'social',name:'社交',emoji:'👥'},
-  {id:'browser',name:'浏览器',emoji:'🌐'},
-  {id:'studio',name:'画室',emoji:'🎨'},
-  {id:'settings',name:'设置',emoji:'⚙️'},
+const APPS=[
+  {id:'chat',    name:'聊天',   svg:'M8 2C4.7 2 2 4.3 2 7.2c0 1.6.7 3 1.9 4L3 14l3.1-1.4C7 13 7.5 13.1 8 13.1c3.3 0 6-2.3 6-5.1S11.3 2 8 2z'},
+  {id:'memory',  name:'记忆',   svg:'M9 2a4 4 0 0 1 4 4c0 1-.3 1.9-.9 2.6L14 14h-3v-2H9v-2H7l-.1-.1A4 4 0 0 1 9 2z'},
+  {id:'photos',  name:'相册',   svg:'M3 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5zm3 1a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0zm2 7 2.5-3.5L13 13H6z'},
+  {id:'music',   name:'音乐',   svg:'M9 3v8.4A3 3 0 1 1 7 9V5l6-1.5V7a3 3 0 1 1-2-2.8V4L9 5V3z'},
+  {id:'pet',     name:'宠物',   svg:'M4.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm7 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM8 15c-2.5 0-4.5-1.3-5-3 .5-1 1.8-1.5 3-1 .5.2 1.3.4 2 .4s1.5-.2 2-.4c1.2-.5 2.5 0 3 1-.5 1.7-2.5 3-5 3z'},
+  {id:'shop',    name:'商店',   svg:'M3 3h2l.4 2M7 13h8l2-8H5.4M7 13 5.4 5M7 13l-1 2h9M9 17a1 1 0 1 0 2 0 1 1 0 0 0-2 0zm6 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0z'},
+  {id:'wallet',  name:'钱包',   svg:'M3 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1H3V6zm0 3h14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9zm11 2a1 1 0 1 0 2 0 1 1 0 0 0-2 0z'},
+  {id:'calendar',name:'日历',   svg:'M5 3v2M11 3v2M3 9h10M5 5h8a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm2 6h2v2H7z'},
+  {id:'diary',   name:'日记',   svg:'M6 2h7l3 3v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm2 9H6v2h2v-2zm0-4H6v2h2V7zm4 4h-2v2h2v-2zm0-4h-2v2h2V7z'},
+  {id:'social',  name:'社交',   svg:'M15 8c0 2.8-3 5-7 5a8 8 0 0 1-2-.3L3 14l.7-2.5A5 5 0 0 1 2 8c0-2.8 3-5 7-5s6 2.2 6 5z'},
+  {id:'browser', name:'浏览器', svg:'M8 2a6 6 0 1 1 0 12A6 6 0 0 1 8 2zm0 1.5c-.7 0-1.8 1-2.3 2.5h4.6C9.8 4.5 8.7 3.5 8 3.5zm-3 2.5A7 7 0 0 0 4.5 8c0 .7.1 1.4.3 2h6.4c.2-.6.3-1.3.3-2s-.1-1.4-.3-2H5zm.5 4.5c.5 1.5 1.6 2.5 2.3 2.5s1.8-1 2.3-2.5H5.7z'},
+  {id:'studio',  name:'画室',   svg:'M2 12l5-5 3 3 4-6 4 8H2z'},
+  {id:'settings',name:'设置',   svg:'M8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm5.7 2.5-.8-.1a5 5 0 0 0-.4-1l.5-.7-1.4-1.4-.7.5a5 5 0 0 0-1-.4l-.1-.8H8.2l-.1.8a5 5 0 0 0-1 .4l-.7-.5L5 5.7l.5.7a5 5 0 0 0-.4 1l-.8.1v2l.8.1a5 5 0 0 0 .4 1l-.5.7 1.4 1.4.7-.5a5 5 0 0 0 1 .4l.1.8h1.6l.1-.8a5 5 0 0 0 1-.4l.7.5 1.4-1.4-.5-.7a5 5 0 0 0 .4-1l.8-.1v-2z'},
 ];
 const DOCK_IDS=['chat','browser','music','settings'];
-const GRID_APPS=ALL_APPS.filter(a=>!DOCK_IDS.includes(a.id));
-const PAGE1=GRID_APPS.slice(0,9);
-const PAGE2=GRID_APPS.slice(9);
-const ICON_BG={chat:'#2a2a2a',memory:'#222',photos:'#333',music:'#1e1e1e',pet:'#2e2e2e',shop:'#282828',wallet:'#242424',calendar:'#303030',diary:'#2b2b2b',social:'#252525',browser:'#363636',studio:'#2d2d2d',settings:'#1f1f1f'};
+const GRID=APPS.filter(a=>!DOCK_IDS.includes(a.id));
+const P1=GRID.slice(0,9),P2=GRID.slice(9);
 
-function openFontDB(){return new Promise((res,rej)=>{const req=indexedDB.open('mochi_font',1);req.onupgradeneeded=e=>e.target.result.createObjectStore('fonts');req.onsuccess=e=>res(e.target.result);req.onerror=rej;});}
-async function saveFontToDB(buf){const db=await openFontDB();return new Promise((res,rej)=>{const tx=db.transaction('fonts','readwrite');tx.objectStore('fonts').put(buf,'custom');tx.oncomplete=res;tx.onerror=rej;});}
-async function loadFontFromDB(){const db=await openFontDB();return new Promise(res=>{const tx=db.transaction('fonts','readonly');const req=tx.objectStore('fonts').get('custom');req.onsuccess=e=>res(e.target.result||null);req.onerror=()=>res(null);});}
-async function deleteFontFromDB(){const db=await openFontDB();return new Promise(res=>{const tx=db.transaction('fonts','readwrite');tx.objectStore('fonts').delete('custom');tx.oncomplete=res;});}
-async function applyFontFromDB(){
-  const buf=await loadFontFromDB();if(!buf)return false;
-  try{const face=new FontFace('MochiCustom',buf);await face.load();document.fonts.add(face);document.documentElement.style.setProperty('--mochi-font','"MochiCustom",-apple-system,sans-serif');return true;}catch{return false;}
+const dbOpen=name=>new Promise((r,j)=>{const q=indexedDB.open(name,1);q.onupgradeneeded=e=>e.target.result.createObjectStore('s');q.onsuccess=e=>r(e.target.result);q.onerror=j;});
+const dbGet=async(db,k)=>new Promise(r=>{const t=db.transaction('s','readonly');const q=t.objectStore('s').get(k);q.onsuccess=e=>r(e.target.result??null);q.onerror=()=>r(null);});
+const dbSet=async(db,k,v)=>new Promise((r,j)=>{const t=db.transaction('s','readwrite');t.objectStore('s').put(v,k);t.oncomplete=r;t.onerror=j;});
+const dbDel=async(db,k)=>new Promise(r=>{const t=db.transaction('s','readwrite');t.objectStore('s').delete(k);t.oncomplete=r;});
+let _fdb=null;
+const getFDB=async()=>{if(!_fdb)_fdb=await dbOpen('mochi_assets');return _fdb;};
+async function applyFont(){
+  const db=await getFDB();const buf=await dbGet(db,'font');if(!buf)return false;
+  try{const f=new FontFace('MF',buf);await f.load();document.fonts.add(f);document.documentElement.style.setProperty('--mf','"MF",-apple-system,sans-serif');return true;}catch{return false;}
 }
 
-const DEF={wallpaperIndex:0,customWallpaper:null,theme:'dark',notifications:true,sound:true,dnd:false,iconSize:'normal',showLabel:true,clockWeight:'bold',dockStyle:'glass',hasCustomFont:false};
-function loadS(){try{const s=localStorage.getItem('mochi_v3');return s?JSON.parse(s):{};}catch{return{};}}
-function saveS(s){try{localStorage.setItem('mochi_v3',JSON.stringify(s));}catch{}}
-function getS(){return{...DEF,...loadS()};}
+const DEF={wp:0,cwp:null,theme:'dark',notif:true,sound:true,dnd:false,iconSz:'normal',showLbl:true,ckW:'bold',ckSz:'large',dockSt:'glass',hasFont:false,chatBg:null,bubbleFrost:false,showTime:true,avatarRound:50,apis:[],defaultApi:null,contacts:[{id:'ai1',name:'助手',avatar:'🤖',bio:'你好，我是萌萌机内置助手',online:true}],chats:{}};
+const LS={g(){try{const s=localStorage.getItem('mv4');return s?JSON.parse(s):{};}catch{return{};}},s(v){try{localStorage.setItem('mv4',JSON.stringify(v));}catch{}}};
+const getS=()=>({...DEF,...LS.g()});
 const pad=n=>String(n).padStart(2,'0');
-function resolveTheme(t){if(t==='auto')return window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark';return t;}
-function applyTheme(t){document.querySelector('.phone-outer')?.setAttribute('data-theme',resolveTheme(t));}
+const rt=t=>t==='auto'?window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark':t;
+const applyTheme=t=>document.querySelector('.po')?.setAttribute('data-theme',rt(t));
 
-function StatusBar({battery}){
+function StatusBar({battery,wp}){
   const [now,setNow]=useState(new Date());
   useEffect(()=>{const t=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(t);},[]);
-  return h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 22px 4px',fontSize:'15px',fontWeight:600,color:'var(--status-color)',letterSpacing:'-0.2px',flexShrink:0,userSelect:'none',fontFamily:'var(--mochi-font)'}},
-    h('span',null,`${pad(now.getHours())}:${pad(now.getMinutes())}`),
-    h('div',{style:{display:'flex',alignItems:'center',gap:'6px'}},
-      h('div',{style:{display:'flex',gap:'2px',alignItems:'flex-end'}},...[3,5,7,9].map((ht,i)=>h('div',{key:i,style:{width:'3px',height:ht+'px',borderRadius:'1.5px',background:i<3?'var(--status-color)':'var(--text3)'}}))),
-      h('svg',{width:15,height:11,viewBox:'0 0 16 12',fill:'none'},h('path',{d:'M8 9.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2z',fill:'var(--status-color)'}),h('path',{d:'M5.17 7.17a4 4 0 0 1 5.66 0',stroke:'var(--status-color)',strokeWidth:'1.4',strokeLinecap:'round',fill:'none'}),h('path',{d:'M2.34 4.34a8 8 0 0 1 11.32 0',stroke:'var(--status-color)',strokeWidth:'1.4',strokeLinecap:'round',fill:'none',opacity:'0.38'})),
-      h('div',{style:{display:'flex',alignItems:'center',gap:'2px'}},
-        h('div',{style:{width:'23px',height:'11px',border:'1.5px solid var(--status-color)',borderRadius:'3px',padding:'1.5px',display:'flex',alignItems:'center'}},h('div',{style:{width:Math.max(3,battery*.19)+'px',height:'100%',background:battery<20?'#ff3b30':'var(--status-color)',borderRadius:'1px'}})),
-        h('div',{style:{width:'2px',height:'5px',background:'var(--status-color)',borderRadius:'0 1px 1px 0',opacity:.5}})
+  const c=wp?.light?'#111':'var(--sc)';
+  return h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 22px 2px',flexShrink:0,userSelect:'none',color:c,fontFamily:'var(--mf)'}},
+    h('span',{style:{fontSize:'16px',fontWeight:700,letterSpacing:'-0.5px'}},`${pad(now.getHours())}:${pad(now.getMinutes())}`),
+    h('div',{style:{display:'flex',alignItems:'center',gap:'7px'}},
+      h('div',{style:{display:'flex',gap:'2.5px',alignItems:'center'}},
+        ...[1,1,1,1,0.3,0.3].map((o,i)=>h('div',{key:i,style:{width:'3.5px',height:'3.5px',borderRadius:'50%',background:c,opacity:o}}))
+      ),
+      h('svg',{width:16,height:12,viewBox:'0 0 16 12',fill:'none'},
+        h('path',{d:'M8 10a1 1 0 1 1 0 2 1 1 0 0 1 0-2z',fill:c}),
+        h('path',{d:'M4.9 7.5a4.5 4.5 0 0 1 6.2 0',stroke:c,strokeWidth:'1.5',strokeLinecap:'round',fill:'none'}),
+        h('path',{d:'M2 4.8a8 8 0 0 1 12 0',stroke:c,strokeWidth:'1.5',strokeLinecap:'round',fill:'none',opacity:.38})
+      ),
+      h('div',{style:{display:'flex',alignItems:'center',gap:'3px'}},
+        h('span',{style:{fontSize:'13px',fontWeight:600,opacity:.88}},battery+'%'),
+        h('div',{style:{display:'flex',alignItems:'center',gap:'1px'}},
+          h('div',{style:{width:'22px',height:'11px',border:`1.5px solid ${c}`,borderRadius:'3px',padding:'1.5px',display:'flex',alignItems:'center'}},
+            h('div',{style:{width:Math.max(3,battery*.18)+'px',height:'100%',background:battery<20?'#ff3b30':c,borderRadius:'1px'}})
+          ),
+          h('div',{style:{width:'2px',height:'5px',background:c,borderRadius:'0 1px 1px 0',opacity:.4}})
+        )
       )
     )
   );
 }
 
-function LockScreen({battery,wallpaper,clockWeight,onUnlock}){
+function LockScreen({battery,wp,s,onUnlock}){
   const [now,setNow]=useState(new Date());
-  const [unlocking,setUnlocking]=useState(false);
+  const [out,setOut]=useState(false);
   const [dy,setDy]=useState(0);
   const sy=useRef(0);
   useEffect(()=>{const t=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(t);},[]);
   const days=['周日','周一','周二','周三','周四','周五','周六'];
-  const dateStr=`${now.getMonth()+1}月${now.getDate()}日 ${days[now.getDay()]}`;
-  const doUnlock=()=>{if(unlocking)return;setUnlocking(true);setTimeout(onUnlock,300);};
-  const isLight=wallpaper?.light;
-  const tc=isLight?'rgba(0,0,0,0.88)':'#fff';
-  const tc2=isLight?'rgba(0,0,0,0.45)':'rgba(255,255,255,0.5)';
-  const cw=clockWeight==='thin'?200:clockWeight==='medium'?500:700;
-  return h('div',{
-    onClick:doUnlock,
-    onTouchStart:e=>{sy.current=e.touches[0].clientY;},
-    onTouchMove:e=>{const d=sy.current-e.touches[0].clientY;if(d>0)setDy(d);},
-    onTouchEnd:()=>{if(dy>50)doUnlock();else setDy(0);},
-    style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',cursor:'pointer',userSelect:'none',background:wallpaper?.css||'#0a0a0a',opacity:unlocking?0:1,transform:unlocking?'scale(1.03)':dy>0?`translateY(-${Math.min(dy*.28,28)}px)`:'none',transition:unlocking?'opacity 0.3s,transform 0.3s':'transform 0.12s',fontFamily:'var(--mochi-font)'}
-  },
-    h('div',{style:{color:tc}},h(StatusBar,{battery})),
-    h('div',{style:{flex:'0 0 40px'}}),
-    h('div',{style:{paddingLeft:'28px'}},h('div',{style:{fontSize:'17px',fontWeight:600,color:tc,letterSpacing:'0.1px',marginBottom:'2px'}},dateStr)),
-    h('div',{style:{paddingLeft:'22px'}},h('div',{style:{fontSize:'90px',fontWeight:cw,color:tc,lineHeight:1,letterSpacing:'-4px',fontVariantNumeric:'tabular-nums'}},`${pad(now.getHours())}:${pad(now.getMinutes())}`)),
+  const il=wp?.light;
+  const tc=il?'rgba(0,0,0,0.88)':'#fff';
+  const tc2=il?'rgba(0,0,0,0.42)':'rgba(255,255,255,0.48)';
+  const cw=s.ckW==='thin'?200:s.ckW==='medium'?400:700;
+  const csz=s.ckSz==='small'?68:s.ckSz==='medium'?80:90;
+  const doU=()=>{if(out)return;setOut(true);setTimeout(onUnlock,280);};
+  return h('div',{onClick:doU,onTouchStart:e=>{sy.current=e.touches[0].clientY;},onTouchMove:e=>{const d=sy.current-e.touches[0].clientY;if(d>0)setDy(d);},onTouchEnd:()=>{if(dy>48)doU();else setDy(0);},
+    style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',cursor:'pointer',userSelect:'none',background:wp?.css||'#0a0a0a',opacity:out?0:1,transform:out?'scale(1.02)':dy>0?`translateY(-${Math.min(dy*.25,24)}px)`:'none',transition:out?'opacity 0.28s,transform 0.28s':'transform 0.1s',fontFamily:'var(--mf)'}},
+    h('div',{style:{color:tc}},h(StatusBar,{battery,wp})),
+    h('div',{style:{flex:'0 0 32px'}}),
+    h('div',{style:{paddingLeft:'26px',marginBottom:'1px'}},h('div',{style:{fontSize:'16px',fontWeight:600,color:tc,letterSpacing:'0.1px'}},`${now.getMonth()+1}月${now.getDate()}日 ${days[now.getDay()]}`)),
+    h('div',{style:{paddingLeft:'20px'}},h('div',{style:{fontSize:csz+'px',fontWeight:cw,color:tc,lineHeight:1,letterSpacing:'-4px',fontVariantNumeric:'tabular-nums'}},`${pad(now.getHours())}:${pad(now.getMinutes())}`)),
     h('div',{style:{flex:1}}),
-    h('div',{style:{textAlign:'center',padding:'0 0 44px',display:'flex',flexDirection:'column',alignItems:'center',gap:'10px'}},
-      h('div',{style:{width:'130px',height:'42px',borderRadius:'21px',background:isLight?'rgba(0,0,0,0.1)':'rgba(255,255,255,0.1)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'14px',fontWeight:500,color:tc,letterSpacing:'0.2px',fontFamily:'var(--mochi-font)'}},'上滑解锁')
+    h('div',{style:{display:'flex',justifyContent:'center',padding:'0 0 50px'}},
+      h('div',{style:{width:'148px',height:'44px',borderRadius:'22px',background:il?'rgba(0,0,0,0.11)':'rgba(255,255,255,0.14)',backdropFilter:'blur(32px) saturate(180%)',WebkitBackdropFilter:'blur(32px) saturate(180%)',border:`1px solid ${il?'rgba(0,0,0,0.1)':'rgba(255,255,255,0.26)'}`,display:'flex',alignItems:'center',justifyContent:'center',gap:'7px',boxShadow:'0 4px 20px rgba(0,0,0,0.12)'}},
+        h('svg',{width:13,height:13,viewBox:'0 0 14 14',fill:'none'},h('path',{d:'M7 1a3 3 0 0 1 3 3v1H4V4a3 3 0 0 1 3-3zM3 6h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm4 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2z',fill:tc,opacity:.82})),
+        h('span',{style:{fontSize:'14px',fontWeight:500,color:tc,opacity:.85,letterSpacing:'0.2px'}},'上滑解锁')
+      )
     )
   );
 }
 
-function AppIcon({app,onOpen,dock,iconSize,showLabel}){
-  const [pressed,setPressed]=useState(false);
-  const sz=dock?52:iconSize==='large'?64:iconSize==='small'?48:56;
-  const esz=dock?22:iconSize==='large'?28:iconSize==='small'?20:24;
-  const go=useCallback(()=>{setPressed(true);setTimeout(()=>{setPressed(false);onOpen(app.id);},110);},[app.id,onOpen]);
-  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'4px',cursor:'pointer',userSelect:'none',WebkitUserSelect:'none',minWidth:0},
-    onTouchStart:e=>{e.stopPropagation();setPressed(true);},onTouchEnd:e=>{e.stopPropagation();go();},
-    onMouseDown:e=>{e.stopPropagation();setPressed(true);},onMouseUp:e=>{e.stopPropagation();go();},onMouseLeave:()=>setPressed(false)},
-    h('div',{style:{width:sz+'px',height:sz+'px',borderRadius:sz*0.224+'px',background:ICON_BG[app.id]||'#222',display:'flex',alignItems:'center',justifyContent:'center',fontSize:esz+'px',transform:pressed?'scale(0.85)':'scale(1)',transition:'transform 0.11s cubic-bezier(0.34,1.7,0.64,1)',boxShadow:pressed?'none':'0 1px 8px var(--shadow),inset 0 1px 0 rgba(255,255,255,0.07)',flexShrink:0}},
-      h('span',{style:{lineHeight:1,pointerEvents:'none'}},app.emoji)
+function AppIcon({app,onOpen,dock,s}){
+  const [pr,setPr]=useState(false);
+  const sz=dock?52:s?.iconSz==='large'?62:s?.iconSz==='small'?46:54;
+  const isz=sz*.44;
+  const go=useCallback(()=>{setPr(true);setTimeout(()=>{setPr(false);onOpen(app.id);},100);},[app.id,onOpen]);
+  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'4px',cursor:'pointer',userSelect:'none',minWidth:0},
+    onTouchStart:e=>{e.stopPropagation();setPr(true);},onTouchEnd:e=>{e.stopPropagation();go();},
+    onMouseDown:e=>{e.stopPropagation();setPr(true);},onMouseUp:e=>{e.stopPropagation();go();},onMouseLeave:()=>setPr(false)},
+    h('div',{style:{width:sz+'px',height:sz+'px',borderRadius:sz*.23+'px',background:'rgba(245,245,245,0.92)',display:'flex',alignItems:'center',justifyContent:'center',transform:pr?'scale(0.84)':'scale(1)',transition:'transform 0.1s cubic-bezier(0.34,1.8,0.64,1)',boxShadow:pr?'none':'0 1px 6px rgba(0,0,0,0.16)',flexShrink:0}},
+      h('svg',{width:isz,height:isz,viewBox:'0 0 16 16',fill:'none',stroke:'#2c2c2c',strokeWidth:'1.1',strokeLinecap:'round',strokeLinejoin:'round'},h('path',{d:app.svg}))
     ),
-    !dock&&showLabel&&h('span',{style:{fontSize:'10px',color:'var(--text)',fontWeight:400,textAlign:'center',width:'62px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',opacity:.88,fontFamily:'var(--mochi-font)'}},app.name)
+    !dock&&(s?.showLbl!==false)&&h('span',{style:{fontSize:'10px',color:'var(--text)',fontWeight:400,textAlign:'center',width:'60px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',opacity:.88,fontFamily:'var(--mf)'}},app.name)
   );
 }
 
-function HomeGrid({onOpen,iconSize,showLabel}){
-  const pages=[PAGE1,PAGE2];
-  const [page,setPage]=useState(0);
-  const [dragX,setDragX]=useState(0);
-  const [dragging,setDragging]=useState(false);
-  const sx=useRef(0),sy2=useRef(0),locked=useRef(null);
+function Widget(){
+  const [now,setNow]=useState(new Date());
+  useEffect(()=>{const t=setInterval(()=>setNow(new Date()),30000);return()=>clearInterval(t);},[]);
+  const days=['日','一','二','三','四','五','六'];
+  return h('div',{style:{gridColumn:'span 4',background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'18px',padding:'14px 16px',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'4px'}},
+    h('div',null,
+      h('div',{style:{fontSize:'11px',color:'var(--text3)',marginBottom:'3px',fontFamily:'var(--mf)'}},'今天'),
+      h('div',{style:{fontSize:'28px',fontWeight:700,color:'var(--text)',letterSpacing:'-1px',lineHeight:1,fontFamily:'var(--mf)'}},now.getDate()),
+      h('div',{style:{fontSize:'12px',color:'var(--text2)',marginTop:'2px',fontFamily:'var(--mf)'}},`周${days[now.getDay()]}`)
+    ),
+    h('div',{style:{textAlign:'right'}},
+      h('div',{style:{fontSize:'13px',fontWeight:600,color:'var(--text)',fontFamily:'var(--mf)'}},'萌萌机'),
+      h('div',{style:{fontSize:'11px',color:'var(--text3)',marginTop:'3px',fontFamily:'var(--mf)'}},'V0.1 · 开发中'),
+      h('div',{style:{fontSize:'11px',color:'var(--text3)',marginTop:'2px',fontFamily:'var(--mf)'}},'更多功能即将上线')
+    )
+  );
+}
+
+function HomeGrid({onOpen,s}){
+  const pages=[P1,P2];
+  const [pg,setPg]=useState(0);
+  const [dx,setDx]=useState(0);
+  const [drag,setDrag]=useState(false);
+  const sx=useRef(0),sy=useRef(0),lk=useRef(null);
   const W=useRef(Math.min(window.innerWidth,390));
-  const goTo=p=>{const t=Math.max(0,Math.min(pages.length-1,p));setPage(t);setDragX(0);setDragging(false);};
-  const onTS=useCallback(e=>{sx.current=e.touches[0].clientX;sy2.current=e.touches[0].clientY;locked.current=null;setDragging(true);},[]);
+  const go=p=>{setPg(Math.max(0,Math.min(1,p)));setDx(0);setDrag(false);};
+  const onTS=useCallback(e=>{sx.current=e.touches[0].clientX;sy.current=e.touches[0].clientY;lk.current=null;setDrag(true);},[]);
   const onTM=useCallback(e=>{
-    if(!dragging)return;
-    const dx=e.touches[0].clientX-sx.current,da=Math.abs(dx),db=Math.abs(e.touches[0].clientY-sy2.current);
-    if(!locked.current){if(da>6||db>6)locked.current=da>db?'h':'v';}
-    if(locked.current==='h'){e.preventDefault();let c=dx;if(page===0&&dx>0)c=dx*.12;if(page===pages.length-1&&dx<0)c=dx*.12;setDragX(c);}
-  },[dragging,page,pages.length]);
+    if(!drag)return;
+    const ddx=e.touches[0].clientX-sx.current,da=Math.abs(ddx),db=Math.abs(e.touches[0].clientY-sy.current);
+    if(!lk.current){if(da>5||db>5)lk.current=da>db?'h':'v';}
+    if(lk.current==='h'){e.preventDefault();let c=ddx;if(pg===0&&ddx>0)c=ddx*.12;if(pg===1&&ddx<0)c=ddx*.12;setDx(c);}
+  },[drag,pg]);
   const onTE=useCallback(()=>{
-    if(locked.current==='h'){if(dragX<-52)goTo(page+1);else if(dragX>52)goTo(page-1);else{setDragX(0);setDragging(false);}}
-    else{setDragX(0);setDragging(false);}locked.current=null;
-  },[dragX,page]);
+    if(lk.current==='h'){if(dx<-50)go(pg+1);else if(dx>50)go(pg-1);else{setDx(0);setDrag(false);}}
+    else{setDx(0);setDrag(false);}lk.current=null;
+  },[dx,pg]);
   return h('div',{style:{flex:1,overflow:'hidden',position:'relative',touchAction:'pan-y'},onTouchStart:onTS,onTouchMove:onTM,onTouchEnd:onTE},
-    h('div',{style:{display:'flex',width:pages.length*100+'%',height:'100%',transform:`translateX(${(-page*W.current)+dragX}px)`,transition:!dragging?'transform 0.27s cubic-bezier(0.25,0.46,0.45,0.94)':'none',willChange:'transform'}},
-      ...pages.map((apps,pi)=>h('div',{key:pi,style:{width:W.current+'px',flexShrink:0,display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'20px 4px',padding:'16px 12px 10px',alignContent:'start'}},
-        ...apps.map(app=>h('div',{key:app.id,style:{display:'flex',justifyContent:'center'}},h(AppIcon,{app,onOpen,iconSize,showLabel})))
-      ))
+    h('div',{style:{display:'flex',width:'200%',height:'100%',transform:`translateX(${(-pg*W.current)+dx}px)`,transition:!drag?'transform 0.26s cubic-bezier(0.25,0.46,0.45,0.94)':'none',willChange:'transform'}},
+      h('div',{style:{width:W.current+'px',flexShrink:0,display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'18px 4px',padding:'14px 12px 8px',alignContent:'start'}},
+        ...P1.map(app=>h('div',{key:app.id,style:{display:'flex',justifyContent:'center'}},h(AppIcon,{app,onOpen,s})))
+      ),
+      h('div',{style:{width:W.current+'px',flexShrink:0,padding:'14px 12px 8px',display:'flex',flexDirection:'column',gap:'0'}},
+        h(Widget),
+        h('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'18px 4px'}},
+          ...P2.map(app=>h('div',{key:app.id,style:{display:'flex',justifyContent:'center'}},h(AppIcon,{app,onOpen,s})))
+        )
+      )
     ),
     h('div',{style:{position:'absolute',bottom:'10px',left:0,right:0,display:'flex',justifyContent:'center',gap:'5px',pointerEvents:'none'}},
-      ...pages.map((_,i)=>h('div',{key:i,style:{width:i===page?'16px':'5px',height:'5px',borderRadius:'3px',background:i===page?'var(--text)':'var(--text3)',transition:'width 0.2s,background 0.2s'}}))
+      ...[0,1].map(i=>h('div',{key:i,style:{width:i===pg?'16px':'5px',height:'5px',borderRadius:'3px',background:i===pg?'var(--text)':'var(--text3)',transition:'width 0.2s'}}))
     )
   );
 }
 
-function Dock({onOpen,dockStyle,iconSize}){
-  const apps=DOCK_IDS.map(id=>ALL_APPS.find(a=>a.id===id)).filter(Boolean);
-  const bg=dockStyle==='solid'?'var(--bg2)':dockStyle==='none'?'transparent':'var(--dock-bg)';
+function Dock({onOpen,s}){
+  const apps=DOCK_IDS.map(id=>APPS.find(a=>a.id===id)).filter(Boolean);
+  const bg=s.dockSt==='solid'?'var(--bg2)':s.dockSt==='none'?'transparent':'var(--dock)';
+  const bf=s.dockSt==='glass'?'blur(28px)':'none';
   return h('div',{style:{padding:'0 14px 14px',flexShrink:0}},
-    h('div',{style:{background:bg,backdropFilter:dockStyle==='glass'?'blur(28px)':'none',WebkitBackdropFilter:dockStyle==='glass'?'blur(28px)':'none',borderRadius:'28px',border:dockStyle==='none'?'none':'1px solid var(--border2)',padding:'10px 12px',display:'flex',justifyContent:'space-around',alignItems:'center'}},
-      ...apps.map(app=>h(AppIcon,{key:app.id,app,onOpen,dock:true,iconSize,showLabel:false}))
+    h('div',{style:{background:bg,backdropFilter:bf,WebkitBackdropFilter:bf,borderRadius:'26px',border:s.dockSt==='none'?'none':'1px solid var(--border2)',padding:'10px 10px',display:'flex',justifyContent:'space-around',alignItems:'center'}},
+      ...apps.map(a=>h(AppIcon,{key:a.id,app:a,onOpen,dock:true,s}))
     )
   );
 }
 
-function HomeScreen({battery,onOpen,visible,wallpaper,settings}){
-  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',opacity:visible?1:0,transform:visible?'scale(1)':'scale(1.04)',transition:'opacity 0.28s,transform 0.28s',pointerEvents:visible?'auto':'none',background:wallpaper?.css||'var(--bg)'}},
-    h(StatusBar,{battery}),
-    h(HomeGrid,{onOpen,iconSize:settings.iconSize,showLabel:settings.showLabel}),
-    h(Dock,{onOpen,dockStyle:settings.dockStyle,iconSize:settings.iconSize})
+function HomeScreen({battery,onOpen,visible,wp,s}){
+  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',opacity:visible?1:0,transform:visible?'scale(1)':'scale(1.04)',transition:'opacity 0.26s,transform 0.26s',pointerEvents:visible?'auto':'none',background:wp?.css||'var(--bg)'}},
+    h(StatusBar,{battery,wp}),
+    h(HomeGrid,{onOpen,s}),
+    h(Dock,{onOpen,s})
   );
 }
 
-function Toggle({value,onChange}){
-  return h('div',{onClick:()=>onChange(!value),style:{width:'44px',height:'24px',borderRadius:'12px',background:value?'var(--toggle-on)':'var(--card2)',border:'1px solid var(--border2)',position:'relative',cursor:'pointer',transition:'background 0.2s',flexShrink:0}},
-    h('div',{style:{position:'absolute',top:'2px',left:value?'20px':'2px',width:'18px',height:'18px',borderRadius:'50%',background:'var(--text)',boxShadow:'0 1px 3px rgba(0,0,0,0.3)',transition:'left 0.18s cubic-bezier(0.34,1.3,0.64,1)'}})
+function Toggle({v,on}){
+  return h('div',{onClick:()=>on(!v),style:{width:'44px',height:'24px',borderRadius:'12px',background:v?'var(--toggle)':'var(--card2)',border:'1px solid var(--border2)',position:'relative',cursor:'pointer',transition:'background 0.2s',flexShrink:0}},
+    h('div',{style:{position:'absolute',top:'2px',left:v?'20px':'2px',width:'18px',height:'18px',borderRadius:'50%',background:'var(--text)',boxShadow:'0 1px 3px rgba(0,0,0,0.3)',transition:'left 0.18s cubic-bezier(0.34,1.3,0.64,1)'}})
   );
 }
 
-function SRow({icon,color,label,value,onPress,toggle,tval,onToggle,last,chevron=true}){
-  return h('div',{onClick:toggle?undefined:onPress,style:{display:'flex',alignItems:'center',padding:'11px 16px',gap:'12px',borderBottom:last?'none':'1px solid var(--divider)',cursor:toggle?'default':'pointer',fontFamily:'var(--mochi-font)'}},
+function SRow({icon,color,label,value,onPress,toggle,tv,onT,last,ch=true}){
+  return h('div',{onClick:toggle?undefined:onPress,style:{display:'flex',alignItems:'center',padding:'11px 16px',gap:'11px',borderBottom:last?'none':'1px solid var(--div)',cursor:toggle?'default':'pointer',fontFamily:'var(--mf)'}},
     icon&&h('div',{style:{width:'28px',height:'28px',borderRadius:'7px',background:color||'var(--card2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'14px',flexShrink:0}},icon),
     h('span',{style:{flex:1,fontSize:'15px',color:'var(--text)',fontWeight:400}},label),
-    toggle?h(Toggle,{value:tval,onChange:onToggle})
-      :h('div',{style:{display:'flex',alignItems:'center',gap:'4px'}},
-        value&&h('span',{style:{fontSize:'13px',color:'var(--text3)'}},value),
-        chevron&&h('svg',{width:6,height:11,viewBox:'0 0 7 12',fill:'none'},h('path',{d:'M1 1l5 5-5 5',stroke:'var(--text3)',strokeWidth:'1.6',strokeLinecap:'round',strokeLinejoin:'round'}))
-      )
+    toggle?h(Toggle,{v:tv,on:onT}):h('div',{style:{display:'flex',alignItems:'center',gap:'4px'}},
+      value&&h('span',{style:{fontSize:'13px',color:'var(--text3)'}},value),
+      ch&&h('svg',{width:6,height:11,viewBox:'0 0 7 12',fill:'none'},h('path',{d:'M1 1l5 5-5 5',stroke:'var(--text3)',strokeWidth:'1.6',strokeLinecap:'round',strokeLinejoin:'round'}))
+    )
   );
 }
 
-function SubHeader({title,onBack}){
-  return h('div',{style:{display:'flex',alignItems:'center',padding:'10px 16px',borderBottom:'1px solid var(--divider)',flexShrink:0,background:'var(--header-bg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',fontFamily:'var(--mochi-font)'}},
-    h('button',{onClick:onBack,style:{background:'none',border:'none',color:'var(--text2)',fontSize:'15px',cursor:'pointer',padding:'4px 14px 4px 0',display:'flex',alignItems:'center',gap:'5px',fontFamily:'var(--mochi-font)'}},
-      h('svg',{width:8,height:13,viewBox:'0 0 8 13',fill:'none'},h('path',{d:'M7 1L1 6.5L7 12',stroke:'var(--text2)',strokeWidth:'1.7',strokeLinecap:'round',strokeLinejoin:'round'})),'返回'
-    ),
+function SubHdr({title,onBack}){
+  return h('div',{style:{display:'flex',alignItems:'center',padding:'10px 16px',borderBottom:'1px solid var(--div)',flexShrink:0,background:'var(--hbg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',fontFamily:'var(--mf)'}},
+    h('button',{onClick:onBack,style:{background:'none',border:'none',color:'var(--text2)',fontSize:'15px',cursor:'pointer',padding:'4px 12px 4px 0',display:'flex',alignItems:'center',gap:'5px',fontFamily:'var(--mf)'}},
+      h('svg',{width:8,height:13,viewBox:'0 0 8 13',fill:'none'},h('path',{d:'M7 1L1 6.5L7 12',stroke:'var(--text2)',strokeWidth:'1.7',strokeLinecap:'round',strokeLinejoin:'round'})),'返回'),
     h('span',{style:{fontSize:'16px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.2px'}},title)
   );
 }
-
-function SCard({children,style}){return h('div',{style:{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'14px',overflow:'hidden',...style}},children);}
-function SSection({title,children}){
-  return h('div',{style:{marginBottom:'6px'}},
-    title&&h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'0.6px',padding:'10px 4px 5px',fontFamily:'var(--mochi-font)'}},title.toUpperCase()),
-    h(SCard,null,children)
-  );
-}
-
-function SegCtrl({opts,val,onVal}){
+function Sc({children,style}){return h('div',{style:{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'14px',overflow:'hidden',...style}},children);}
+function Sec({title,children}){return h('div',{style:{marginBottom:'6px'}},title&&h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'0.6px',padding:'10px 4px 5px',fontFamily:'var(--mf)'}},title.toUpperCase()),h(Sc,null,children));}
+function Seg({opts,val,onV}){
   return h('div',{style:{display:'flex',background:'var(--card2)',borderRadius:'9px',padding:'2px',gap:'2px'}},
-    ...opts.map(o=>h('div',{key:o.id,onClick:()=>onVal(o.id),style:{flex:1,textAlign:'center',padding:'6px 0',borderRadius:'7px',background:val===o.id?'var(--bg2)':'transparent',fontSize:'13px',color:val===o.id?'var(--text)':'var(--text3)',fontWeight:val===o.id?600:400,cursor:'pointer',transition:'background 0.15s',fontFamily:'var(--mochi-font)'}},o.l))
+    ...opts.map(o=>h('div',{key:o.id,onClick:()=>onV(o.id),style:{flex:1,textAlign:'center',padding:'6px 0',borderRadius:'7px',background:val===o.id?'var(--bg2)':'transparent',fontSize:'13px',color:val===o.id?'var(--text)':'var(--text3)',fontWeight:val===o.id?600:400,cursor:'pointer',transition:'background 0.15s',fontFamily:'var(--mf)'}},o.l))
   );
 }
 
-function WallpaperPage({settings,onUpdate,onBack}){
-  const fileRef=useRef();
-  const cur=settings.wallpaperIndex,custom=settings.customWallpaper;
-  const handleFile=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=ev=>onUpdate({customWallpaper:ev.target.result,wallpaperIndex:-1});r.readAsDataURL(f);};
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
-    h(SubHeader,{title:'壁纸',onBack}),
-    h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
-      h(SSection,{title:'自定义'},
-        h('div',{style:{padding:'12px 16px'}},
-          custom&&h('div',{onClick:()=>onUpdate({wallpaperIndex:-1}),style:{width:'100%',height:'60px',borderRadius:'10px',background:`url(${custom}) center/cover`,marginBottom:'10px',border:cur===-1?'2px solid var(--text)':'2px solid transparent',cursor:'pointer'}}),
-          h('div',{onClick:()=>fileRef.current?.click(),style:{padding:'9px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px',fontFamily:'var(--mochi-font)'}},custom?'重新选取':'从相册选取图片'),
-          h('input',{ref:fileRef,type:'file',accept:'image/*',style:{display:'none'},onChange:handleFile})
-        )
+function ChatWin({contact,s,onUpdate,onBack}){
+  const msgs=(s.chats&&s.chats[contact.id])||[];
+  const [input,setInput]=useState('');
+  const [tools,setTools]=useState(false);
+  const bottomRef=useRef();
+  useEffect(()=>{bottomRef.current?.scrollIntoView({behavior:'smooth'});},[msgs]);
+  const send=()=>{
+    const t=input.trim();if(!t)return;
+    const now=new Date();
+    const m={id:Date.now(),me:true,text:t,time:`${pad(now.getHours())}:${pad(now.getMinutes())}`};
+    onUpdate({chats:{...s.chats,[contact.id]:[...msgs,m]}});
+    setInput('');
+  };
+  const frost=s.bubbleFrost;
+  const ar=s.avatarRound??50;
+  const TOOLS=[{icon:'📷',label:'相机'},{icon:'🖼️',label:'图片'},{icon:'🎵',label:'音频'},{icon:'📂',label:'文件'},{icon:'📍',label:'位置'},{icon:'💰',label:'转账'}];
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',fontFamily:'var(--mf)',background:s.chatBg?`url(${s.chatBg}) center/cover`:'var(--bg)'}},
+    h('div',{style:{display:'flex',alignItems:'center',padding:'10px 14px',gap:'10px',flexShrink:0,background:'var(--hbg)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderBottom:'1px solid var(--div)'}},
+      h('button',{onClick:onBack,style:{background:'none',border:'none',color:'var(--text2)',cursor:'pointer',padding:'4px',display:'flex',alignItems:'center',gap:'4px',fontSize:'15px',fontFamily:'var(--mf)'}},
+        h('svg',{width:8,height:13,viewBox:'0 0 8 13',fill:'none'},h('path',{d:'M7 1L1 6.5L7 12',stroke:'var(--text2)',strokeWidth:'1.7',strokeLinecap:'round',strokeLinejoin:'round'})),'消息'),
+      h('div',{style:{width:'32px',height:'32px',borderRadius:ar+'%',background:'var(--card2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'17px',flexShrink:0}},contact.avatar||'👤'),
+      h('div',{style:{flex:1}},
+        h('div',{style:{fontSize:'15px',fontWeight:600,color:'var(--text)'}},contact.name),
+        contact.online&&h('div',{style:{fontSize:'11px',color:'#34c759',marginTop:'1px'}},'在线')
+      )
+    ),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'10px 14px',display:'flex',flexDirection:'column',gap:'8px'}},
+      msgs.length===0&&h('div',{style:{textAlign:'center',color:'var(--text3)',fontSize:'13px',marginTop:'40px'}},'发消息开始聊天'),
+      ...msgs.map(m=>h('div',{key:m.id,style:{display:'flex',flexDirection:'column',alignItems:m.me?'flex-end':'flex-start',gap:'2px'}},
+        h('div',{style:{display:'flex',alignItems:'flex-end',gap:'6px',flexDirection:m.me?'row-reverse':'row'}},
+          !m.me&&h('div',{style:{width:'30px',height:'30px',borderRadius:ar+'%',background:'var(--card2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'15px',flexShrink:0}},contact.avatar||'👤'),
+          h('div',{style:{maxWidth:'70%',padding:'9px 13px',borderRadius:m.me?'18px 18px 4px 18px':'18px 18px 18px 4px',background:m.me?'#1c1c1e':frost?'rgba(255,255,255,0.12)':'var(--bthem)',color:m.me?'#fff':'var(--text)',fontSize:'15px',lineHeight:1.45,boxShadow:'0 1px 3px var(--shad)',border:m.me?'none':'1px solid var(--border)',backdropFilter:frost?'blur(12px)':'none',WebkitBackdropFilter:frost?'blur(12px)':'none'}},m.text)
+        ),
+        s.showTime!==false&&h('div',{style:{fontSize:'10px',color:'var(--text3)',paddingInline:'36px'}},m.time)
+      )),
+      h('div',{ref:bottomRef})
+    ),
+    tools&&h('div',{style:{background:'var(--hbg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',borderTop:'1px solid var(--div)',padding:'14px 20px',display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'12px',flexShrink:0}},
+      ...TOOLS.map(t=>h('div',{key:t.label,style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'5px',cursor:'pointer'}},
+        h('div',{style:{width:'44px',height:'44px',borderRadius:'14px',background:'var(--card2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'20px'}},t.icon),
+        h('span',{style:{fontSize:'10px',color:'var(--text3)',fontFamily:'var(--mf)'}},t.label)
+      ))
+    ),
+    h('div',{style:{padding:'8px 12px 20px',borderTop:'1px solid var(--div)',background:'var(--hbg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',display:'flex',gap:'8px',alignItems:'flex-end',flexShrink:0}},
+      h('button',{onClick:()=>setTools(v=>!v),style:{width:'34px',height:'34px',borderRadius:'50%',border:'none',background:'var(--card2)',color:'var(--text3)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,fontSize:'20px',lineHeight:1}},tools?'✕':'+'),
+      h('div',{style:{flex:1,background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'20px',padding:'7px 14px',display:'flex',alignItems:'center'}},
+        h('input',{value:input,onChange:e=>setInput(e.target.value),onKeyDown:e=>{if(e.key==='Enter')send();},placeholder:'发消息...',style:{background:'transparent',border:'none',outline:'none',width:'100%',color:'var(--text)',fontSize:'15px',fontFamily:'var(--mf)'}})
       ),
+      h('button',{onClick:send,style:{width:'34px',height:'34px',borderRadius:'50%',border:'none',background:input.trim()?'var(--text)':'var(--card2)',color:input.trim()?'var(--bg)':'var(--text3)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,transition:'background 0.15s,color 0.15s'}},
+        h('svg',{width:14,height:14,viewBox:'0 0 14 14',fill:'none'},h('path',{d:'M7 12V2M7 2L2 7M7 2l5 5',stroke:'currentColor',strokeWidth:'1.8',strokeLinecap:'round',strokeLinejoin:'round'}))
+      )
+    )
+  );
+}
+
+function ChatApp({s,onUpdate}){
+  const [view,setView]=useState('list');
+  const [aid,setAid]=useState(null);
+  const [showAdd,setShowAdd]=useState(false);
+  const [newName,setNewName]=useState('');
+  const contacts=s.contacts||[];
+  const addContact=()=>{if(!newName.trim())return;onUpdate({contacts:[...contacts,{id:'c'+Date.now(),name:newName.trim(),avatar:'🤖',bio:'',online:false}]});setNewName('');setShowAdd(false);};
+  if(view==='chat'&&aid){const c=contacts.find(x=>x.id===aid);if(c)return h(ChatWin,{contact:c,s,onUpdate,onBack:()=>setView('list')});}
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)',fontFamily:'var(--mf)'}},
+    h('div',{style:{padding:'16px 20px 10px',borderBottom:'1px solid var(--div)',display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexShrink:0}},
+      h('h1',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-0.5px'}},'消息'),
+      h('button',{onClick:()=>setShowAdd(v=>!v),style:{background:'var(--card2)',border:'1px solid var(--border2)',borderRadius:'50%',width:'28px',height:'28px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'var(--text2)',fontSize:'18px',lineHeight:1}},'+')
+    ),
+    showAdd&&h('div',{style:{padding:'10px 16px',borderBottom:'1px solid var(--div)',display:'flex',gap:'8px',flexShrink:0}},
+      h('input',{value:newName,onChange:e=>setNewName(e.target.value),onKeyDown:e=>{if(e.key==='Enter')addContact();},placeholder:'角色名称',autoFocus:true,style:{flex:1,background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'10px',padding:'8px 12px',color:'var(--text)',fontSize:'14px',outline:'none',fontFamily:'var(--mf)'}}),
+      h('button',{onClick:addContact,style:{padding:'8px 14px',borderRadius:'10px',background:'var(--card2)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:'14px',cursor:'pointer',fontFamily:'var(--mf)'}},'添加'),
+      h('button',{onClick:()=>setShowAdd(false),style:{padding:'8px 10px',borderRadius:'10px',background:'transparent',border:'none',color:'var(--text3)',fontSize:'14px',cursor:'pointer'}},'取消')
+    ),
+    h('div',{style:{flex:1,overflowY:'auto'}},
+      contacts.length===0&&h('div',{style:{textAlign:'center',color:'var(--text3)',fontSize:'14px',marginTop:'60px'}},'点 + 添加角色开始聊天'),
+      contacts.map(c=>h('div',{key:c.id,onClick:()=>{setAid(c.id);setView('chat');},style:{display:'flex',alignItems:'center',gap:'12px',padding:'12px 20px',borderBottom:'1px solid var(--div)',cursor:'pointer'}},
+        h('div',{style:{width:'46px',height:'46px',borderRadius:'23px',background:'var(--card2)',border:'1px solid var(--border2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'22px',flexShrink:0,position:'relative'}},
+          c.avatar||'👤',
+          c.online&&h('div',{style:{position:'absolute',bottom:'1px',right:'1px',width:'10px',height:'10px',borderRadius:'50%',background:'#34c759',border:'2px solid var(--bg)'}})
+        ),
+        h('div',{style:{flex:1,minWidth:0}},
+          h('div',{style:{fontSize:'15px',fontWeight:600,color:'var(--text)',marginBottom:'2px'}},c.name),
+          h('div',{style:{fontSize:'13px',color:'var(--text3)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},(s.chats?.[c.id]?.slice(-1)[0]?.text)||c.bio||'暂无消息')
+        )
+      ))
+    )
+  );
+}
+
+function WPPage({s,upd,onBack}){
+  const fr=useRef();
+  const hf=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=ev=>upd({cwp:ev.target.result,wp:-1});r.readAsDataURL(f);};
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h(SubHdr,{title:'壁纸',onBack}),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
+      h(Sec,{title:'自定义'},h('div',{style:{padding:'12px 16px'}},
+        s.cwp&&h('div',{onClick:()=>upd({wp:-1}),style:{width:'100%',height:'60px',borderRadius:'10px',background:`url(${s.cwp}) center/cover`,marginBottom:'10px',border:s.wp===-1?'2px solid var(--text)':'2px solid transparent',cursor:'pointer'}}),
+        h('div',{onClick:()=>fr.current?.click(),style:{padding:'9px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px',fontFamily:'var(--mf)'}},s.cwp?'重新选取':'从相册选取图片'),
+        h('input',{ref:fr,type:'file',accept:'image/*',style:{display:'none'},onChange:hf})
+      )),
       h('div',null,
-        h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'0.6px',padding:'4px 4px 8px',fontFamily:'var(--mochi-font)'}},'预设'),
+        h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'0.6px',padding:'4px 4px 8px',fontFamily:'var(--mf)'}},'预设'),
         h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px'}},
-          ...WALLPAPERS.map((wp,i)=>h('div',{key:i,onClick:()=>onUpdate({wallpaperIndex:i,customWallpaper:null}),style:{height:'70px',borderRadius:'12px',background:wp.css,border:(cur===i&&!custom)?'2px solid var(--text)':'1.5px solid var(--border)',cursor:'pointer',display:'flex',alignItems:'flex-end',padding:'7px',position:'relative',overflow:'hidden'}},
-            h('span',{style:{fontSize:'11px',fontWeight:500,color:wp.light?'rgba(0,0,0,0.55)':'rgba(255,255,255,0.6)',fontFamily:'var(--mochi-font)'}},wp.name),
-            (cur===i&&!custom)&&h('div',{style:{position:'absolute',top:'6px',right:'6px',width:'15px',height:'15px',borderRadius:'50%',background:'var(--text)',display:'flex',alignItems:'center',justifyContent:'center'}},
-              h('svg',{width:8,height:7,viewBox:'0 0 10 8',fill:'none'},h('path',{d:'M1 4l3 3 5-6',stroke:wp.light?'#fff':'#111',strokeWidth:'1.5',strokeLinecap:'round',strokeLinejoin:'round'}))
-            )
+          ...WPS.map((wp,i)=>h('div',{key:i,onClick:()=>upd({wp:i,cwp:null}),style:{height:'70px',borderRadius:'12px',background:wp.css,border:(s.wp===i&&!s.cwp)?'2px solid var(--text)':'1.5px solid var(--border)',cursor:'pointer',display:'flex',alignItems:'flex-end',padding:'7px',position:'relative',overflow:'hidden'}},
+            h('span',{style:{fontSize:'11px',fontWeight:500,color:wp.light?'rgba(0,0,0,0.55)':'rgba(255,255,255,0.6)',fontFamily:'var(--mf)'}},wp.name),
+            (s.wp===i&&!s.cwp)&&h('div',{style:{position:'absolute',top:'6px',right:'6px',width:'14px',height:'14px',borderRadius:'50%',background:'var(--text)',display:'flex',alignItems:'center',justifyContent:'center'}},h('svg',{width:8,height:7,viewBox:'0 0 10 8',fill:'none'},h('path',{d:'M1 4l3 3 5-6',stroke:wp.light?'#fff':'#111',strokeWidth:'1.5',strokeLinecap:'round',strokeLinejoin:'round'})))
           ))
         )
       )
@@ -282,200 +389,200 @@ function WallpaperPage({settings,onUpdate,onBack}){
   );
 }
 
-function ThemePage({current,onSelect,onBack}){
+function ThemePg({cur,onSel,onBack}){
   const opts=[{id:'dark',label:'深色',desc:'深色背景，沉静克制'},{id:'light',label:'浅色',desc:'浅色背景，干净清爽'},{id:'auto',label:'跟随系统',desc:'随手机自动切换'}];
   return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
-    h(SubHeader,{title:'外观',onBack}),
+    h(SubHdr,{title:'外观',onBack}),
     h('div',{style:{flex:1,padding:'12px 16px',display:'flex',flexDirection:'column',gap:'8px'}},
-      ...opts.map(o=>h('div',{key:o.id,onClick:()=>onSelect(o.id),style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'13px 16px',borderRadius:'13px',cursor:'pointer',background:current===o.id?'var(--card2)':'var(--card)',border:current===o.id?'1.5px solid var(--border2)':'1.5px solid var(--border)',fontFamily:'var(--mochi-font)'}},
+      ...opts.map(o=>h('div',{key:o.id,onClick:()=>onSel(o.id),style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'13px 16px',borderRadius:'13px',cursor:'pointer',background:cur===o.id?'var(--card2)':'var(--card)',border:cur===o.id?'1.5px solid var(--border2)':'1.5px solid var(--border)',fontFamily:'var(--mf)'}},
         h('div',null,h('div',{style:{color:'var(--text)',fontSize:'15px',fontWeight:500}},o.label),h('div',{style:{color:'var(--text3)',fontSize:'12px',marginTop:'2px'}},o.desc)),
-        current===o.id&&h('div',{style:{width:'18px',height:'18px',borderRadius:'50%',border:'2px solid var(--text)',display:'flex',alignItems:'center',justifyContent:'center'}},h('div',{style:{width:'8px',height:'8px',borderRadius:'50%',background:'var(--text)'}}))
+        cur===o.id&&h('div',{style:{width:'18px',height:'18px',borderRadius:'50%',border:'2px solid var(--text)',display:'flex',alignItems:'center',justifyContent:'center'}},h('div',{style:{width:'8px',height:'8px',borderRadius:'50%',background:'var(--text)'}}))
       ))
     )
   );
 }
 
-function PersonalizePage({settings,onUpdate,onBack}){
-  const [fontLoading,setFontLoading]=useState(false);
-  const [fontMsg,setFontMsg]=useState('');
-  const fileRef=useRef();
-  const handleFontFile=async e=>{
-    const f=e.target.files?.[0];if(!f)return;
-    setFontLoading(true);setFontMsg('');
-    try{const buf=await f.arrayBuffer();await saveFontToDB(buf);const ok=await applyFontFromDB();if(ok){onUpdate({hasCustomFont:true});setFontMsg('字体已应用');}else setFontMsg('字体加载失败');}
-    catch{setFontMsg('导入出错');}
-    setFontLoading(false);
-  };
-  const clearFont=async()=>{await deleteFontFromDB();document.documentElement.style.removeProperty('--mochi-font');onUpdate({hasCustomFont:false});setFontMsg('已恢复默认');};
-  const iconOpts=[{id:'small',l:'小'},{id:'normal',l:'标准'},{id:'large',l:'大'}];
-  const clockOpts=[{id:'thin',l:'细体'},{id:'medium',l:'中等'},{id:'bold',l:'粗体'}];
-  const dockOpts=[{id:'glass',l:'毛玻璃'},{id:'solid',l:'纯色'},{id:'none',l:'透明'}];
+function ChatBeauty({s,upd,onBack}){
+  const fr=useRef();
+  const hf=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=ev=>upd({chatBg:ev.target.result});r.readAsDataURL(f);};
   return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
-    h(SubHeader,{title:'个性化',onBack}),
+    h(SubHdr,{title:'聊天美化',onBack}),
     h('div',{style:{flex:1,overflowY:'auto',padding:'10px 16px 20px'}},
-      h(SSection,{title:'自定义字体'},
-        h('div',{style:{padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
-          h('div',{style:{fontSize:'13px',color:'var(--text2)',lineHeight:1.5,fontFamily:'var(--mochi-font)'}},settings.hasCustomFont?'已使用自定义字体':'支持 .ttf / .otf 字体文件，导入后立即全局生效'),
-          h('div',{style:{display:'flex',gap:'8px'}},
-            h('div',{onClick:()=>fileRef.current?.click(),style:{flex:1,padding:'9px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px',fontFamily:'var(--mochi-font)'}},fontLoading?'导入中...':'导入字体文件'),
-            settings.hasCustomFont&&h('div',{onClick:clearFont,style:{padding:'9px 14px',borderRadius:'10px',border:'1.5px solid var(--border2)',cursor:'pointer',color:'var(--text3)',fontSize:'14px',fontFamily:'var(--mochi-font)'}},'恢复默认')
-          ),
-          fontMsg&&h('div',{style:{fontSize:'12px',color:'var(--text3)',fontFamily:'var(--mochi-font)'}},fontMsg),
-          h('input',{ref:fileRef,type:'file',accept:'.ttf,.otf,.woff,.woff2',style:{display:'none'},onChange:handleFontFile})
-        )
-      ),
-      h(SSection,{title:'图标'},
-        h('div',{style:{padding:'12px 16px',display:'flex',flexDirection:'column',gap:'12px'}},
-          h('div',null,h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px',fontFamily:'var(--mochi-font)'}},'图标大小'),h(SegCtrl,{opts:iconOpts,val:settings.iconSize,onVal:v=>onUpdate({iconSize:v})})),
-          h(SRow,{icon:null,label:'显示图标名称',toggle:true,tval:settings.showLabel,onToggle:v=>onUpdate({showLabel:v}),last:true,chevron:false})
-        )
-      ),
-      h(SSection,{title:'Dock 样式'},h('div',{style:{padding:'12px 16px'}},h(SegCtrl,{opts:dockOpts,val:settings.dockStyle,onVal:v=>onUpdate({dockStyle:v})}))),
-      h(SSection,{title:'锁屏时钟'},h('div',{style:{padding:'12px 16px'}},h(SegCtrl,{opts:clockOpts,val:settings.clockWeight,onVal:v=>onUpdate({clockWeight:v})})))
-    )
-  );
-}
-
-function AboutPage({onBack}){
-  const items=[['版本','V0.1'],['阶段','开发中'],['作者','rainj5435-wq'],['框架','React 18']];
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
-    h(SubHeader,{title:'关于',onBack}),
-    h('div',{style:{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'18px',padding:'32px'}},
-      h('div',{style:{fontSize:'52px',lineHeight:1}},'📱'),
-      h('div',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-0.4px',fontFamily:'var(--mochi-font)'}},'萌萌机'),
-      h(SCard,{style:{width:'100%'}},
-        ...items.map(([k,v],i)=>h('div',{key:k,style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'11px 16px',borderBottom:i<items.length-1?'1px solid var(--divider)':'none',fontFamily:'var(--mochi-font)'}},
-          h('span',{style:{color:'var(--text3)',fontSize:'14px'}},k),h('span',{style:{color:'var(--text)',fontSize:'14px',fontWeight:500}},v)
-        ))
-      ),
-      h('div',{style:{color:'var(--text3)',fontSize:'12px',textAlign:'center',lineHeight:1.8,fontFamily:'var(--mochi-font)'}},'你的 AI 小手机\n更多功能持续开发中')
-    )
-  );
-}
-
-function SettingsApp({settings,onSettingsChange}){
-  const [sub,setSub]=useState(null);
-  const update=useCallback(patch=>{const next={...settings,...patch};onSettingsChange(next);saveS(next);},[settings,onSettingsChange]);
-  if(sub==='wallpaper')return h(WallpaperPage,{settings,onUpdate:p=>update(p),onBack:()=>setSub(null)});
-  if(sub==='theme')return h(ThemePage,{current:settings.theme,onSelect:t=>{update({theme:t});setSub(null);},onBack:()=>setSub(null)});
-  if(sub==='personalize')return h(PersonalizePage,{settings,onUpdate:update,onBack:()=>setSub(null)});
-  if(sub==='about')return h(AboutPage,{onBack:()=>setSub(null)});
-  const themeLabel={dark:'深色',light:'浅色',auto:'跟随系统'}[settings.theme];
-  const wpLabel=settings.customWallpaper?'自定义':(WALLPAPERS[settings.wallpaperIndex]?.name||'默认');
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)',fontFamily:'var(--mochi-font)'}},
-    h('div',{style:{padding:'18px 20px 10px',flexShrink:0,borderBottom:'1px solid var(--divider)'}},h('h1',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-0.5px',margin:0,fontFamily:'var(--mochi-font)'}},'设置')),
-    h('div',{style:{flex:1,overflowY:'auto',padding:'8px 16px 20px'}},
-      h(SSection,{title:'外观'},
-        h(SRow,{icon:'🌓',color:'#444',label:'外观',value:themeLabel,onPress:()=>setSub('theme')}),
-        h(SRow,{icon:'🖼️',color:'#3a3a3a',label:'壁纸',value:wpLabel,onPress:()=>setSub('wallpaper')}),
-        h(SRow,{icon:'✨',color:'#333',label:'个性化',value:'字体·图标·时钟',onPress:()=>setSub('personalize'),last:true})
-      ),
-      h(SSection,{title:'通知与声音'},
-        h(SRow,{icon:'🔔',color:'#3a3a3a',label:'通知',toggle:true,tval:settings.notifications,onToggle:v=>update({notifications:v})}),
-        h(SRow,{icon:'🔊',color:'#333',label:'声音',toggle:true,tval:settings.sound,onToggle:v=>update({sound:v})}),
-        h(SRow,{icon:'🌙',color:'#2a2a2a',label:'勿扰',toggle:true,tval:settings.dnd,onToggle:v=>update({dnd:v}),last:true})
-      ),
-      h(SSection,{title:'其他'},h(SRow,{icon:'ℹ️',color:'#383838',label:'关于萌萌机',value:'V0.1',onPress:()=>setSub('about'),last:true}))
-    )
-  );
-}
-
-const DEMO_MSGS=[
-  {id:1,me:false,text:'你好呀 ~',time:'10:20'},
-  {id:2,me:true,text:'你好！萌萌机上线了。',time:'10:21'},
-  {id:3,me:false,text:'期待后续功能，加油！',time:'10:21'},
-  {id:4,me:true,text:'会的，慢慢来。',time:'10:22'},
-];
-
-function ChatApp(){
-  const [msgs,setMsgs]=useState(DEMO_MSGS);
-  const [input,setInput]=useState('');
-  const bottomRef=useRef();
-  useEffect(()=>{bottomRef.current?.scrollIntoView({behavior:'smooth'});},[msgs]);
-  const send=()=>{
-    const t=input.trim();if(!t)return;
-    const now=new Date();
-    setMsgs(m=>[...m,{id:Date.now(),me:true,text:t,time:`${pad(now.getHours())}:${pad(now.getMinutes())}`}]);
-    setInput('');
-  };
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)',fontFamily:'var(--mochi-font)'}},
-    h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
-      ...msgs.map(m=>h('div',{key:m.id,style:{display:'flex',flexDirection:'column',alignItems:m.me?'flex-end':'flex-start'}},
-        h('div',{style:{maxWidth:'72%',padding:'10px 14px',borderRadius:m.me?'20px 20px 5px 20px':'20px 20px 20px 5px',background:m.me?'var(--bubble-me)':'var(--bubble-them)',color:m.me?'var(--bubble-me-text)':'var(--bubble-them-text)',fontSize:'15px',lineHeight:'1.45',boxShadow:'0 1px 4px var(--shadow)',border:m.me?'none':'1px solid var(--border)'}},m.text),
-        h('div',{style:{fontSize:'11px',color:'var(--text3)',marginTop:'3px',paddingInline:'4px'}},m.time)
+      h(Sec,{title:'聊天背景'},h('div',{style:{padding:'12px 16px'}},
+        s.chatBg&&h('div',{style:{width:'100%',height:'70px',borderRadius:'10px',background:`url(${s.chatBg}) center/cover`,marginBottom:'10px',border:'1.5px solid var(--border2)'}}),
+        h('div',{style:{display:'flex',gap:'8px'}},
+          h('div',{onClick:()=>fr.current?.click(),style:{flex:1,padding:'9px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px',fontFamily:'var(--mf)'}},s.chatBg?'更换背景':'选取背景图'),
+          s.chatBg&&h('div',{onClick:()=>upd({chatBg:null}),style:{padding:'9px 12px',borderRadius:'10px',border:'1.5px solid var(--border2)',cursor:'pointer',color:'var(--text3)',fontSize:'14px',fontFamily:'var(--mf)'}},'移除')
+        ),
+        h('input',{ref:fr,type:'file',accept:'image/*',style:{display:'none'},onChange:hf})
       )),
-      h('div',{ref:bottomRef})
-    ),
-    h('div',{style:{padding:'10px 14px 20px',borderTop:'1px solid var(--divider)',background:'var(--header-bg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',display:'flex',gap:'10px',alignItems:'flex-end'}},
-      h('div',{style:{flex:1,background:'var(--input-bg)',border:'1px solid var(--border2)',borderRadius:'20px',padding:'8px 14px',display:'flex',alignItems:'center'}},
-        h('input',{value:input,onChange:e=>setInput(e.target.value),onKeyDown:e=>{if(e.key==='Enter')send();},placeholder:'发消息...',style:{background:'transparent',border:'none',outline:'none',width:'100%',color:'var(--text)',fontSize:'15px',fontFamily:'var(--mochi-font)'}})
-      ),
-      h('button',{onClick:send,style:{width:'34px',height:'34px',borderRadius:'50%',border:'none',background:input.trim()?'var(--text)':'var(--card2)',color:input.trim()?'var(--bg)':'var(--text3)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,transition:'background 0.18s,color 0.18s'}},
-        h('svg',{width:14,height:14,viewBox:'0 0 14 14',fill:'none'},h('path',{d:'M7 12V2M7 2L2 7M7 2l5 5',stroke:'currentColor',strokeWidth:'1.8',strokeLinecap:'round',strokeLinejoin:'round'}))
+      h(Sec,{title:'气泡与头像'},
+        h(SRow,{label:'气泡磨砂效果',toggle:true,tv:s.bubbleFrost,onT:v=>upd({bubbleFrost:v})}),
+        h(SRow,{label:'显示消息时间',toggle:true,tv:s.showTime!==false,onT:v=>upd({showTime:v})}),
+        h('div',{style:{padding:'12px 16px',borderTop:'1px solid var(--div)'}},
+          h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px',fontFamily:'var(--mf)'}},'头像圆角'),
+          h('input',{type:'range',min:0,max:50,value:s.avatarRound??50,onChange:e=>upd({avatarRound:+e.target.value}),style:{width:'100%',accentColor:'var(--text)'}}),
+          h('div',{style:{fontSize:'12px',color:'var(--text3)',marginTop:'4px',fontFamily:'var(--mf)'}},`${s.avatarRound??50}% — ${(s.avatarRound??50)>=45?'圆形':(s.avatarRound??50)>=20?'圆角':'方形'}`)
+        )
       )
     )
   );
 }
 
-function ComingSoon({app}){
-  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',gap:'12px',padding:'40px',background:'var(--bg)',fontFamily:'var(--mochi-font)'}},
-    h('div',{style:{width:'68px',height:'68px',borderRadius:'20px',background:ICON_BG[app.id]||'#222',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'30px',boxShadow:'0 4px 16px var(--shadow)'}},app.emoji),
+function APIPage({s,upd,onBack}){
+  const [form,setForm]=useState({name:'',url:'',key:'',model:''});
+  const [testRes,setTestRes]=useState({});
+  const [testing,setTesting]=useState(null);
+  const apis=s.apis||[];
+  const add=()=>{if(!form.url||!form.key)return;upd({apis:[...apis,{id:'a'+Date.now(),...form}]});setForm({name:'',url:'',key:'',model:''});};
+  const del=id=>upd({apis:apis.filter(a=>a.id!==id)});
+  const test=async a=>{
+    setTesting(a.id);setTestRes(r=>({...r,[a.id]:'测试中...'}));
+    try{const r=await fetch(`${a.url.replace(/\/$/,'')}/models`,{headers:{'Authorization':`Bearer ${a.key}`},signal:AbortSignal.timeout(8000)});setTestRes(r2=>({...r2,[a.id]:r.ok?'✓ 连接成功':'✕ 失败 ('+r.status+')'}));}
+    catch(e){setTestRes(r=>({...r,[a.id]:'✕ '+e.message.slice(0,28)}));}
+    setTesting(null);
+  };
+  const inp=(ph,k,t='text')=>h('input',{value:form[k],onChange:e=>setForm(f=>({...f,[k]:e.target.value})),placeholder:ph,type:t,style:{width:'100%',background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'10px',padding:'9px 12px',color:'var(--text)',fontSize:'14px',outline:'none',fontFamily:'var(--mf)',marginBottom:'8px'}});
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h(SubHdr,{title:'AI API',onBack}),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'10px 16px 20px'}},
+      h(Sec,{title:'添加 API'},h('div',{style:{padding:'12px 16px'}},
+        inp('名称（选填）','name'),inp('Base URL','url'),inp('API Key','key','password'),inp('模型名称','model'),
+        h('button',{onClick:add,style:{width:'100%',padding:'10px',borderRadius:'10px',background:'var(--card2)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:'14px',cursor:'pointer',fontFamily:'var(--mf)'}},'添加')
+      )),
+      apis.length>0&&h(Sec,{title:'已配置'},
+        ...apis.map((a,i)=>h('div',{key:a.id,style:{padding:'12px 16px',borderBottom:i<apis.length-1?'1px solid var(--div)':'none'}},
+          h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'3px'}},
+            h('span',{style:{fontSize:'14px',fontWeight:600,color:'var(--text)',fontFamily:'var(--mf)'}},a.name||a.url.slice(8,36)),
+            h('div',{style:{display:'flex',gap:'10px'}},
+              a.id===s.defaultApi?h('span',{style:{fontSize:'11px',color:'#34c759',fontFamily:'var(--mf)'}},'默认'):h('button',{onClick:()=>upd({defaultApi:a.id}),style:{fontSize:'11px',color:'var(--text3)',background:'none',border:'none',cursor:'pointer',fontFamily:'var(--mf)'}},'设默认'),
+              h('button',{onClick:()=>test(a),disabled:testing===a.id,style:{fontSize:'11px',color:'var(--text2)',background:'none',border:'none',cursor:'pointer',fontFamily:'var(--mf)'}},'测试'),
+              h('button',{onClick:()=>del(a.id),style:{fontSize:'11px',color:'#ff453a',background:'none',border:'none',cursor:'pointer',fontFamily:'var(--mf)'}},'删除')
+            )
+          ),
+          h('div',{style:{fontSize:'12px',color:'var(--text3)',fontFamily:'var(--mf)'}},a.model||'未指定模型'),
+          testRes[a.id]&&h('div',{style:{fontSize:'11px',color:testRes[a.id].includes('✓')?'#34c759':'#ff453a',marginTop:'4px',fontFamily:'var(--mf)'}},testRes[a.id])
+        ))
+      )
+    )
+  );
+}
+
+function PersonalPg({s,upd,onBack}){
+  const [msg,setMsg]=useState('');const [ld,setLd]=useState(false);const fr=useRef();
+  const hf=async e=>{
+    const f=e.target.files?.[0];if(!f)return;setLd(true);setMsg('');
+    try{const db=await getFDB();await dbSet(db,'font',await f.arrayBuffer());const ok=await applyFont();if(ok){upd({hasFont:true});setMsg('字体已应用 ✓');}else setMsg('加载失败');}
+    catch{setMsg('导入出错');}setLd(false);
+  };
+  const clr=async()=>{const db=await getFDB();await dbDel(db,'font');document.documentElement.style.removeProperty('--mf');upd({hasFont:false});setMsg('已恢复默认');};
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h(SubHdr,{title:'个性化',onBack}),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'10px 16px 20px'}},
+      h(Sec,{title:'字体'},h('div',{style:{padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
+        h('div',{style:{fontSize:'13px',color:'var(--text2)',fontFamily:'var(--mf)'}},s.hasFont?'已使用自定义字体':'支持 .ttf / .otf，导入后全局生效'),
+        h('div',{style:{display:'flex',gap:'8px'}},
+          h('div',{onClick:()=>fr.current?.click(),style:{flex:1,padding:'9px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px',fontFamily:'var(--mf)'}},ld?'导入中...':'导入字体文件'),
+          s.hasFont&&h('div',{onClick:clr,style:{padding:'9px 12px',borderRadius:'10px',border:'1.5px solid var(--border2)',cursor:'pointer',color:'var(--text3)',fontSize:'14px',fontFamily:'var(--mf)'}},'恢复默认')
+        ),
+        msg&&h('div',{style:{fontSize:'12px',color:msg.includes('✓')?'#34c759':'var(--text3)',fontFamily:'var(--mf)'}},msg),
+        h('input',{ref:fr,type:'file',accept:'.ttf,.otf,.woff,.woff2',style:{display:'none'},onChange:hf})
+      )),
+      h(Sec,{title:'图标'},h('div',{style:{padding:'12px 16px',display:'flex',flexDirection:'column',gap:'12px'}},
+        h('div',null,h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px',fontFamily:'var(--mf)'}},'大小'),h(Seg,{opts:[{id:'small',l:'小'},{id:'normal',l:'标准'},{id:'large',l:'大'}],val:s.iconSz,onV:v=>upd({iconSz:v})})),
+        h(SRow,{label:'显示图标名称',toggle:true,tv:s.showLbl,onT:v=>upd({showLbl:v}),last:true,ch:false})
+      )),
+      h(Sec,{title:'Dock'},h('div',{style:{padding:'12px 16px'}},h(Seg,{opts:[{id:'glass',l:'毛玻璃'},{id:'solid',l:'纯色'},{id:'none',l:'透明'}],val:s.dockSt,onV:v=>upd({dockSt:v})}))),
+      h(Sec,{title:'锁屏时钟'},h('div',{style:{padding:'12px 16px',display:'flex',flexDirection:'column',gap:'12px'}},
+        h('div',null,h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px',fontFamily:'var(--mf)'}},'字重'),h(Seg,{opts:[{id:'thin',l:'细体'},{id:'medium',l:'中等'},{id:'bold',l:'粗体'}],val:s.ckW,onV:v=>upd({ckW:v})})),
+        h('div',null,h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px',fontFamily:'var(--mf)'}},'大小'),h(Seg,{opts:[{id:'small',l:'小'},{id:'medium',l:'中'},{id:'large',l:'大'}],val:s.ckSz,onV:v=>upd({ckSz:v})}))
+      ))
+    )
+  );
+}
+
+function SettingsApp({s,upd}){
+  const [sub,setSub]=useState(null);
+  if(sub==='wp')return h(WPPage,{s,upd,onBack:()=>setSub(null)});
+  if(sub==='theme')return h(ThemePg,{cur:s.theme,onSel:t=>{upd({theme:t});setSub(null);},onBack:()=>setSub(null)});
+  if(sub==='personal')return h(PersonalPg,{s,upd,onBack:()=>setSub(null)});
+  if(sub==='chatBeauty')return h(ChatBeauty,{s,upd,onBack:()=>setSub(null)});
+  if(sub==='api')return h(APIPage,{s,upd,onBack:()=>setSub(null)});
+  if(sub==='about')return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h(SubHdr,{title:'关于',onBack:()=>setSub(null)}),
+    h('div',{style:{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'18px',padding:'32px'}},
+      h('div',{style:{fontSize:'52px'}},'📱'),
+      h('div',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',fontFamily:'var(--mf)'}},'萌萌机'),
+      h(Sc,{style:{width:'100%'}},...[['版本','V0.1'],['阶段','开发中'],['作者','rainj5435-wq'],['框架','React 18']].map(([k,v],i,arr)=>h('div',{key:k,style:{display:'flex',justifyContent:'space-between',padding:'11px 16px',borderBottom:i<arr.length-1?'1px solid var(--div)':'none',fontFamily:'var(--mf)'}},h('span',{style:{color:'var(--text3)',fontSize:'14px'}},k),h('span',{style:{color:'var(--text)',fontSize:'14px',fontWeight:500}},v)))),
+      h('div',{style:{color:'var(--text3)',fontSize:'12px',textAlign:'center',lineHeight:1.8,fontFamily:'var(--mf)'}},'你的 AI 小手机\n更多功能持续开发中')
+    )
+  );
+  const tl={dark:'深色',light:'浅色',auto:'跟随系统'}[s.theme];
+  const wl=s.cwp?'自定义':(WPS[s.wp]?.name||'默认');
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)',fontFamily:'var(--mf)'}},
+    h('div',{style:{padding:'18px 20px 10px',flexShrink:0,borderBottom:'1px solid var(--div)'}},h('h1',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-0.5px',margin:0,fontFamily:'var(--mf)'}},'设置')),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'8px 16px 20px'}},
+      h(Sec,{title:'外观'},h(SRow,{icon:'🌓',color:'#444',label:'外观',value:tl,onPress:()=>setSub('theme')}),h(SRow,{icon:'🖼️',color:'#3a3a3a',label:'壁纸',value:wl,onPress:()=>setSub('wp')}),h(SRow,{icon:'✨',color:'#333',label:'个性化',value:'字体·图标·时钟',onPress:()=>setSub('personal'),last:true})),
+      h(Sec,{title:'AI'},h(SRow,{icon:'🤖',color:'#2a2a2a',label:'AI API',value:s.apis?.length?s.apis.length+'个':'未配置',onPress:()=>setSub('api'),last:true})),
+      h(Sec,{title:'聊天'},h(SRow,{icon:'💬',color:'#3a3a3a',label:'聊天美化',value:'背景·气泡·头像',onPress:()=>setSub('chatBeauty'),last:true})),
+      h(Sec,{title:'通知与声音'},h(SRow,{icon:'🔔',color:'#3a3a3a',label:'通知',toggle:true,tv:s.notif,onT:v=>upd({notif:v})}),h(SRow,{icon:'🔊',color:'#333',label:'声音',toggle:true,tv:s.sound,onT:v=>upd({sound:v})}),h(SRow,{icon:'🌙',color:'#2a2a2a',label:'勿扰',toggle:true,tv:s.dnd,onT:v=>upd({dnd:v}),last:true})),
+      h(Sec,{title:'其他'},h(SRow,{icon:'ℹ️',color:'#383838',label:'关于萌萌机',value:'V0.1',onPress:()=>setSub('about'),last:true}))
+    )
+  );
+}
+
+function Soon({app}){
+  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',gap:'12px',padding:'40px',background:'var(--bg)',fontFamily:'var(--mf)'}},
+    h('div',{style:{width:'66px',height:'66px',borderRadius:'20px',background:'rgba(245,245,245,0.92)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 4px 16px var(--shad)'}},h('svg',{width:30,height:30,viewBox:'0 0 16 16',fill:'none',stroke:'#2a2a2a',strokeWidth:'1.1',strokeLinecap:'round',strokeLinejoin:'round'},h('path',{d:app.svg}))),
     h('div',{style:{fontSize:'19px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.3px'}},app.name),
     h('div',{style:{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'12px',padding:'11px 20px',color:'var(--text3)',fontSize:'14px',textAlign:'center'}},'此 App 即将开放')
   );
 }
 
-function AppWindow({app,battery,settings,onSettingsChange,onClose}){
-  const [visible,setVisible]=useState(false);
-  const [mounted,setMounted]=useState(false);
-  useEffect(()=>{if(app){setMounted(true);const t=setTimeout(()=>setVisible(true),10);return()=>clearTimeout(t);}},[app]);
-  const handleClose=()=>{setVisible(false);setTimeout(()=>{setMounted(false);onClose();},260);};
-  if(!mounted)return null;
-  const getContent=()=>{if(!app)return null;if(app.id==='settings')return h(SettingsApp,{settings,onSettingsChange});if(app.id==='chat')return h(ChatApp);return h(ComingSoon,{app});};
-  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',transform:visible?'scale(1)':'scale(0.95)',opacity:visible?1:0,transformOrigin:'center bottom',transition:'transform 0.26s cubic-bezier(0.34,1.1,0.64,1),opacity 0.2s',overflow:'hidden',borderRadius:'inherit',background:'var(--bg)',fontFamily:'var(--mochi-font)'}},
-    h('div',{style:{flexShrink:0,background:'var(--header-bg)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderBottom:'1px solid var(--divider)'}},
-      h(StatusBar,{battery}),
+function AppWin({app,battery,s,upd,onClose}){
+  const [vis,setVis]=useState(false);const [mnt,setMnt]=useState(false);
+  useEffect(()=>{if(app){setMnt(true);const t=setTimeout(()=>setVis(true),10);return()=>clearTimeout(t);}},[app]);
+  const close=()=>{setVis(false);setTimeout(()=>{setMnt(false);onClose();},250);};
+  if(!mnt)return null;
+  const wp=s.cwp?{css:`url(${s.cwp}) center/cover`,light:false}:(WPS[s.wp]||WPS[0]);
+  const getC=()=>{if(!app)return null;if(app.id==='settings')return h(SettingsApp,{s,upd});if(app.id==='chat')return h(ChatApp,{s,onUpdate:upd});return h(Soon,{app});};
+  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',transform:vis?'scale(1)':'scale(0.95)',opacity:vis?1:0,transformOrigin:'center bottom',transition:'transform 0.24s cubic-bezier(0.34,1.1,0.64,1),opacity 0.2s',overflow:'hidden',borderRadius:'inherit',background:'var(--bg)',fontFamily:'var(--mf)'}},
+    h('div',{style:{flexShrink:0,background:'var(--hbg)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderBottom:'1px solid var(--div)'}},
+      h(StatusBar,{battery,wp}),
       h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'2px 16px 10px'}},
-        h('span',{style:{fontSize:'17px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.3px',fontFamily:'var(--mochi-font)'}},app?.name),
-        h('button',{onClick:handleClose,style:{background:'var(--card2)',border:'1px solid var(--border)',borderRadius:'50%',width:'26px',height:'26px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'var(--text3)',fontSize:'12px',flexShrink:0}},'✕')
+        h('span',{style:{fontSize:'17px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.3px',fontFamily:'var(--mf)'}},app?.name),
+        h('button',{onClick:close,style:{background:'var(--card2)',border:'1px solid var(--border)',borderRadius:'50%',width:'26px',height:'26px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'var(--text3)',fontSize:'12px',flexShrink:0}},'✕')
       )
     ),
-    h('div',{style:{flex:1,overflow:'hidden',position:'relative'}},getContent()),
-    h('div',{style:{padding:'7px 0 5px',display:'flex',justifyContent:'center',flexShrink:0,background:'var(--header-bg)'}},
-      h('div',{onClick:handleClose,style:{width:'100px',height:'4px',background:'var(--text3)',borderRadius:'2px',cursor:'pointer'}})
-    )
+    h('div',{style:{flex:1,overflow:'hidden',position:'relative'}},getC()),
+    h('div',{style:{padding:'7px 0 5px',display:'flex',justifyContent:'center',flexShrink:0,background:'var(--hbg)'}},h('div',{onClick:close,style:{width:'100px',height:'4px',background:'var(--text3)',borderRadius:'2px',cursor:'pointer'}}))
   );
 }
 
 function PhoneShell(){
-  const [settings,setSettings]=useState(getS);
-  const [screen,setScreen]=useState('lock');
-  const [openAppId,setOpenAppId]=useState(null);
-  const [homeVisible,setHomeVisible]=useState(false);
+  const [s,setS]=useState(getS);
+  const [scr,setScr]=useState('lock');
+  const [aid,setAid]=useState(null);
+  const [hv,setHv]=useState(false);
   const battery=82;
-  useEffect(()=>{applyTheme(settings.theme);if(settings.hasCustomFont)applyFontFromDB();},[]);
-  useEffect(()=>{applyTheme(settings.theme);},[settings.theme]);
-  const wallpaper=useMemo(()=>{
-    if(settings.customWallpaper)return{css:`url(${settings.customWallpaper}) center/cover no-repeat`,light:false};
-    return WALLPAPERS[settings.wallpaperIndex]||WALLPAPERS[0];
-  },[settings.wallpaperIndex,settings.customWallpaper]);
-  const handleUnlock=useCallback(()=>{setScreen('home');setTimeout(()=>setHomeVisible(true),10);},[]);
-  const handleOpen=useCallback(id=>{setOpenAppId(id);setScreen('app');},[]);
-  const handleClose=useCallback(()=>{setOpenAppId(null);setScreen('home');},[]);
-  const openApp=openAppId?ALL_APPS.find(a=>a.id===openAppId)||null:null;
-  const handleSettingsChange=useCallback(next=>{setSettings(next);saveS(next);applyTheme(next.theme);},[]);
+  const upd=useCallback(patch=>setS(prev=>{const n={...prev,...patch};LS.s(n);applyTheme(n.theme);return n;}),[]);
+  useEffect(()=>{applyTheme(s.theme);if(s.hasFont)applyFont();},[]);
+  useEffect(()=>{applyTheme(s.theme);},[s.theme]);
+  const wp=useMemo(()=>s.cwp?{css:`url(${s.cwp}) center/cover no-repeat`,light:false}:(WPS[s.wp]||WPS[0]),[s.wp,s.cwp]);
+  const unlock=useCallback(()=>{setScr('home');setTimeout(()=>setHv(true),10);},[]);
+  const open=useCallback(id=>{setAid(id);setScr('app');},[]);
+  const close=useCallback(()=>{setAid(null);setScr('home');},[]);
+  const app=aid?APPS.find(a=>a.id===aid)||null:null;
   return h('div',{style:{width:'100%',height:'100%',position:'relative',borderRadius:'inherit',overflow:'hidden'}},
-    screen==='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:10}},h(LockScreen,{battery,wallpaper,clockWeight:settings.clockWeight,onUnlock:handleUnlock})),
-    screen!=='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:1}},h(HomeScreen,{battery,onOpen:handleOpen,visible:screen==='home'&&homeVisible,wallpaper,settings})),
-    (screen==='app'||openAppId)&&h('div',{style:{position:'absolute',inset:0,zIndex:5}},h(AppWindow,{app:openApp,battery,settings,onSettingsChange:handleSettingsChange,onClose:handleClose}))
+    scr==='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:10}},h(LockScreen,{battery,wp,s,onUnlock:unlock})),
+    scr!=='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:1}},h(HomeScreen,{battery,onOpen:open,visible:scr==='home'&&hv,wp,s})),
+    (scr==='app'||aid)&&h('div',{style:{position:'absolute',inset:0,zIndex:5}},h(AppWin,{app,battery,s,upd,onClose:close}))
   );
 }
 
 function App(){
   useEffect(()=>{applyTheme(getS().theme);},[]);
-  return h('div',{style:{minHeight:'100dvh',display:'flex',alignItems:'center',justifyContent:'center',background:'#000'}},
-    h('div',{className:'phone-outer'},h(PhoneShell))
-  );
+  return h('div',{style:{minHeight:'100dvh',display:'flex',alignItems:'center',justifyContent:'center',background:'#000'}},h('div',{className:'po'},h(PhoneShell)));
 }
 ReactDOM.createRoot(document.getElementById('root')).render(h(App));
 </script>
