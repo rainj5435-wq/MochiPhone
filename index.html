@@ -4,40 +4,46 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <title>萌萌机</title>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
-body{background:#000;font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif}
+body{background:#000;font-family:var(--mochi-font);}
 ::-webkit-scrollbar{display:none}
 #root{width:100vw;height:100dvh;display:flex;align-items:center;justify-content:center;overflow:hidden}
 :root{
-  --bg:#111111;--bg2:#1a1a1a;--bg3:#222222;
-  --card:rgba(255,255,255,0.06);--card2:rgba(255,255,255,0.10);
-  --border:rgba(255,255,255,0.10);--border2:rgba(255,255,255,0.16);
-  --text:#ffffff;--text2:rgba(255,255,255,0.65);--text3:rgba(255,255,255,0.35);
-  --accent:#c8c8c8;--toggle-on:#585858;
-  --dock-bg:rgba(28,28,28,0.88);
-  --status-color:#ffffff;--header-bg:rgba(17,17,17,0.94);
-  --divider:rgba(255,255,255,0.08);--shadow:rgba(0,0,0,0.5);
+  --mochi-font:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
+  --bg:#0f0f0f;--bg2:#1a1a1a;
+  --card:rgba(255,255,255,0.055);--card2:rgba(255,255,255,0.09);
+  --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.15);
+  --text:#f0f0f0;--text2:rgba(255,255,255,0.6);--text3:rgba(255,255,255,0.3);
+  --toggle-on:#555;--dock-bg:rgba(22,22,22,0.82);
+  --status-color:#f0f0f0;--header-bg:rgba(15,15,15,0.92);
+  --divider:rgba(255,255,255,0.07);--shadow:rgba(0,0,0,0.6);
+  --input-bg:rgba(255,255,255,0.07);
+  --bubble-me:#1c1c1e;--bubble-them:rgba(255,255,255,0.1);
+  --bubble-me-text:#fff;--bubble-them-text:#f0f0f0;
 }
 [data-theme="light"]{
-  --bg:#f2f2f2;--bg2:#ffffff;--bg3:#e8e8e8;
-  --card:rgba(0,0,0,0.04);--card2:rgba(0,0,0,0.07);
-  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
-  --text:#111111;--text2:rgba(0,0,0,0.55);--text3:rgba(0,0,0,0.30);
-  --accent:#585858;--toggle-on:#797979;
-  --dock-bg:rgba(220,220,220,0.88);
-  --status-color:#111111;--header-bg:rgba(242,242,242,0.94);
-  --divider:rgba(0,0,0,0.07);--shadow:rgba(0,0,0,0.12);
+  --bg:#f5f5f5;--bg2:#ffffff;
+  --card:rgba(0,0,0,0.038);--card2:rgba(0,0,0,0.065);
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);
+  --text:#111;--text2:rgba(0,0,0,0.5);--text3:rgba(0,0,0,0.28);
+  --toggle-on:#888;--dock-bg:rgba(215,215,215,0.82);
+  --status-color:#111;--header-bg:rgba(245,245,245,0.94);
+  --divider:rgba(0,0,0,0.065);--shadow:rgba(0,0,0,0.1);
+  --input-bg:rgba(0,0,0,0.05);
+  --bubble-me:#1c1c1e;--bubble-them:rgba(0,0,0,0.07);
+  --bubble-me-text:#fff;--bubble-them-text:#111;
 }
 @media(min-width:520px){
-  .phone-outer{width:390px!important;height:844px!important;border-radius:50px!important;
-  box-shadow:0 0 0 8px #1c1c1c,0 0 0 10px #2a2a2a,0 32px 80px rgba(0,0,0,0.8)!important;}
+  .phone-outer{width:390px!important;height:844px!important;border-radius:52px!important;
+  box-shadow:0 0 0 9px #181818,0 0 0 11px #252525,0 40px 100px rgba(0,0,0,0.85)!important;}
 }
-.phone-outer{width:100vw;height:100dvh;border-radius:0;overflow:hidden;position:relative;background:var(--bg);transition:background 0.3s;}
+.phone-outer{width:100vw;height:100dvh;border-radius:0;overflow:hidden;position:relative;background:var(--bg);font-family:var(--mochi-font);}
 </style>
 </head>
 <body>
@@ -47,14 +53,14 @@ const {useState,useEffect,useCallback,useRef,useMemo}=React;
 const h=React.createElement;
 
 const WALLPAPERS=[
-  {name:'墨夜',css:'linear-gradient(160deg,#0a0a0a 0%,#1a1a1a 50%,#111111 100%)',light:false},
-  {name:'霜白',css:'linear-gradient(160deg,#e8e8e8 0%,#f5f5f5 50%,#ececec 100%)',light:true},
-  {name:'玄铁',css:'linear-gradient(145deg,#151515 0%,#2a2a2a 40%,#1a1a1a 100%)',light:false},
-  {name:'烟灰',css:'linear-gradient(160deg,#2a2a2a 0%,#3a3a3a 50%,#252525 100%)',light:false},
-  {name:'银雾',css:'linear-gradient(160deg,#d0d0d0 0%,#e8e8e8 50%,#c8c8c8 100%)',light:true},
-  {name:'深空',css:'radial-gradient(ellipse at 30% 20%,#1e1e1e 0%,#0a0a0a 70%)',light:false},
-  {name:'月光',css:'radial-gradient(ellipse at 60% 30%,#e0e0e0 0%,#c8c8c8 100%)',light:true},
-  {name:'炭黑',css:'linear-gradient(180deg,#111 0%,#1c1c1c 100%)',light:false},
+  {name:'墨夜',css:'#0a0a0a',light:false},
+  {name:'霜白',css:'linear-gradient(160deg,#e8e8e8,#f5f5f5)',light:true},
+  {name:'玄铁',css:'linear-gradient(145deg,#111,#2a2a2a)',light:false},
+  {name:'烟灰',css:'linear-gradient(160deg,#252525,#383838)',light:false},
+  {name:'银雾',css:'linear-gradient(160deg,#d0d0d0,#e8e8e8)',light:true},
+  {name:'深空',css:'radial-gradient(ellipse at 30% 20%,#1a1a1a,#080808)',light:false},
+  {name:'月光',css:'radial-gradient(ellipse at 50% 30%,#e5e5e5,#c8c8c8)',light:true},
+  {name:'炭灰',css:'linear-gradient(180deg,#0d0d0d,#1c1c1c)',light:false},
 ];
 
 const ALL_APPS=[
@@ -76,221 +82,198 @@ const DOCK_IDS=['chat','browser','music','settings'];
 const GRID_APPS=ALL_APPS.filter(a=>!DOCK_IDS.includes(a.id));
 const PAGE1=GRID_APPS.slice(0,9);
 const PAGE2=GRID_APPS.slice(9);
+const ICON_BG={chat:'#2a2a2a',memory:'#222',photos:'#333',music:'#1e1e1e',pet:'#2e2e2e',shop:'#282828',wallet:'#242424',calendar:'#303030',diary:'#2b2b2b',social:'#252525',browser:'#363636',studio:'#2d2d2d',settings:'#1f1f1f'};
 
-const ICON_GRAD={
-  chat:'linear-gradient(145deg,#3a3a3a,#585858)',
-  memory:'linear-gradient(145deg,#2a2a2a,#444444)',
-  photos:'linear-gradient(145deg,#454545,#636363)',
-  music:'linear-gradient(145deg,#222222,#404040)',
-  pet:'linear-gradient(145deg,#3d3d3d,#5a5a5a)',
-  shop:'linear-gradient(145deg,#303030,#505050)',
-  wallet:'linear-gradient(145deg,#282828,#464646)',
-  calendar:'linear-gradient(145deg,#404040,#606060)',
-  diary:'linear-gradient(145deg,#353535,#535353)',
-  social:'linear-gradient(145deg,#2e2e2e,#4c4c4c)',
-  browser:'linear-gradient(145deg,#484848,#686868)',
-  studio:'linear-gradient(145deg,#3a3a3a,#585858)',
-  settings:'linear-gradient(145deg,#252525,#424242)',
-};
+function openFontDB(){return new Promise((res,rej)=>{const req=indexedDB.open('mochi_font',1);req.onupgradeneeded=e=>e.target.result.createObjectStore('fonts');req.onsuccess=e=>res(e.target.result);req.onerror=rej;});}
+async function saveFontToDB(buf){const db=await openFontDB();return new Promise((res,rej)=>{const tx=db.transaction('fonts','readwrite');tx.objectStore('fonts').put(buf,'custom');tx.oncomplete=res;tx.onerror=rej;});}
+async function loadFontFromDB(){const db=await openFontDB();return new Promise(res=>{const tx=db.transaction('fonts','readonly');const req=tx.objectStore('fonts').get('custom');req.onsuccess=e=>res(e.target.result||null);req.onerror=()=>res(null);});}
+async function deleteFontFromDB(){const db=await openFontDB();return new Promise(res=>{const tx=db.transaction('fonts','readwrite');tx.objectStore('fonts').delete('custom');tx.oncomplete=res;});}
+async function applyFontFromDB(){
+  const buf=await loadFontFromDB();if(!buf)return false;
+  try{const face=new FontFace('MochiCustom',buf);await face.load();document.fonts.add(face);document.documentElement.style.setProperty('--mochi-font','"MochiCustom",-apple-system,sans-serif');return true;}catch{return false;}
+}
 
-const DEFAULT_SETTINGS={wallpaperIndex:0,customWallpaper:null,theme:'dark',notifications:true,sound:true,dnd:false};
-function loadSettings(){try{const s=localStorage.getItem('mochi_v2');return s?JSON.parse(s):{};}catch{return{};}}
-function saveSettings(s){try{localStorage.setItem('mochi_v2',JSON.stringify(s));}catch{}}
-function getSettings(){return{...DEFAULT_SETTINGS,...loadSettings()};}
+const DEF={wallpaperIndex:0,customWallpaper:null,theme:'dark',notifications:true,sound:true,dnd:false,iconSize:'normal',showLabel:true,clockWeight:'bold',dockStyle:'glass',hasCustomFont:false};
+function loadS(){try{const s=localStorage.getItem('mochi_v3');return s?JSON.parse(s):{};}catch{return{};}}
+function saveS(s){try{localStorage.setItem('mochi_v3',JSON.stringify(s));}catch{}}
+function getS(){return{...DEF,...loadS()};}
 const pad=n=>String(n).padStart(2,'0');
-
-function resolveTheme(t){
-  if(t==='auto')return window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark';
-  return t;
-}
-function applyTheme(t){
-  document.querySelector('.phone-outer')?.setAttribute('data-theme',resolveTheme(t));
-}
+function resolveTheme(t){if(t==='auto')return window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark';return t;}
+function applyTheme(t){document.querySelector('.phone-outer')?.setAttribute('data-theme',resolveTheme(t));}
 
 function StatusBar({battery}){
   const [now,setNow]=useState(new Date());
   useEffect(()=>{const t=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(t);},[]);
-  return h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 20px 4px',fontSize:'15px',fontWeight:600,color:'var(--status-color)',letterSpacing:'-0.3px',flexShrink:0,userSelect:'none'}},
+  return h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 22px 4px',fontSize:'15px',fontWeight:600,color:'var(--status-color)',letterSpacing:'-0.2px',flexShrink:0,userSelect:'none',fontFamily:'var(--mochi-font)'}},
     h('span',null,`${pad(now.getHours())}:${pad(now.getMinutes())}`),
-    h('div',{style:{display:'flex',alignItems:'center',gap:'5px'}},
-      h('div',{style:{display:'flex',gap:'2px',alignItems:'flex-end'}},
-        ...[3,5,7,9].map((ht,i)=>h('div',{key:i,style:{width:'3px',height:ht+'px',borderRadius:'1px',background:i<3?'var(--status-color)':'var(--text3)'}}))
-      ),
-      h('svg',{width:15,height:11,viewBox:'0 0 16 12',fill:'none'},
-        h('path',{d:'M8 9.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2z',fill:'var(--status-color)'}),
-        h('path',{d:'M5.17 7.17a4 4 0 0 1 5.66 0',stroke:'var(--status-color)',strokeWidth:'1.5',strokeLinecap:'round',fill:'none'}),
-        h('path',{d:'M2.34 4.34a8 8 0 0 1 11.32 0',stroke:'var(--status-color)',strokeWidth:'1.5',strokeLinecap:'round',fill:'none',opacity:'0.4'})
-      ),
+    h('div',{style:{display:'flex',alignItems:'center',gap:'6px'}},
+      h('div',{style:{display:'flex',gap:'2px',alignItems:'flex-end'}},...[3,5,7,9].map((ht,i)=>h('div',{key:i,style:{width:'3px',height:ht+'px',borderRadius:'1.5px',background:i<3?'var(--status-color)':'var(--text3)'}}))),
+      h('svg',{width:15,height:11,viewBox:'0 0 16 12',fill:'none'},h('path',{d:'M8 9.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2z',fill:'var(--status-color)'}),h('path',{d:'M5.17 7.17a4 4 0 0 1 5.66 0',stroke:'var(--status-color)',strokeWidth:'1.4',strokeLinecap:'round',fill:'none'}),h('path',{d:'M2.34 4.34a8 8 0 0 1 11.32 0',stroke:'var(--status-color)',strokeWidth:'1.4',strokeLinecap:'round',fill:'none',opacity:'0.38'})),
       h('div',{style:{display:'flex',alignItems:'center',gap:'2px'}},
-        h('div',{style:{width:'24px',height:'11px',border:'1.5px solid var(--status-color)',borderRadius:'3px',padding:'1.5px',display:'flex',alignItems:'center'}},
-          h('div',{style:{width:Math.max(4,battery*0.20)+'px',height:'100%',background:battery<20?'#ff453a':'var(--status-color)',borderRadius:'1px'}})
-        ),
-        h('div',{style:{width:'2px',height:'5px',background:'var(--status-color)',borderRadius:'0 1px 1px 0',opacity:0.5}})
+        h('div',{style:{width:'23px',height:'11px',border:'1.5px solid var(--status-color)',borderRadius:'3px',padding:'1.5px',display:'flex',alignItems:'center'}},h('div',{style:{width:Math.max(3,battery*.19)+'px',height:'100%',background:battery<20?'#ff3b30':'var(--status-color)',borderRadius:'1px'}})),
+        h('div',{style:{width:'2px',height:'5px',background:'var(--status-color)',borderRadius:'0 1px 1px 0',opacity:.5}})
       )
     )
   );
 }
 
-function LockScreen({battery,wallpaper,onUnlock}){
+function LockScreen({battery,wallpaper,clockWeight,onUnlock}){
   const [now,setNow]=useState(new Date());
   const [unlocking,setUnlocking]=useState(false);
   const [dy,setDy]=useState(0);
   const sy=useRef(0);
   useEffect(()=>{const t=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(t);},[]);
   const days=['周日','周一','周二','周三','周四','周五','周六'];
-  const doUnlock=()=>{if(unlocking)return;setUnlocking(true);setTimeout(onUnlock,320);};
+  const dateStr=`${now.getMonth()+1}月${now.getDate()}日 ${days[now.getDay()]}`;
+  const doUnlock=()=>{if(unlocking)return;setUnlocking(true);setTimeout(onUnlock,300);};
   const isLight=wallpaper?.light;
-  const tc=isLight?'rgba(0,0,0,0.85)':'rgba(255,255,255,0.92)';
-  const tc2=isLight?'rgba(0,0,0,0.45)':'rgba(255,255,255,0.45)';
+  const tc=isLight?'rgba(0,0,0,0.88)':'#fff';
+  const tc2=isLight?'rgba(0,0,0,0.45)':'rgba(255,255,255,0.5)';
+  const cw=clockWeight==='thin'?200:clockWeight==='medium'?500:700;
   return h('div',{
     onClick:doUnlock,
     onTouchStart:e=>{sy.current=e.touches[0].clientY;},
     onTouchMove:e=>{const d=sy.current-e.touches[0].clientY;if(d>0)setDy(d);},
-    onTouchEnd:()=>{if(dy>55)doUnlock();else setDy(0);},
-    style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',cursor:'pointer',userSelect:'none',background:wallpaper?.css||'#111',opacity:unlocking?0:1,transform:unlocking?'scale(1.03)':dy>0?`translateY(-${Math.min(dy*.3,30)}px)`:'none',transition:unlocking?'opacity 0.32s,transform 0.32s':'transform 0.15s'}
+    onTouchEnd:()=>{if(dy>50)doUnlock();else setDy(0);},
+    style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',cursor:'pointer',userSelect:'none',background:wallpaper?.css||'#0a0a0a',opacity:unlocking?0:1,transform:unlocking?'scale(1.03)':dy>0?`translateY(-${Math.min(dy*.28,28)}px)`:'none',transition:unlocking?'opacity 0.3s,transform 0.3s':'transform 0.12s',fontFamily:'var(--mochi-font)'}
   },
-    h('div',{style:{color:tc,flexShrink:0}},h(StatusBar,{battery})),
+    h('div',{style:{color:tc}},h(StatusBar,{battery})),
+    h('div',{style:{flex:'0 0 40px'}}),
+    h('div',{style:{paddingLeft:'28px'}},h('div',{style:{fontSize:'17px',fontWeight:600,color:tc,letterSpacing:'0.1px',marginBottom:'2px'}},dateStr)),
+    h('div',{style:{paddingLeft:'22px'}},h('div',{style:{fontSize:'90px',fontWeight:cw,color:tc,lineHeight:1,letterSpacing:'-4px',fontVariantNumeric:'tabular-nums'}},`${pad(now.getHours())}:${pad(now.getMinutes())}`)),
     h('div',{style:{flex:1}}),
-    h('div',{style:{textAlign:'center',padding:'0 32px 12px'}},
-      h('div',{style:{fontSize:'76px',fontWeight:200,color:tc,lineHeight:1,letterSpacing:'-3px'}},`${pad(now.getHours())}:${pad(now.getMinutes())}`),
-      h('div',{style:{fontSize:'16px',color:tc2,marginTop:'10px',fontWeight:400}},`${days[now.getDay()]}，${now.getMonth()+1}月${now.getDate()}日`)
-    ),
-    h('div',{style:{flex:1}}),
-    h('div',{style:{textAlign:'center',padding:'0 0 40px',display:'flex',flexDirection:'column',alignItems:'center',gap:'8px'}},
-      h('div',{style:{color:tc2,fontSize:'12px',letterSpacing:'0.5px'}},'上滑或点击解锁'),
-      h('svg',{width:18,height:10,viewBox:'0 0 20 12',fill:'none'},h('path',{d:'M10 2 L18 10 M10 2 L2 10',stroke:tc2,strokeWidth:'1.8',strokeLinecap:'round'}))
+    h('div',{style:{textAlign:'center',padding:'0 0 44px',display:'flex',flexDirection:'column',alignItems:'center',gap:'10px'}},
+      h('div',{style:{width:'130px',height:'42px',borderRadius:'21px',background:isLight?'rgba(0,0,0,0.1)':'rgba(255,255,255,0.1)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'14px',fontWeight:500,color:tc,letterSpacing:'0.2px',fontFamily:'var(--mochi-font)'}},'上滑解锁')
     )
   );
 }
 
-function AppIcon({app,onOpen,dock}){
+function AppIcon({app,onOpen,dock,iconSize,showLabel}){
   const [pressed,setPressed]=useState(false);
-  const sz=dock?54:56;
-  const go=useCallback(()=>{setPressed(true);setTimeout(()=>{setPressed(false);onOpen(app.id);},120);},[app.id,onOpen]);
-  return h('div',{
-    style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'5px',cursor:'pointer',userSelect:'none',WebkitUserSelect:'none',minWidth:0},
-    onTouchStart:e=>{e.stopPropagation();setPressed(true);},
-    onTouchEnd:e=>{e.stopPropagation();go();},
-    onMouseDown:e=>{e.stopPropagation();setPressed(true);},
-    onMouseUp:e=>{e.stopPropagation();go();},
-    onMouseLeave:()=>setPressed(false),
-  },
-    h('div',{style:{width:sz+'px',height:sz+'px',borderRadius:'20px',background:ICON_GRAD[app.id]||ICON_GRAD.settings,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'24px',transform:pressed?'scale(0.86)':'scale(1)',transition:'transform 0.12s cubic-bezier(0.34,1.6,0.64,1)',boxShadow:pressed?'none':'0 2px 12px var(--shadow),inset 0 1px 0 rgba(255,255,255,0.08)',flexShrink:0}},
+  const sz=dock?52:iconSize==='large'?64:iconSize==='small'?48:56;
+  const esz=dock?22:iconSize==='large'?28:iconSize==='small'?20:24;
+  const go=useCallback(()=>{setPressed(true);setTimeout(()=>{setPressed(false);onOpen(app.id);},110);},[app.id,onOpen]);
+  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'4px',cursor:'pointer',userSelect:'none',WebkitUserSelect:'none',minWidth:0},
+    onTouchStart:e=>{e.stopPropagation();setPressed(true);},onTouchEnd:e=>{e.stopPropagation();go();},
+    onMouseDown:e=>{e.stopPropagation();setPressed(true);},onMouseUp:e=>{e.stopPropagation();go();},onMouseLeave:()=>setPressed(false)},
+    h('div',{style:{width:sz+'px',height:sz+'px',borderRadius:sz*0.224+'px',background:ICON_BG[app.id]||'#222',display:'flex',alignItems:'center',justifyContent:'center',fontSize:esz+'px',transform:pressed?'scale(0.85)':'scale(1)',transition:'transform 0.11s cubic-bezier(0.34,1.7,0.64,1)',boxShadow:pressed?'none':'0 1px 8px var(--shadow),inset 0 1px 0 rgba(255,255,255,0.07)',flexShrink:0}},
       h('span',{style:{lineHeight:1,pointerEvents:'none'}},app.emoji)
     ),
-    !dock&&h('span',{style:{fontSize:'10.5px',color:'var(--text)',fontWeight:400,textAlign:'center',width:'62px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',opacity:0.9}},app.name)
+    !dock&&showLabel&&h('span',{style:{fontSize:'10px',color:'var(--text)',fontWeight:400,textAlign:'center',width:'62px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',opacity:.88,fontFamily:'var(--mochi-font)'}},app.name)
   );
 }
 
-function HomeGrid({onOpen}){
+function HomeGrid({onOpen,iconSize,showLabel}){
   const pages=[PAGE1,PAGE2];
   const [page,setPage]=useState(0);
   const [dragX,setDragX]=useState(0);
   const [dragging,setDragging]=useState(false);
-  const sx=useRef(0),sy=useRef(0),locked=useRef(null);
+  const sx=useRef(0),sy2=useRef(0),locked=useRef(null);
   const W=useRef(Math.min(window.innerWidth,390));
   const goTo=p=>{const t=Math.max(0,Math.min(pages.length-1,p));setPage(t);setDragX(0);setDragging(false);};
-  const onTS=useCallback(e=>{sx.current=e.touches[0].clientX;sy.current=e.touches[0].clientY;locked.current=null;setDragging(true);},[]);
+  const onTS=useCallback(e=>{sx.current=e.touches[0].clientX;sy2.current=e.touches[0].clientY;locked.current=null;setDragging(true);},[]);
   const onTM=useCallback(e=>{
     if(!dragging)return;
-    const dx=e.touches[0].clientX-sx.current,dabs=Math.abs(dx),dyabs=Math.abs(e.touches[0].clientY-sy.current);
-    if(!locked.current){if(dabs>6||dyabs>6)locked.current=dabs>dyabs?'h':'v';}
-    if(locked.current==='h'){e.preventDefault();let c=dx;if(page===0&&dx>0)c=dx*.15;if(page===pages.length-1&&dx<0)c=dx*.15;setDragX(c);}
+    const dx=e.touches[0].clientX-sx.current,da=Math.abs(dx),db=Math.abs(e.touches[0].clientY-sy2.current);
+    if(!locked.current){if(da>6||db>6)locked.current=da>db?'h':'v';}
+    if(locked.current==='h'){e.preventDefault();let c=dx;if(page===0&&dx>0)c=dx*.12;if(page===pages.length-1&&dx<0)c=dx*.12;setDragX(c);}
   },[dragging,page,pages.length]);
   const onTE=useCallback(()=>{
-    if(locked.current==='h'){if(dragX<-55)goTo(page+1);else if(dragX>55)goTo(page-1);else{setDragX(0);setDragging(false);}}
+    if(locked.current==='h'){if(dragX<-52)goTo(page+1);else if(dragX>52)goTo(page-1);else{setDragX(0);setDragging(false);}}
     else{setDragX(0);setDragging(false);}locked.current=null;
   },[dragX,page]);
-  const offset=(-page*W.current)+dragX;
   return h('div',{style:{flex:1,overflow:'hidden',position:'relative',touchAction:'pan-y'},onTouchStart:onTS,onTouchMove:onTM,onTouchEnd:onTE},
-    h('div',{style:{display:'flex',width:pages.length*100+'%',height:'100%',transform:`translateX(${offset}px)`,transition:!dragging?'transform 0.28s cubic-bezier(0.25,0.46,0.45,0.94)':'none',willChange:'transform'}},
-      ...pages.map((apps,pi)=>h('div',{key:pi,style:{width:W.current+'px',flexShrink:0,display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'18px 6px',padding:'14px 14px 8px',alignContent:'start'}},
-        ...apps.map(app=>h('div',{key:app.id,style:{display:'flex',justifyContent:'center'}},h(AppIcon,{app,onOpen})))
+    h('div',{style:{display:'flex',width:pages.length*100+'%',height:'100%',transform:`translateX(${(-page*W.current)+dragX}px)`,transition:!dragging?'transform 0.27s cubic-bezier(0.25,0.46,0.45,0.94)':'none',willChange:'transform'}},
+      ...pages.map((apps,pi)=>h('div',{key:pi,style:{width:W.current+'px',flexShrink:0,display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'20px 4px',padding:'16px 12px 10px',alignContent:'start'}},
+        ...apps.map(app=>h('div',{key:app.id,style:{display:'flex',justifyContent:'center'}},h(AppIcon,{app,onOpen,iconSize,showLabel})))
       ))
     ),
-    h('div',{style:{position:'absolute',bottom:'8px',left:0,right:0,display:'flex',justifyContent:'center',gap:'5px',pointerEvents:'none'}},
-      ...pages.map((_,i)=>h('div',{key:i,style:{width:i===page?'18px':'5px',height:'5px',borderRadius:'3px',background:i===page?'var(--text)':'var(--text3)',transition:'width 0.22s,background 0.22s'}}))
+    h('div',{style:{position:'absolute',bottom:'10px',left:0,right:0,display:'flex',justifyContent:'center',gap:'5px',pointerEvents:'none'}},
+      ...pages.map((_,i)=>h('div',{key:i,style:{width:i===page?'16px':'5px',height:'5px',borderRadius:'3px',background:i===page?'var(--text)':'var(--text3)',transition:'width 0.2s,background 0.2s'}}))
     )
   );
 }
 
-function Dock({onOpen}){
+function Dock({onOpen,dockStyle,iconSize}){
   const apps=DOCK_IDS.map(id=>ALL_APPS.find(a=>a.id===id)).filter(Boolean);
-  return h('div',{style:{padding:'0 14px 12px',flexShrink:0}},
-    h('div',{style:{background:'var(--dock-bg)',backdropFilter:'blur(24px)',WebkitBackdropFilter:'blur(24px)',borderRadius:'26px',border:'1px solid var(--border2)',padding:'10px 12px',display:'flex',justifyContent:'space-around',alignItems:'center'}},
-      ...apps.map(app=>h(AppIcon,{key:app.id,app,onOpen,dock:true}))
+  const bg=dockStyle==='solid'?'var(--bg2)':dockStyle==='none'?'transparent':'var(--dock-bg)';
+  return h('div',{style:{padding:'0 14px 14px',flexShrink:0}},
+    h('div',{style:{background:bg,backdropFilter:dockStyle==='glass'?'blur(28px)':'none',WebkitBackdropFilter:dockStyle==='glass'?'blur(28px)':'none',borderRadius:'28px',border:dockStyle==='none'?'none':'1px solid var(--border2)',padding:'10px 12px',display:'flex',justifyContent:'space-around',alignItems:'center'}},
+      ...apps.map(app=>h(AppIcon,{key:app.id,app,onOpen,dock:true,iconSize,showLabel:false}))
     )
   );
 }
 
-function HomeScreen({battery,onOpen,visible,wallpaper}){
-  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',opacity:visible?1:0,transform:visible?'scale(1)':'scale(1.04)',transition:'opacity 0.3s,transform 0.3s',pointerEvents:visible?'auto':'none',background:wallpaper?.css||'var(--bg)'}},
+function HomeScreen({battery,onOpen,visible,wallpaper,settings}){
+  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',opacity:visible?1:0,transform:visible?'scale(1)':'scale(1.04)',transition:'opacity 0.28s,transform 0.28s',pointerEvents:visible?'auto':'none',background:wallpaper?.css||'var(--bg)'}},
     h(StatusBar,{battery}),
-    h(HomeGrid,{onOpen}),
-    h(Dock,{onOpen})
+    h(HomeGrid,{onOpen,iconSize:settings.iconSize,showLabel:settings.showLabel}),
+    h(Dock,{onOpen,dockStyle:settings.dockStyle,iconSize:settings.iconSize})
   );
 }
 
 function Toggle({value,onChange}){
-  return h('div',{onClick:()=>onChange(!value),style:{width:'46px',height:'26px',borderRadius:'13px',background:value?'var(--toggle-on)':'var(--card2)',border:'1px solid var(--border2)',position:'relative',cursor:'pointer',transition:'background 0.22s',flexShrink:0}},
-    h('div',{style:{position:'absolute',top:'2px',left:value?'20px':'2px',width:'20px',height:'20px',borderRadius:'50%',background:'var(--text)',boxShadow:'0 1px 4px rgba(0,0,0,0.3)',transition:'left 0.2s cubic-bezier(0.34,1.3,0.64,1)'}})
+  return h('div',{onClick:()=>onChange(!value),style:{width:'44px',height:'24px',borderRadius:'12px',background:value?'var(--toggle-on)':'var(--card2)',border:'1px solid var(--border2)',position:'relative',cursor:'pointer',transition:'background 0.2s',flexShrink:0}},
+    h('div',{style:{position:'absolute',top:'2px',left:value?'20px':'2px',width:'18px',height:'18px',borderRadius:'50%',background:'var(--text)',boxShadow:'0 1px 3px rgba(0,0,0,0.3)',transition:'left 0.18s cubic-bezier(0.34,1.3,0.64,1)'}})
   );
 }
 
-function SRow({icon,color,label,value,onPress,toggle,tval,onToggle,last}){
-  return h('div',{onClick:toggle?undefined:onPress,style:{display:'flex',alignItems:'center',padding:'12px 16px',gap:'12px',borderBottom:last?'none':'1px solid var(--divider)',cursor:toggle?'default':'pointer'}},
-    h('div',{style:{width:'30px',height:'30px',borderRadius:'8px',background:color||'var(--card2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'15px',flexShrink:0}},icon),
+function SRow({icon,color,label,value,onPress,toggle,tval,onToggle,last,chevron=true}){
+  return h('div',{onClick:toggle?undefined:onPress,style:{display:'flex',alignItems:'center',padding:'11px 16px',gap:'12px',borderBottom:last?'none':'1px solid var(--divider)',cursor:toggle?'default':'pointer',fontFamily:'var(--mochi-font)'}},
+    icon&&h('div',{style:{width:'28px',height:'28px',borderRadius:'7px',background:color||'var(--card2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'14px',flexShrink:0}},icon),
     h('span',{style:{flex:1,fontSize:'15px',color:'var(--text)',fontWeight:400}},label),
     toggle?h(Toggle,{value:tval,onChange:onToggle})
       :h('div',{style:{display:'flex',alignItems:'center',gap:'4px'}},
         value&&h('span',{style:{fontSize:'13px',color:'var(--text3)'}},value),
-        h('svg',{width:7,height:12,viewBox:'0 0 8 13',fill:'none'},h('path',{d:'M1 1l6 5.5L1 12',stroke:'var(--text3)',strokeWidth:'1.8',strokeLinecap:'round',strokeLinejoin:'round'}))
+        chevron&&h('svg',{width:6,height:11,viewBox:'0 0 7 12',fill:'none'},h('path',{d:'M1 1l5 5-5 5',stroke:'var(--text3)',strokeWidth:'1.6',strokeLinecap:'round',strokeLinejoin:'round'}))
       )
   );
 }
 
 function SubHeader({title,onBack}){
-  return h('div',{style:{display:'flex',alignItems:'center',padding:'12px 16px',borderBottom:'1px solid var(--divider)',flexShrink:0,background:'var(--header-bg)',backdropFilter:'blur(12px)',WebkitBackdropFilter:'blur(12px)'}},
-    h('button',{onClick:onBack,style:{background:'none',border:'none',color:'var(--text2)',fontSize:'15px',cursor:'pointer',padding:'4px 12px 4px 0',display:'flex',alignItems:'center',gap:'4px'}},
-      h('svg',{width:8,height:13,viewBox:'0 0 8 13',fill:'none'},h('path',{d:'M7 1L1 6.5L7 12',stroke:'var(--text2)',strokeWidth:'1.8',strokeLinecap:'round',strokeLinejoin:'round'})),
-      '返回'
+  return h('div',{style:{display:'flex',alignItems:'center',padding:'10px 16px',borderBottom:'1px solid var(--divider)',flexShrink:0,background:'var(--header-bg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',fontFamily:'var(--mochi-font)'}},
+    h('button',{onClick:onBack,style:{background:'none',border:'none',color:'var(--text2)',fontSize:'15px',cursor:'pointer',padding:'4px 14px 4px 0',display:'flex',alignItems:'center',gap:'5px',fontFamily:'var(--mochi-font)'}},
+      h('svg',{width:8,height:13,viewBox:'0 0 8 13',fill:'none'},h('path',{d:'M7 1L1 6.5L7 12',stroke:'var(--text2)',strokeWidth:'1.7',strokeLinecap:'round',strokeLinejoin:'round'})),'返回'
     ),
-    h('span',{style:{fontSize:'16px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.3px'}},title)
+    h('span',{style:{fontSize:'16px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.2px'}},title)
   );
 }
 
-function Card({children,style}){
-  return h('div',{style:{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'16px',overflow:'hidden',...style}},children);
+function SCard({children,style}){return h('div',{style:{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'14px',overflow:'hidden',...style}},children);}
+function SSection({title,children}){
+  return h('div',{style:{marginBottom:'6px'}},
+    title&&h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'0.6px',padding:'10px 4px 5px',fontFamily:'var(--mochi-font)'}},title.toUpperCase()),
+    h(SCard,null,children)
+  );
+}
+
+function SegCtrl({opts,val,onVal}){
+  return h('div',{style:{display:'flex',background:'var(--card2)',borderRadius:'9px',padding:'2px',gap:'2px'}},
+    ...opts.map(o=>h('div',{key:o.id,onClick:()=>onVal(o.id),style:{flex:1,textAlign:'center',padding:'6px 0',borderRadius:'7px',background:val===o.id?'var(--bg2)':'transparent',fontSize:'13px',color:val===o.id?'var(--text)':'var(--text3)',fontWeight:val===o.id?600:400,cursor:'pointer',transition:'background 0.15s',fontFamily:'var(--mochi-font)'}},o.l))
+  );
 }
 
 function WallpaperPage({settings,onUpdate,onBack}){
   const fileRef=useRef();
-  const cur=settings.wallpaperIndex;
-  const custom=settings.customWallpaper;
-  const handleFile=e=>{
-    const f=e.target.files?.[0];if(!f)return;
-    const r=new FileReader();
-    r.onload=ev=>onUpdate({customWallpaper:ev.target.result,wallpaperIndex:-1});
-    r.readAsDataURL(f);
-  };
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)',overflow:'hidden'}},
+  const cur=settings.wallpaperIndex,custom=settings.customWallpaper;
+  const handleFile=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=ev=>onUpdate({customWallpaper:ev.target.result,wallpaperIndex:-1});r.readAsDataURL(f);};
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
     h(SubHeader,{title:'壁纸',onBack}),
-    h('div',{style:{flex:1,overflowY:'auto',padding:'14px 16px',display:'flex',flexDirection:'column',gap:'12px'}},
-      h('div',null,
-        h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'0.5px',marginBottom:'8px',paddingLeft:'2px'}},'自定义'),
-        h(Card,null,h('div',{style:{padding:'14px 16px'}},
-          custom&&h('div',{onClick:()=>onUpdate({wallpaperIndex:-1}),style:{width:'100%',height:'70px',borderRadius:'10px',background:`url(${custom}) center/cover`,marginBottom:'10px',border:cur===-1?'2px solid var(--text)':'2px solid transparent',cursor:'pointer'}}),
-          h('div',{onClick:()=>fileRef.current?.click(),style:{padding:'10px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px'}},custom?'重新上传':'从手机相册选取'),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
+      h(SSection,{title:'自定义'},
+        h('div',{style:{padding:'12px 16px'}},
+          custom&&h('div',{onClick:()=>onUpdate({wallpaperIndex:-1}),style:{width:'100%',height:'60px',borderRadius:'10px',background:`url(${custom}) center/cover`,marginBottom:'10px',border:cur===-1?'2px solid var(--text)':'2px solid transparent',cursor:'pointer'}}),
+          h('div',{onClick:()=>fileRef.current?.click(),style:{padding:'9px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px',fontFamily:'var(--mochi-font)'}},custom?'重新选取':'从相册选取图片'),
           h('input',{ref:fileRef,type:'file',accept:'image/*',style:{display:'none'},onChange:handleFile})
-        ))
+        )
       ),
       h('div',null,
-        h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'0.5px',marginBottom:'8px',paddingLeft:'2px'}},'预设'),
-        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'10px'}},
-          ...WALLPAPERS.map((wp,i)=>h('div',{key:i,onClick:()=>onUpdate({wallpaperIndex:i,customWallpaper:null}),style:{height:'75px',borderRadius:'12px',background:wp.css,border:(cur===i&&!custom)?'2.5px solid var(--text)':'2px solid var(--border)',cursor:'pointer',display:'flex',alignItems:'flex-end',padding:'7px',position:'relative',overflow:'hidden'}},
-            h('span',{style:{fontSize:'11px',fontWeight:500,color:wp.light?'rgba(0,0,0,0.55)':'rgba(255,255,255,0.65)'}},wp.name),
-            (cur===i&&!custom)&&h('div',{style:{position:'absolute',top:'6px',right:'6px',width:'16px',height:'16px',borderRadius:'50%',background:'var(--text)',display:'flex',alignItems:'center',justifyContent:'center'}},
-              h('svg',{width:9,height:7,viewBox:'0 0 10 8',fill:'none'},h('path',{d:'M1 4l3 3 5-6',stroke:wp.light?'#fff':'#111',strokeWidth:'1.5',strokeLinecap:'round',strokeLinejoin:'round'}))
+        h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'0.6px',padding:'4px 4px 8px',fontFamily:'var(--mochi-font)'}},'预设'),
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px'}},
+          ...WALLPAPERS.map((wp,i)=>h('div',{key:i,onClick:()=>onUpdate({wallpaperIndex:i,customWallpaper:null}),style:{height:'70px',borderRadius:'12px',background:wp.css,border:(cur===i&&!custom)?'2px solid var(--text)':'1.5px solid var(--border)',cursor:'pointer',display:'flex',alignItems:'flex-end',padding:'7px',position:'relative',overflow:'hidden'}},
+            h('span',{style:{fontSize:'11px',fontWeight:500,color:wp.light?'rgba(0,0,0,0.55)':'rgba(255,255,255,0.6)',fontFamily:'var(--mochi-font)'}},wp.name),
+            (cur===i&&!custom)&&h('div',{style:{position:'absolute',top:'6px',right:'6px',width:'15px',height:'15px',borderRadius:'50%',background:'var(--text)',display:'flex',alignItems:'center',justifyContent:'center'}},
+              h('svg',{width:8,height:7,viewBox:'0 0 10 8',fill:'none'},h('path',{d:'M1 4l3 3 5-6',stroke:wp.light?'#fff':'#111',strokeWidth:'1.5',strokeLinecap:'round',strokeLinejoin:'round'}))
             )
           ))
         )
@@ -300,14 +283,55 @@ function WallpaperPage({settings,onUpdate,onBack}){
 }
 
 function ThemePage({current,onSelect,onBack}){
-  const opts=[{id:'dark',label:'深色',desc:'深色背景'},{id:'light',label:'浅色',desc:'浅色背景'},{id:'auto',label:'跟随系统',desc:'随手机自动切换'}];
+  const opts=[{id:'dark',label:'深色',desc:'深色背景，沉静克制'},{id:'light',label:'浅色',desc:'浅色背景，干净清爽'},{id:'auto',label:'跟随系统',desc:'随手机自动切换'}];
   return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
     h(SubHeader,{title:'外观',onBack}),
-    h('div',{style:{flex:1,padding:'14px 16px',display:'flex',flexDirection:'column',gap:'8px'}},
-      ...opts.map(o=>h('div',{key:o.id,onClick:()=>onSelect(o.id),style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 16px',borderRadius:'14px',cursor:'pointer',background:current===o.id?'var(--card2)':'var(--card)',border:current===o.id?'1.5px solid var(--border2)':'1.5px solid var(--border)'}},
+    h('div',{style:{flex:1,padding:'12px 16px',display:'flex',flexDirection:'column',gap:'8px'}},
+      ...opts.map(o=>h('div',{key:o.id,onClick:()=>onSelect(o.id),style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'13px 16px',borderRadius:'13px',cursor:'pointer',background:current===o.id?'var(--card2)':'var(--card)',border:current===o.id?'1.5px solid var(--border2)':'1.5px solid var(--border)',fontFamily:'var(--mochi-font)'}},
         h('div',null,h('div',{style:{color:'var(--text)',fontSize:'15px',fontWeight:500}},o.label),h('div',{style:{color:'var(--text3)',fontSize:'12px',marginTop:'2px'}},o.desc)),
-        current===o.id&&h('svg',{width:16,height:16,viewBox:'0 0 16 16',fill:'none'},h('circle',{cx:'8',cy:'8',r:'7',stroke:'var(--text)',strokeWidth:'1.5'}),h('circle',{cx:'8',cy:'8',r:'3.5',fill:'var(--text)'}))
+        current===o.id&&h('div',{style:{width:'18px',height:'18px',borderRadius:'50%',border:'2px solid var(--text)',display:'flex',alignItems:'center',justifyContent:'center'}},h('div',{style:{width:'8px',height:'8px',borderRadius:'50%',background:'var(--text)'}}))
       ))
+    )
+  );
+}
+
+function PersonalizePage({settings,onUpdate,onBack}){
+  const [fontLoading,setFontLoading]=useState(false);
+  const [fontMsg,setFontMsg]=useState('');
+  const fileRef=useRef();
+  const handleFontFile=async e=>{
+    const f=e.target.files?.[0];if(!f)return;
+    setFontLoading(true);setFontMsg('');
+    try{const buf=await f.arrayBuffer();await saveFontToDB(buf);const ok=await applyFontFromDB();if(ok){onUpdate({hasCustomFont:true});setFontMsg('字体已应用');}else setFontMsg('字体加载失败');}
+    catch{setFontMsg('导入出错');}
+    setFontLoading(false);
+  };
+  const clearFont=async()=>{await deleteFontFromDB();document.documentElement.style.removeProperty('--mochi-font');onUpdate({hasCustomFont:false});setFontMsg('已恢复默认');};
+  const iconOpts=[{id:'small',l:'小'},{id:'normal',l:'标准'},{id:'large',l:'大'}];
+  const clockOpts=[{id:'thin',l:'细体'},{id:'medium',l:'中等'},{id:'bold',l:'粗体'}];
+  const dockOpts=[{id:'glass',l:'毛玻璃'},{id:'solid',l:'纯色'},{id:'none',l:'透明'}];
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h(SubHeader,{title:'个性化',onBack}),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'10px 16px 20px'}},
+      h(SSection,{title:'自定义字体'},
+        h('div',{style:{padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
+          h('div',{style:{fontSize:'13px',color:'var(--text2)',lineHeight:1.5,fontFamily:'var(--mochi-font)'}},settings.hasCustomFont?'已使用自定义字体':'支持 .ttf / .otf 字体文件，导入后立即全局生效'),
+          h('div',{style:{display:'flex',gap:'8px'}},
+            h('div',{onClick:()=>fileRef.current?.click(),style:{flex:1,padding:'9px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px',fontFamily:'var(--mochi-font)'}},fontLoading?'导入中...':'导入字体文件'),
+            settings.hasCustomFont&&h('div',{onClick:clearFont,style:{padding:'9px 14px',borderRadius:'10px',border:'1.5px solid var(--border2)',cursor:'pointer',color:'var(--text3)',fontSize:'14px',fontFamily:'var(--mochi-font)'}},'恢复默认')
+          ),
+          fontMsg&&h('div',{style:{fontSize:'12px',color:'var(--text3)',fontFamily:'var(--mochi-font)'}},fontMsg),
+          h('input',{ref:fileRef,type:'file',accept:'.ttf,.otf,.woff,.woff2',style:{display:'none'},onChange:handleFontFile})
+        )
+      ),
+      h(SSection,{title:'图标'},
+        h('div',{style:{padding:'12px 16px',display:'flex',flexDirection:'column',gap:'12px'}},
+          h('div',null,h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px',fontFamily:'var(--mochi-font)'}},'图标大小'),h(SegCtrl,{opts:iconOpts,val:settings.iconSize,onVal:v=>onUpdate({iconSize:v})})),
+          h(SRow,{icon:null,label:'显示图标名称',toggle:true,tval:settings.showLabel,onToggle:v=>onUpdate({showLabel:v}),last:true,chevron:false})
+        )
+      ),
+      h(SSection,{title:'Dock 样式'},h('div',{style:{padding:'12px 16px'}},h(SegCtrl,{opts:dockOpts,val:settings.dockStyle,onVal:v=>onUpdate({dockStyle:v})}))),
+      h(SSection,{title:'锁屏时钟'},h('div',{style:{padding:'12px 16px'}},h(SegCtrl,{opts:clockOpts,val:settings.clockWeight,onVal:v=>onUpdate({clockWeight:v})})))
     )
   );
 }
@@ -316,111 +340,139 @@ function AboutPage({onBack}){
   const items=[['版本','V0.1'],['阶段','开发中'],['作者','rainj5435-wq'],['框架','React 18']];
   return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
     h(SubHeader,{title:'关于',onBack}),
-    h('div',{style:{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'20px',padding:'32px'}},
-      h('div',{style:{fontSize:'56px',lineHeight:1}},'🐰'),
-      h('div',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-0.5px'}},'萌萌机'),
-      h(Card,{style:{width:'100%'}},
-        ...items.map(([k,v],i)=>h('div',{key:k,style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 16px',borderBottom:i<items.length-1?'1px solid var(--divider)':'none'}},
-          h('span',{style:{color:'var(--text3)',fontSize:'14px'}},k),
-          h('span',{style:{color:'var(--text)',fontSize:'14px',fontWeight:500}},v)
+    h('div',{style:{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'18px',padding:'32px'}},
+      h('div',{style:{fontSize:'52px',lineHeight:1}},'📱'),
+      h('div',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-0.4px',fontFamily:'var(--mochi-font)'}},'萌萌机'),
+      h(SCard,{style:{width:'100%'}},
+        ...items.map(([k,v],i)=>h('div',{key:k,style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'11px 16px',borderBottom:i<items.length-1?'1px solid var(--divider)':'none',fontFamily:'var(--mochi-font)'}},
+          h('span',{style:{color:'var(--text3)',fontSize:'14px'}},k),h('span',{style:{color:'var(--text)',fontSize:'14px',fontWeight:500}},v)
         ))
       ),
-      h('div',{style:{color:'var(--text3)',fontSize:'12px',textAlign:'center',lineHeight:1.8}},'你的 AI 小手机 🐰\n更多功能持续开发中')
+      h('div',{style:{color:'var(--text3)',fontSize:'12px',textAlign:'center',lineHeight:1.8,fontFamily:'var(--mochi-font)'}},'你的 AI 小手机\n更多功能持续开发中')
     )
   );
 }
 
 function SettingsApp({settings,onSettingsChange}){
   const [sub,setSub]=useState(null);
-  const update=useCallback(patch=>{const next={...settings,...patch};onSettingsChange(next);saveSettings(next);},[settings,onSettingsChange]);
-  if(sub==='wallpaper')return h(WallpaperPage,{settings,onUpdate:p=>{update(p);},onBack:()=>setSub(null)});
+  const update=useCallback(patch=>{const next={...settings,...patch};onSettingsChange(next);saveS(next);},[settings,onSettingsChange]);
+  if(sub==='wallpaper')return h(WallpaperPage,{settings,onUpdate:p=>update(p),onBack:()=>setSub(null)});
   if(sub==='theme')return h(ThemePage,{current:settings.theme,onSelect:t=>{update({theme:t});setSub(null);},onBack:()=>setSub(null)});
+  if(sub==='personalize')return h(PersonalizePage,{settings,onUpdate:update,onBack:()=>setSub(null)});
   if(sub==='about')return h(AboutPage,{onBack:()=>setSub(null)});
   const themeLabel={dark:'深色',light:'浅色',auto:'跟随系统'}[settings.theme];
   const wpLabel=settings.customWallpaper?'自定义':(WALLPAPERS[settings.wallpaperIndex]?.name||'默认');
-  const sections=[
-    {title:'外观',rows:[
-      {icon:'🌓',color:'#585858',label:'外观',sub:'theme',value:themeLabel},
-      {icon:'🖼️',color:'#484848',label:'壁纸',sub:'wallpaper',value:wpLabel,last:true},
-    ]},
-    {title:'通知与声音',rows:[
-      {icon:'🔔',color:'#3a3a3a',label:'通知',toggle:true,key:'notifications'},
-      {icon:'🔊',color:'#424242',label:'声音',toggle:true,key:'sound'},
-      {icon:'🌙',color:'#2e2e2e',label:'勿扰',toggle:true,key:'dnd',last:true},
-    ]},
-    {title:'其他',rows:[
-      {icon:'ℹ️',color:'#404040',label:'关于萌萌机',sub:'about',value:'V0.1',last:true},
-    ]},
-  ];
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
-    h('div',{style:{padding:'18px 20px 12px',flexShrink:0,borderBottom:'1px solid var(--divider)'}},
-      h('h1',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-0.5px',margin:0}},'设置')
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)',fontFamily:'var(--mochi-font)'}},
+    h('div',{style:{padding:'18px 20px 10px',flexShrink:0,borderBottom:'1px solid var(--divider)'}},h('h1',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-0.5px',margin:0,fontFamily:'var(--mochi-font)'}},'设置')),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'8px 16px 20px'}},
+      h(SSection,{title:'外观'},
+        h(SRow,{icon:'🌓',color:'#444',label:'外观',value:themeLabel,onPress:()=>setSub('theme')}),
+        h(SRow,{icon:'🖼️',color:'#3a3a3a',label:'壁纸',value:wpLabel,onPress:()=>setSub('wallpaper')}),
+        h(SRow,{icon:'✨',color:'#333',label:'个性化',value:'字体·图标·时钟',onPress:()=>setSub('personalize'),last:true})
+      ),
+      h(SSection,{title:'通知与声音'},
+        h(SRow,{icon:'🔔',color:'#3a3a3a',label:'通知',toggle:true,tval:settings.notifications,onToggle:v=>update({notifications:v})}),
+        h(SRow,{icon:'🔊',color:'#333',label:'声音',toggle:true,tval:settings.sound,onToggle:v=>update({sound:v})}),
+        h(SRow,{icon:'🌙',color:'#2a2a2a',label:'勿扰',toggle:true,tval:settings.dnd,onToggle:v=>update({dnd:v}),last:true})
+      ),
+      h(SSection,{title:'其他'},h(SRow,{icon:'ℹ️',color:'#383838',label:'关于萌萌机',value:'V0.1',onPress:()=>setSub('about'),last:true}))
+    )
+  );
+}
+
+const DEMO_MSGS=[
+  {id:1,me:false,text:'你好呀 ~',time:'10:20'},
+  {id:2,me:true,text:'你好！萌萌机上线了。',time:'10:21'},
+  {id:3,me:false,text:'期待后续功能，加油！',time:'10:21'},
+  {id:4,me:true,text:'会的，慢慢来。',time:'10:22'},
+];
+
+function ChatApp(){
+  const [msgs,setMsgs]=useState(DEMO_MSGS);
+  const [input,setInput]=useState('');
+  const bottomRef=useRef();
+  useEffect(()=>{bottomRef.current?.scrollIntoView({behavior:'smooth'});},[msgs]);
+  const send=()=>{
+    const t=input.trim();if(!t)return;
+    const now=new Date();
+    setMsgs(m=>[...m,{id:Date.now(),me:true,text:t,time:`${pad(now.getHours())}:${pad(now.getMinutes())}`}]);
+    setInput('');
+  };
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)',fontFamily:'var(--mochi-font)'}},
+    h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
+      ...msgs.map(m=>h('div',{key:m.id,style:{display:'flex',flexDirection:'column',alignItems:m.me?'flex-end':'flex-start'}},
+        h('div',{style:{maxWidth:'72%',padding:'10px 14px',borderRadius:m.me?'20px 20px 5px 20px':'20px 20px 20px 5px',background:m.me?'var(--bubble-me)':'var(--bubble-them)',color:m.me?'var(--bubble-me-text)':'var(--bubble-them-text)',fontSize:'15px',lineHeight:'1.45',boxShadow:'0 1px 4px var(--shadow)',border:m.me?'none':'1px solid var(--border)'}},m.text),
+        h('div',{style:{fontSize:'11px',color:'var(--text3)',marginTop:'3px',paddingInline:'4px'}},m.time)
+      )),
+      h('div',{ref:bottomRef})
     ),
-    h('div',{style:{flex:1,overflowY:'auto',padding:'10px 16px 20px'}},
-      ...sections.map(sec=>h('div',{key:sec.title,style:{marginBottom:'8px'}},
-        h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'0.5px',padding:'10px 4px 6px'}},sec.title.toUpperCase()),
-        h(Card,null,...sec.rows.map(row=>h(SRow,{key:row.label,icon:row.icon,color:row.color,label:row.label,last:!!row.last,value:row.value,toggle:!!row.toggle,tval:row.key?settings[row.key]:undefined,onToggle:row.key?v=>update({[row.key]:v}):undefined,onPress:row.sub?()=>setSub(row.sub):undefined})))
-      ))
+    h('div',{style:{padding:'10px 14px 20px',borderTop:'1px solid var(--divider)',background:'var(--header-bg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',display:'flex',gap:'10px',alignItems:'flex-end'}},
+      h('div',{style:{flex:1,background:'var(--input-bg)',border:'1px solid var(--border2)',borderRadius:'20px',padding:'8px 14px',display:'flex',alignItems:'center'}},
+        h('input',{value:input,onChange:e=>setInput(e.target.value),onKeyDown:e=>{if(e.key==='Enter')send();},placeholder:'发消息...',style:{background:'transparent',border:'none',outline:'none',width:'100%',color:'var(--text)',fontSize:'15px',fontFamily:'var(--mochi-font)'}})
+      ),
+      h('button',{onClick:send,style:{width:'34px',height:'34px',borderRadius:'50%',border:'none',background:input.trim()?'var(--text)':'var(--card2)',color:input.trim()?'var(--bg)':'var(--text3)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,transition:'background 0.18s,color 0.18s'}},
+        h('svg',{width:14,height:14,viewBox:'0 0 14 14',fill:'none'},h('path',{d:'M7 12V2M7 2L2 7M7 2l5 5',stroke:'currentColor',strokeWidth:'1.8',strokeLinecap:'round',strokeLinejoin:'round'}))
+      )
     )
   );
 }
 
 function ComingSoon({app}){
-  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',gap:'14px',padding:'40px',background:'var(--bg)'}},
-    h('div',{style:{width:'72px',height:'72px',borderRadius:'22px',background:ICON_GRAD[app.id]||ICON_GRAD.settings,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'32px',boxShadow:'0 4px 20px var(--shadow)'}},app.emoji),
-    h('div',{style:{fontSize:'20px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.4px'}},app.name),
-    h('div',{style:{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'14px',padding:'12px 20px',color:'var(--text2)',fontSize:'14px',textAlign:'center',lineHeight:1.6}},'此 App 即将开放')
+  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',gap:'12px',padding:'40px',background:'var(--bg)',fontFamily:'var(--mochi-font)'}},
+    h('div',{style:{width:'68px',height:'68px',borderRadius:'20px',background:ICON_BG[app.id]||'#222',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'30px',boxShadow:'0 4px 16px var(--shadow)'}},app.emoji),
+    h('div',{style:{fontSize:'19px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.3px'}},app.name),
+    h('div',{style:{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'12px',padding:'11px 20px',color:'var(--text3)',fontSize:'14px',textAlign:'center'}},'此 App 即将开放')
   );
 }
 
 function AppWindow({app,battery,settings,onSettingsChange,onClose}){
   const [visible,setVisible]=useState(false);
   const [mounted,setMounted]=useState(false);
-  useEffect(()=>{if(app){setMounted(true);const t=setTimeout(()=>setVisible(true),12);return()=>clearTimeout(t);}},[app]);
-  const handleClose=()=>{setVisible(false);setTimeout(()=>{setMounted(false);onClose();},280);};
+  useEffect(()=>{if(app){setMounted(true);const t=setTimeout(()=>setVisible(true),10);return()=>clearTimeout(t);}},[app]);
+  const handleClose=()=>{setVisible(false);setTimeout(()=>{setMounted(false);onClose();},260);};
   if(!mounted)return null;
-  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',transform:visible?'scale(1)':'scale(0.94)',opacity:visible?1:0,transformOrigin:'center bottom',transition:'transform 0.28s cubic-bezier(0.34,1.1,0.64,1),opacity 0.22s',overflow:'hidden',borderRadius:'inherit',background:'var(--bg)'}},
-    h('div',{style:{flexShrink:0,background:'var(--header-bg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',borderBottom:'1px solid var(--divider)'}},
+  const getContent=()=>{if(!app)return null;if(app.id==='settings')return h(SettingsApp,{settings,onSettingsChange});if(app.id==='chat')return h(ChatApp);return h(ComingSoon,{app});};
+  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',transform:visible?'scale(1)':'scale(0.95)',opacity:visible?1:0,transformOrigin:'center bottom',transition:'transform 0.26s cubic-bezier(0.34,1.1,0.64,1),opacity 0.2s',overflow:'hidden',borderRadius:'inherit',background:'var(--bg)',fontFamily:'var(--mochi-font)'}},
+    h('div',{style:{flexShrink:0,background:'var(--header-bg)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderBottom:'1px solid var(--divider)'}},
       h(StatusBar,{battery}),
-      h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'4px 16px 10px'}},
-        h('span',{style:{fontSize:'17px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.3px'}},app?.name),
-        h('button',{onClick:handleClose,style:{background:'var(--card2)',border:'1px solid var(--border)',borderRadius:'50%',width:'28px',height:'28px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'var(--text2)',fontSize:'13px',flexShrink:0}},'✕')
+      h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'2px 16px 10px'}},
+        h('span',{style:{fontSize:'17px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.3px',fontFamily:'var(--mochi-font)'}},app?.name),
+        h('button',{onClick:handleClose,style:{background:'var(--card2)',border:'1px solid var(--border)',borderRadius:'50%',width:'26px',height:'26px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'var(--text3)',fontSize:'12px',flexShrink:0}},'✕')
       )
     ),
-    h('div',{style:{flex:1,overflow:'hidden',position:'relative'}},
-      app&&(app.id==='settings'?h(SettingsApp,{settings,onSettingsChange}):h(ComingSoon,{app}))
-    ),
-    h('div',{style:{padding:'8px 0 6px',display:'flex',justifyContent:'center',flexShrink:0,background:'var(--header-bg)'}},
-      h('div',{onClick:handleClose,style:{width:'110px',height:'4px',background:'var(--text3)',borderRadius:'2px',cursor:'pointer'}})
+    h('div',{style:{flex:1,overflow:'hidden',position:'relative'}},getContent()),
+    h('div',{style:{padding:'7px 0 5px',display:'flex',justifyContent:'center',flexShrink:0,background:'var(--header-bg)'}},
+      h('div',{onClick:handleClose,style:{width:'100px',height:'4px',background:'var(--text3)',borderRadius:'2px',cursor:'pointer'}})
     )
   );
 }
 
 function PhoneShell(){
-  const [settings,setSettings]=useState(getSettings);
+  const [settings,setSettings]=useState(getS);
   const [screen,setScreen]=useState('lock');
   const [openAppId,setOpenAppId]=useState(null);
   const [homeVisible,setHomeVisible]=useState(false);
   const battery=82;
+  useEffect(()=>{applyTheme(settings.theme);if(settings.hasCustomFont)applyFontFromDB();},[]);
   useEffect(()=>{applyTheme(settings.theme);},[settings.theme]);
   const wallpaper=useMemo(()=>{
     if(settings.customWallpaper)return{css:`url(${settings.customWallpaper}) center/cover no-repeat`,light:false};
     return WALLPAPERS[settings.wallpaperIndex]||WALLPAPERS[0];
   },[settings.wallpaperIndex,settings.customWallpaper]);
-  const handleUnlock=useCallback(()=>{setScreen('home');setTimeout(()=>setHomeVisible(true),12);},[]);
+  const handleUnlock=useCallback(()=>{setScreen('home');setTimeout(()=>setHomeVisible(true),10);},[]);
   const handleOpen=useCallback(id=>{setOpenAppId(id);setScreen('app');},[]);
   const handleClose=useCallback(()=>{setOpenAppId(null);setScreen('home');},[]);
   const openApp=openAppId?ALL_APPS.find(a=>a.id===openAppId)||null:null;
-  const handleSettingsChange=useCallback(next=>{setSettings(next);saveSettings(next);applyTheme(next.theme);},[]);
+  const handleSettingsChange=useCallback(next=>{setSettings(next);saveS(next);applyTheme(next.theme);},[]);
   return h('div',{style:{width:'100%',height:'100%',position:'relative',borderRadius:'inherit',overflow:'hidden'}},
-    screen==='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:10}},h(LockScreen,{battery,wallpaper,onUnlock:handleUnlock})),
-    screen!=='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:1}},h(HomeScreen,{battery,onOpen:handleOpen,visible:screen==='home'&&homeVisible,wallpaper})),
+    screen==='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:10}},h(LockScreen,{battery,wallpaper,clockWeight:settings.clockWeight,onUnlock:handleUnlock})),
+    screen!=='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:1}},h(HomeScreen,{battery,onOpen:handleOpen,visible:screen==='home'&&homeVisible,wallpaper,settings})),
     (screen==='app'||openAppId)&&h('div',{style:{position:'absolute',inset:0,zIndex:5}},h(AppWindow,{app:openApp,battery,settings,onSettingsChange:handleSettingsChange,onClose:handleClose}))
   );
 }
 
 function App(){
-  useEffect(()=>{applyTheme(getSettings().theme);},[]);
+  useEffect(()=>{applyTheme(getS().theme);},[]);
   return h('div',{style:{minHeight:'100dvh',display:'flex',alignItems:'center',justifyContent:'center',background:'#000'}},
     h('div',{className:'phone-outer'},h(PhoneShell))
   );
