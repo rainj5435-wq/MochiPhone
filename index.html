@@ -2,588 +2,673 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#000000"/>
+<link rel="manifest" href="manifest.json"/>
 <title>萌萌机</title>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
-body{background:#000;font-family:var(--mf);}
+html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;background:#000}
+body{font-family:var(--mf)}
 ::-webkit-scrollbar{display:none}
-#root{width:100vw;height:100dvh;display:flex;align-items:center;justify-content:center;overflow:hidden}
-:root{
-  --mf:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
-  --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#222;
-  --card:rgba(255,255,255,0.055);--card2:rgba(255,255,255,0.09);--card3:rgba(255,255,255,0.13);
-  --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.15);
-  --text:#f0f0f0;--text2:rgba(255,255,255,0.58);--text3:rgba(255,255,255,0.28);
-  --toggle:#555;--dock:rgba(20,20,20,0.78);
-  --sc:#f0f0f0;--hbg:rgba(15,15,15,0.92);
-  --div:rgba(255,255,255,0.07);--shad:rgba(0,0,0,0.6);
-  --ibg:rgba(255,255,255,0.07);
-  --bme:#1c1c1e;--bthem:rgba(255,255,255,0.1);
-  --bmet:#fff;--bthemt:#f0f0f0;
-}
-[data-theme="light"]{
-  --bg:#f2f2f7;--bg2:#fff;--bg3:#e8e8ed;
-  --card:rgba(0,0,0,0.038);--card2:rgba(0,0,0,0.065);--card3:rgba(0,0,0,0.095);
-  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);
-  --text:#111;--text2:rgba(0,0,0,0.5);--text3:rgba(0,0,0,0.28);
-  --toggle:#888;--dock:rgba(210,210,215,0.82);
-  --sc:#111;--hbg:rgba(242,242,247,0.94);
-  --div:rgba(0,0,0,0.065);--shad:rgba(0,0,0,0.1);
-  --ibg:rgba(0,0,0,0.05);
-  --bme:#1c1c1e;--bthem:rgba(0,0,0,0.07);
-  --bmet:#fff;--bthemt:#111;
-}
-@media(min-width:520px){
-  .po{width:390px!important;height:844px!important;border-radius:52px!important;
-  box-shadow:0 0 0 9px #181818,0 0 0 11px #252525,0 40px 100px rgba(0,0,0,.85)!important;}
-}
-.po{width:100vw;height:100dvh;border-radius:0;overflow:hidden;position:relative;background:var(--bg);font-family:var(--mf);}
+button,input,textarea,select{font-family:var(--mf)}
+#root{width:100vw;height:100dvh;display:flex;align-items:center;justify-content:center}
+:root{--mf:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue','PingFang SC','Noto Sans SC',sans-serif;
+--bg:#0e0e0f;--bg2:#1b1b1d;--card:rgba(255,255,255,.06);--card2:rgba(255,255,255,.1);--border:rgba(255,255,255,.09);--border2:rgba(255,255,255,.17);
+--text:#f2f2f4;--text2:rgba(255,255,255,.6);--text3:rgba(255,255,255,.32);--tog:#6a6a70;--dock:rgba(40,40,43,.55);--hbg:rgba(14,14,15,.9);
+--div:rgba(255,255,255,.07);--shad:rgba(0,0,0,.5);--ibg:rgba(255,255,255,.08)}
+[data-theme=light]{--bg:#f2f2f6;--bg2:#fff;--card:rgba(0,0,0,.04);--card2:rgba(0,0,0,.07);--border:rgba(0,0,0,.07);--border2:rgba(0,0,0,.13);
+--text:#17171a;--text2:rgba(0,0,0,.55);--text3:rgba(0,0,0,.3);--tog:#8e8e93;--dock:rgba(255,255,255,.5);--hbg:rgba(242,242,246,.92);
+--div:rgba(0,0,0,.07);--shad:rgba(0,0,0,.1);--ibg:rgba(0,0,0,.05)}
+.po{width:100vw;height:100dvh;overflow:hidden;position:relative;background:var(--bg);font-family:var(--mf);color:var(--text)}
+@media(min-width:520px){.po{width:390px;height:844px;border-radius:52px;box-shadow:0 0 0 9px #181818,0 0 0 11px #262626,0 40px 100px rgba(0,0,0,.85)}}
+.key{width:74px;height:74px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:300;cursor:pointer;color:#fff;background:rgba(255,255,255,.16);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transition:background .12s,transform .12s}
+.key:active{background:rgba(255,255,255,.42);transform:scale(.93)}
+.key.txt{background:transparent;font-size:16px;font-weight:500;backdrop-filter:none;-webkit-backdrop-filter:none}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-7px)}80%{transform:translateX(4px)}}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.dots i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--text3);margin:0 2px;animation:blink 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+.bubble{max-width:68%;padding:9px 13px;font-size:15px;line-height:1.45;word-break:break-word;white-space:pre-wrap}
+.bubble-me{background:#1d1d20;color:#fff;border-radius:18px 18px 4px 18px}
+.bubble-them{background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:18px 18px 18px 4px}
+.frost .bubble-me{background:rgba(29,29,32,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.frost .bubble-them{background:rgba(255,255,255,.16);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 </style>
 </head>
 <body><div id="root"></div>
 <script>
 const {useState,useEffect,useCallback,useRef,useMemo}=React;
 const h=React.createElement;
+const pad=n=>String(n).padStart(2,'0');
+const ft=d=>pad(d.getHours())+':'+pad(d.getMinutes());
+let installEvt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;});
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+const DRAG={moved:false};
 
+const STAR='radial-gradient(1.2px 1.2px at 12% 18%,rgba(255,255,255,.8),transparent),radial-gradient(1px 1px at 78% 12%,rgba(255,255,255,.7),transparent),radial-gradient(1.4px 1.4px at 45% 40%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 88% 55%,rgba(255,255,255,.7),transparent),radial-gradient(1.2px 1.2px at 25% 72%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 62% 86%,rgba(255,255,255,.7),transparent),linear-gradient(180deg,#0a0a0b,#1c1c1f)';
 const WPS=[
-  {name:'墨夜',css:'#0a0a0a',light:false},
-  {name:'霜白',css:'linear-gradient(160deg,#e0e0e0,#f5f5f5)',light:true},
-  {name:'玄铁',css:'linear-gradient(145deg,#0e0e0e,#252525)',light:false},
-  {name:'银雾',css:'linear-gradient(160deg,#c8c8c8,#e5e5e5)',light:true},
-  {name:'深空',css:'radial-gradient(ellipse at 30% 20%,#181818,#060606)',light:false},
-  {name:'月光',css:'radial-gradient(ellipse at 50% 30%,#e8e8e8,#c0c0c0)',light:true},
-  {name:'炭灰',css:'linear-gradient(180deg,#0a0a0a,#1a1a1a)',light:false},
-  {name:'晨雾',css:'linear-gradient(160deg,#d8d8d8,#efefef)',light:true},
-];
+ {name:'墨夜',css:'#0b0b0c',light:false},
+ {name:'霜白',css:'linear-gradient(165deg,#d9d9dc,#f6f6f7)',light:true},
+ {name:'玄铁',css:'linear-gradient(150deg,#101011,#2b2b2e)',light:false},
+ {name:'银雾',css:'linear-gradient(165deg,#bfbfc4,#e6e6e8)',light:true},
+ {name:'深空',css:'radial-gradient(ellipse at 30% 15%,#202023,#060607 70%)',light:false},
+ {name:'月光',css:'radial-gradient(ellipse at 50% 25%,#f0f0f2,#b9b9bf 80%)',light:true},
+ {name:'星屑',css:STAR,light:false},
+ {name:'晨雾',css:'linear-gradient(165deg,#cfcfd3,#f1f1f3)',light:true}];
 
-const APPS=[
-  {id:'chat',    name:'聊天',   svg:'M8 2C4.7 2 2 4.3 2 7.2c0 1.6.7 3 1.9 4L3 14l3.1-1.4C7 13 7.5 13.1 8 13.1c3.3 0 6-2.3 6-5.1S11.3 2 8 2z'},
-  {id:'memory',  name:'记忆',   svg:'M9 2a4 4 0 0 1 4 4c0 1-.3 1.9-.9 2.6L14 14h-3v-2H9v-2H7l-.1-.1A4 4 0 0 1 9 2z'},
-  {id:'photos',  name:'相册',   svg:'M3 5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5zm3 1a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0zm2 7 2.5-3.5L13 13H6z'},
-  {id:'music',   name:'音乐',   svg:'M9 3v8.4A3 3 0 1 1 7 9V5l6-1.5V7a3 3 0 1 1-2-2.8V4L9 5V3z'},
-  {id:'pet',     name:'宠物',   svg:'M4.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm7 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM8 15c-2.5 0-4.5-1.3-5-3 .5-1 1.8-1.5 3-1 .5.2 1.3.4 2 .4s1.5-.2 2-.4c1.2-.5 2.5 0 3 1-.5 1.7-2.5 3-5 3z'},
-  {id:'shop',    name:'商店',   svg:'M3 3h2l.4 2M7 13h8l2-8H5.4M7 13 5.4 5M7 13l-1 2h9M9 17a1 1 0 1 0 2 0 1 1 0 0 0-2 0zm6 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0z'},
-  {id:'wallet',  name:'钱包',   svg:'M3 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1H3V6zm0 3h14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9zm11 2a1 1 0 1 0 2 0 1 1 0 0 0-2 0z'},
-  {id:'calendar',name:'日历',   svg:'M5 3v2M11 3v2M3 9h10M5 5h8a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm2 6h2v2H7z'},
-  {id:'diary',   name:'日记',   svg:'M6 2h7l3 3v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm2 9H6v2h2v-2zm0-4H6v2h2V7zm4 4h-2v2h2v-2zm0-4h-2v2h2V7z'},
-  {id:'social',  name:'社交',   svg:'M15 8c0 2.8-3 5-7 5a8 8 0 0 1-2-.3L3 14l.7-2.5A5 5 0 0 1 2 8c0-2.8 3-5 7-5s6 2.2 6 5z'},
-  {id:'browser', name:'浏览器', svg:'M8 2a6 6 0 1 1 0 12A6 6 0 0 1 8 2zm0 1.5c-.7 0-1.8 1-2.3 2.5h4.6C9.8 4.5 8.7 3.5 8 3.5zm-3 2.5A7 7 0 0 0 4.5 8c0 .7.1 1.4.3 2h6.4c.2-.6.3-1.3.3-2s-.1-1.4-.3-2H5zm.5 4.5c.5 1.5 1.6 2.5 2.3 2.5s1.8-1 2.3-2.5H5.7z'},
-  {id:'studio',  name:'画室',   svg:'M2 12l5-5 3 3 4-6 4 8H2z'},
-  {id:'settings',name:'设置',   svg:'M8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm5.7 2.5-.8-.1a5 5 0 0 0-.4-1l.5-.7-1.4-1.4-.7.5a5 5 0 0 0-1-.4l-.1-.8H8.2l-.1.8a5 5 0 0 0-1 .4l-.7-.5L5 5.7l.5.7a5 5 0 0 0-.4 1l-.8.1v2l.8.1a5 5 0 0 0 .4 1l-.5.7 1.4 1.4.7-.5a5 5 0 0 0 1 .4l.1.8h1.6l.1-.8a5 5 0 0 0 1-.4l.7.5 1.4-1.4-.5-.7a5 5 0 0 0 .4-1l.8-.1v-2z'},
-];
+const APPS=[['chat','聊天'],['memory','记忆'],['photos','相册'],['music','音乐'],['pet','宠物'],['shop','商店'],['wallet','钱包'],['calendar','日历'],['diary','日记'],['social','社交'],['browser','浏览器'],['studio','画室'],['settings','设置']].map(([id,name])=>({id,name}));
 const DOCK_IDS=['chat','browser','music','settings'];
 const GRID=APPS.filter(a=>!DOCK_IDS.includes(a.id));
-const P1=GRID.slice(0,9),P2=GRID.slice(9);
 
-const dbOpen=name=>new Promise((r,j)=>{const q=indexedDB.open(name,1);q.onupgradeneeded=e=>e.target.result.createObjectStore('s');q.onsuccess=e=>r(e.target.result);q.onerror=j;});
-const dbGet=async(db,k)=>new Promise(r=>{const t=db.transaction('s','readonly');const q=t.objectStore('s').get(k);q.onsuccess=e=>r(e.target.result??null);q.onerror=()=>r(null);});
-const dbSet=async(db,k,v)=>new Promise((r,j)=>{const t=db.transaction('s','readwrite');t.objectStore('s').put(v,k);t.oncomplete=r;t.onerror=j;});
-const dbDel=async(db,k)=>new Promise(r=>{const t=db.transaction('s','readwrite');t.objectStore('s').delete(k);t.oncomplete=r;});
-let _fdb=null;
-const getFDB=async()=>{if(!_fdb)_fdb=await dbOpen('mochi_assets');return _fdb;};
-async function applyFont(){
-  const db=await getFDB();const buf=await dbGet(db,'font');if(!buf)return false;
-  try{const f=new FontFace('MF',buf);await f.load();document.fonts.add(f);document.documentElement.style.setProperty('--mf','"MF",-apple-system,sans-serif');return true;}catch{return false;}
+const DEF={wp:0,cwp:null,cwpLight:false,theme:'dark',notif:true,sound:true,dnd:false,iconSz:'normal',showLbl:true,ckW:'bold',ckSz:'large',dockSt:'glass',hasFont:false,
+ passOn:true,pass:'1111',apis:[],defaultApi:null,
+ contacts:[{id:'ai1',name:'助手',avatar:null,persona:'',bio:'你好，我是萌萌机内置助手',online:true,blocked:false}],
+ chats:{},chatSettings:{},moments:[],myName:'我',myAvatar:null,mySign:'写点什么吧'};
+const LS={
+ g(){try{return JSON.parse(localStorage.getItem('mv5')||localStorage.getItem('mv4')||'{}')}catch(e){return{}}},
+ s(v){try{localStorage.setItem('mv5',JSON.stringify(v))}catch(e){console.warn('保存失败（可能是图片太大）',e)}}};
+const getS=()=>{const s={...DEF,...LS.g()};if(/resetpass/.test(location.search)){s.pass='1111';s.passOn=true;LS.s(s);}return s;};
+const rt=t=>t==='auto'?(window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark'):t;
+const applyTheme=t=>document.documentElement.setAttribute('data-theme',rt(t));
+applyTheme(getS().theme);
+
+const imgData=(f,max=1080,q=.82)=>new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const i=new Image();i.onerror=rej;i.onload=()=>{
+ const k=Math.min(1,max/Math.max(i.width,i.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(i.width*k));c.height=Math.max(1,Math.round(i.height*k));
+ const x=c.getContext('2d');x.drawImage(i,0,0,c.width,c.height);const t=document.createElement('canvas');t.width=t.height=8;const tx=t.getContext('2d');tx.drawImage(c,0,0,8,8);
+ const d=tx.getImageData(0,0,8,8).data;let l=0;for(let j=0;j<d.length;j+=4)l+=(d[j]*.3+d[j+1]*.59+d[j+2]*.11);
+ res({url:c.toDataURL('image/jpeg',q),lum:l/64});};i.src=r.result;};r.readAsDataURL(f);});
+const pickFile=(accept,cb)=>{const i=document.createElement('input');i.type='file';i.accept=accept;i.style.display='none';document.body.appendChild(i);
+ i.onchange=()=>{const f=i.files&&i.files[0];if(f)cb(f);setTimeout(()=>i.remove(),500);};i.addEventListener('cancel',()=>i.remove());i.click();};
+const pick=(max,cb)=>pickFile('image/*',f=>imgData(f,max).then(cb).catch(()=>{}));
+
+const fdb=()=>new Promise((r,j)=>{const q=indexedDB.open('mochi_assets',1);q.onupgradeneeded=e=>e.target.result.createObjectStore('s');q.onsuccess=e=>r(e.target.result);q.onerror=j;});
+const fget=async()=>{const d=await fdb();return new Promise(r=>{const q=d.transaction('s').objectStore('s').get('font');q.onsuccess=e=>r(e.target.result||null);q.onerror=()=>r(null);});};
+const fset=async v=>{const d=await fdb();return new Promise((r,j)=>{const t=d.transaction('s','readwrite');v?t.objectStore('s').put(v,'font'):t.objectStore('s').delete('font');t.oncomplete=r;t.onerror=j;});};
+async function applyFont(){const b=await fget();if(!b)return false;try{const f=new FontFace('MF',b);await f.load();document.fonts.add(f);document.documentElement.style.setProperty('--mf','"MF",-apple-system,sans-serif');return true;}catch(e){return false;}}
+
+async function callAI(api,persona,hist){
+ const base=api.url.replace(/\/$/,'');const claude=api.tpl==='claude'||/anthropic\.com/.test(base);
+ const sys='你在手机聊天软件里和用户聊天，保持角色，用自然口语化的简短中文回复。'+(persona?'角色设定：'+persona:'');
+ const ms=[];hist.slice(-24).forEach(m=>{const role=m.me?'user':'assistant';if(ms.length&&ms[ms.length-1].role===role)ms[ms.length-1].content+='\n'+m.text;else ms.push({role,content:m.text});});
+ while(ms.length&&ms[0].role!=='user')ms.shift();
+ const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),60000);
+ try{
+  const url=claude?(/\/v1$/.test(base)?base:base+'/v1')+'/messages':base+'/chat/completions';
+  const r=await fetch(url,{method:'POST',signal:ctl.signal,
+   headers:claude?{'Content-Type':'application/json','x-api-key':api.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'}:{'Content-Type':'application/json','Authorization':'Bearer '+api.key},
+   body:JSON.stringify(claude?{model:api.model,max_tokens:1024,system:sys,messages:ms}:{model:api.model,messages:[{role:'system',content:sys},...ms]})});
+  if(!r.ok){const t=await r.text().catch(()=>'');const m={401:'Key 无效或已过期',403:'没有权限，检查 Key 或地区限制',404:'地址或模型不存在',429:'请求太频繁或额度用完'}[r.status];throw new Error((m||'请求失败 '+r.status)+(m?'':(t?'：'+t.slice(0,80):'')));}
+  const j=await r.json();const out=claude?(j.content||[]).map(c=>c.text||'').join(''):(j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content);
+  if(!out)throw new Error('接口返回为空');return out.trim();
+ }catch(e){if(e.name==='AbortError')throw new Error('请求超时');if(e instanceof TypeError)throw new Error('网络错误或被跨域拦截，该服务商可能不允许浏览器直接调用，可换成中转地址');throw e;}
+ finally{clearTimeout(to);}
 }
 
-const DEF={wp:0,cwp:null,theme:'dark',notif:true,sound:true,dnd:false,iconSz:'normal',showLbl:true,ckW:'bold',ckSz:'large',dockSt:'glass',hasFont:false,chatBg:null,bubbleFrost:false,showTime:true,avatarRound:50,apis:[],defaultApi:null,contacts:[{id:'ai1',name:'助手',avatar:'🤖',bio:'你好，我是萌萌机内置助手',online:true}],chats:{}};
-const LS={g(){try{const s=localStorage.getItem('mv4');return s?JSON.parse(s):{};}catch{return{};}},s(v){try{localStorage.setItem('mv4',JSON.stringify(v));}catch{}}};
-const getS=()=>({...DEF,...LS.g()});
-const pad=n=>String(n).padStart(2,'0');
-const rt=t=>t==='auto'?window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark':t;
-const applyTheme=t=>document.querySelector('.po')?.setAttribute('data-theme',rt(t));
+const IC={back:'M15 18l-6-6 6-6',menu:'M4 6h16M4 12h16M4 18h16',close:'M18 6L6 18M6 6l12 12',send:'M12 19V5M5 12l7-7 7 7',plus:'M12 5v14M5 12h14',
+ camera:'M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+ image:'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM21 15l-5-5L5 21',
+ moments:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94',
+ profile:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+ wallet:'M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 1 0-4h13M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 0 0 0 4h4v-4z',
+ file:'M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM13 2v7h7',
+ lock:'M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4',
+ torch:'M8 2h8l-1.5 6h-5zM9.5 8h5v2.5a3 3 0 0 1-1 2.2V21a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-8.3a3 3 0 0 1-1-2.2z',
+ bell:'M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9zM13.7 21a2 2 0 0 1-3.4 0',
+ volume:'M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14',
+ moon:'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z',
+ info:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16v-4M12 8h.01',
+ theme:'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 2v20',
+ sparkle:'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z',
+ chip:'M7 7h10v10H7zM9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3',
+ download:'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3'};
+const Ic=({n,size=20,sw=1.8,style})=>h('svg',{width:size,height:size,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:sw,strokeLinecap:'round',strokeLinejoin:'round',style:{flexShrink:0,...style}},h('path',{d:IC[n]}));
 
-function StatusBar({battery,wp}){
-  const [now,setNow]=useState(new Date());
-  useEffect(()=>{const t=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(t);},[]);
-  const c=wp?.light?'#111':'var(--sc)';
-  return h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 22px 2px',flexShrink:0,userSelect:'none',color:c,fontFamily:'var(--mf)'}},
-    h('span',{style:{fontSize:'16px',fontWeight:700,letterSpacing:'-0.5px'}},`${pad(now.getHours())}:${pad(now.getMinutes())}`),
+const cir=(x,y,r)=>`M${x-r} ${y}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0z`;
+const P=(d,o)=>h('path',{d,fillRule:'evenodd',...o});
+const BG='#eeeef0';
+const GL={
+ chat:()=>[P('M7 3h10a5 5 0 0 1 5 5v4a5 5 0 0 1-5 5h-6l-4.5 4v-4.2A5 5 0 0 1 2 12V8a5 5 0 0 1 5-5z')],
+ memory:()=>[P('M12 4.2A3.6 3.6 0 0 0 5.6 6 3.8 3.8 0 0 0 3.4 10.8 3.8 3.8 0 0 0 4.6 15 3.4 3.4 0 0 0 8 19.8 3.6 3.6 0 0 0 12 20.4 3.6 3.6 0 0 0 16 19.8 3.4 3.4 0 0 0 19.4 15 3.8 3.8 0 0 0 20.6 10.8 3.8 3.8 0 0 0 18.4 6 3.6 3.6 0 0 0 12 4.2z'),h('path',{d:'M12 5v15M7.4 10.4h2.4M14.2 13.8h2.4',stroke:BG,strokeWidth:1.5,fill:'none',strokeLinecap:'round'})],
+ photos:()=>[P('M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z'+cir(8.5,8.5,1.9)+'M4.5 19l4.6-6 3.4 4.2 2.4-3 4.6 4.8z')],
+ music:()=>[P('M9 5l11-2.2V15h-2V6.4L11 7.8V17H9z'),P(cir(7.5,17.5,2.8)),P(cir(16.5,15.5,2.8))],
+ pet:()=>[P(cir(5,11.2,2.2)),P(cir(9.3,6.4,2.4)),P(cir(14.7,6.4,2.4)),P(cir(19,11.2,2.2)),P('M12 11.3c-3.3 0-6 3.4-6 6.4 0 1.9 1.4 3 3 3 1.2 0 2-.6 3-.6s1.8.6 3 .6c1.6 0 3-1.1 3-3 0-3-2.7-6.4-6-6.4z')],
+ shop:()=>[P('M5.2 8h13.6l1 11.4a1.6 1.6 0 0 1-1.6 1.8H5.8a1.6 1.6 0 0 1-1.6-1.8z'),h('path',{d:'M8.8 8V6.6a3.2 3.2 0 0 1 6.4 0V8',fill:'none',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round'})],
+ wallet:()=>[P('M4 5h13a2 2 0 0 1 2 2v1h.5A2.5 2.5 0 0 1 22 10.5v6a2.5 2.5 0 0 1-2.5 2.5H5a3 3 0 0 1-3-3V7a2 2 0 0 1 2-2z'+cir(17.2,13.5,1.5))],
+ calendar:()=>[P('M5 4.5h14a3 3 0 0 1 3 3V19a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3zM4.5 10.5h15V19a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5z'),P('M7 2.5h2v4H7zM15 2.5h2v4h-2z'),P('M7 13h3v3H7zM11.5 13h3v3h-3z')],
+ diary:()=>[P('M6 2.5h12a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-15a2 2 0 0 1 2-2zM8 7.5h8v1.8H8zM8 11.5h8v1.8H8zM8 15.5h5v1.8H8z')],
+ social:()=>[P(cir(9,8,3.4)),P('M2.5 20c0-3.6 2.8-6.2 6.5-6.2s6.5 2.6 6.5 6.2z'),P(cir(17,9,2.7)),P('M16.2 14.2c.4-.1.8-.1 1.2-.1 2.5 0 4.4 2 4.4 4.9h-4.6c0-1.9-.4-3.4-1-4.8z')],
+ browser:()=>[h('circle',{cx:12,cy:12,r:9,fill:'none',stroke:'currentColor',strokeWidth:2}),h('ellipse',{cx:12,cy:12,rx:3.8,ry:9,fill:'none',stroke:'currentColor',strokeWidth:2}),h('path',{d:'M3.5 9.5h17M3.5 14.5h17',stroke:'currentColor',strokeWidth:2,fill:'none'})],
+ studio:()=>[P('M12 2.5a9.5 9.5 0 1 0 0 19c1.3 0 2.2-1 2.2-2.2 0-.6-.2-1.1-.6-1.5-.3-.4-.5-.8-.5-1.3 0-1 .8-1.8 1.8-1.8H17a4.6 4.6 0 0 0 4.6-4.6C21.6 6.3 17.3 2.5 12 2.5z'+cir(7.6,11.4,1.5)+cir(10.4,7,1.5)+cir(15.4,7,1.5)+cir(18,11,1.5))],
+ settings:()=>[P('M12 5.6a6.4 6.4 0 1 0 0 12.8 6.4 6.4 0 1 0 0-12.8z'+cir(12,12,2.9)),...[0,1,2,3,4,5,6,7].map(i=>h('rect',{key:i,x:10.5,y:1.8,width:3,height:5,rx:1.2,transform:'rotate('+i*45+' 12 12)'}))]};
+const Gl=({id,size=28,color='#5d5d62'})=>h('svg',{width:size,height:size,viewBox:'0 0 24 24',fill:color,style:{color,flexShrink:0}},...(GL[id]?GL[id]():[]));
+const SQ='linear-gradient(150deg,#fdfdfd 0%,#e8e8eb 100%)';
+function StatusBar({wp}){
+  const [n,setN]=useState(new Date());
+  useEffect(()=>{const t=setInterval(()=>setN(new Date()),1000);return()=>clearInterval(t);},[]);
+  const c=wp&&wp.light?'#1a1a1a':'#fff';
+  const bat=82;
+  return h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 22px 0',flexShrink:0,userSelect:'none',color:c}},
+    h('span',{style:{fontSize:'18px',fontWeight:700,letterSpacing:'-.6px',fontVariantNumeric:'tabular-nums'}},pad(n.getHours())+':'+pad(n.getMinutes())),
     h('div',{style:{display:'flex',alignItems:'center',gap:'7px'}},
-      h('div',{style:{display:'flex',gap:'2.5px',alignItems:'center'}},
-        ...[1,1,1,1,0.3,0.3].map((o,i)=>h('div',{key:i,style:{width:'3.5px',height:'3.5px',borderRadius:'50%',background:c,opacity:o}}))
-      ),
-      h('svg',{width:16,height:12,viewBox:'0 0 16 12',fill:'none'},
-        h('path',{d:'M8 10a1 1 0 1 1 0 2 1 1 0 0 1 0-2z',fill:c}),
-        h('path',{d:'M4.9 7.5a4.5 4.5 0 0 1 6.2 0',stroke:c,strokeWidth:'1.5',strokeLinecap:'round',fill:'none'}),
-        h('path',{d:'M2 4.8a8 8 0 0 1 12 0',stroke:c,strokeWidth:'1.5',strokeLinecap:'round',fill:'none',opacity:.38})
-      ),
-      h('div',{style:{display:'flex',alignItems:'center',gap:'3px'}},
-        h('span',{style:{fontSize:'13px',fontWeight:600,opacity:.88}},battery+'%'),
-        h('div',{style:{display:'flex',alignItems:'center',gap:'1px'}},
-          h('div',{style:{width:'22px',height:'11px',border:`1.5px solid ${c}`,borderRadius:'3px',padding:'1.5px',display:'flex',alignItems:'center'}},
-            h('div',{style:{width:Math.max(3,battery*.18)+'px',height:'100%',background:battery<20?'#ff3b30':c,borderRadius:'1px'}})
-          ),
-          h('div',{style:{width:'2px',height:'5px',background:c,borderRadius:'0 1px 1px 0',opacity:.4}})
-        )
-      )
-    )
-  );
+      h('div',{style:{display:'flex',alignItems:'flex-end',gap:'1.6px'}},
+        ...[1,2,3,4].map(k=>h('div',{key:k,style:{display:'flex',flexDirection:'column-reverse',gap:'1.6px'}},
+          ...Array.from({length:k},(_,i)=>h('i',{key:i,style:{display:'block',width:'3.4px',height:'3.4px',borderRadius:'1px',background:c}}))))),
+      h('svg',{width:19,height:14,viewBox:'0 0 24 17',fill:'none'},
+        h('path',{d:'M12 14a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2z',fill:c}),
+        h('path',{d:'M6.5 9.2a7.8 7.8 0 0 1 11 0',stroke:c,strokeWidth:'2.6',strokeLinecap:'round'}),
+        h('path',{d:'M2.2 4.6a13.8 13.8 0 0 1 19.6 0',stroke:c,strokeWidth:'2.6',strokeLinecap:'round'})),
+      h('div',{style:{display:'flex',alignItems:'center'}},
+        h('div',{style:{position:'relative',width:'32px',height:'18px',borderRadius:'6px',overflow:'hidden',background:wp&&wp.light?'rgba(26,26,26,.28)':'rgba(255,255,255,.34)'}},
+          h('span',{style:{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'13px',fontWeight:800,letterSpacing:'-.3px',color:wp&&wp.light?'#fff':'#fff'}},bat),
+          h('div',{style:{position:'absolute',left:0,top:0,bottom:0,width:bat+'%',background:wp&&wp.light?'#1a1a1a':'#f4f4f4',overflow:'hidden'}},
+            h('span',{style:{position:'absolute',left:0,top:0,bottom:0,width:'32px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'13px',fontWeight:800,letterSpacing:'-.3px',color:wp&&wp.light?'#fff':'#111'}},bat))),
+        h('div',{style:{width:'2.6px',height:'6px',borderRadius:'0 2px 2px 0',background:wp&&wp.light?'rgba(26,26,26,.35)':'rgba(255,255,255,.4)',marginLeft:'1.5px'}}))));
 }
 
-function LockScreen({battery,wp,s,onUnlock}){
-  const [now,setNow]=useState(new Date());
-  const [out,setOut]=useState(false);
-  const [dy,setDy]=useState(0);
-  const sy=useRef(0);
-  useEffect(()=>{const t=setInterval(()=>setNow(new Date()),1000);return()=>clearInterval(t);},[]);
-  const days=['周日','周一','周二','周三','周四','周五','周六'];
-  const il=wp?.light;
-  const tc=il?'rgba(0,0,0,0.88)':'#fff';
-  const tc2=il?'rgba(0,0,0,0.42)':'rgba(255,255,255,0.48)';
-  const cw=s.ckW==='thin'?200:s.ckW==='medium'?400:700;
-  const csz=s.ckSz==='small'?68:s.ckSz==='medium'?80:90;
-  const doU=()=>{if(out)return;setOut(true);setTimeout(onUnlock,280);};
-  return h('div',{onClick:doU,onTouchStart:e=>{sy.current=e.touches[0].clientY;},onTouchMove:e=>{const d=sy.current-e.touches[0].clientY;if(d>0)setDy(d);},onTouchEnd:()=>{if(dy>48)doU();else setDy(0);},
-    style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',cursor:'pointer',userSelect:'none',background:wp?.css||'#0a0a0a',opacity:out?0:1,transform:out?'scale(1.02)':dy>0?`translateY(-${Math.min(dy*.25,24)}px)`:'none',transition:out?'opacity 0.28s,transform 0.28s':'transform 0.1s',fontFamily:'var(--mf)'}},
-    h('div',{style:{color:tc}},h(StatusBar,{battery,wp})),
-    h('div',{style:{flex:'0 0 32px'}}),
-    h('div',{style:{paddingLeft:'26px',marginBottom:'1px'}},h('div',{style:{fontSize:'16px',fontWeight:600,color:tc,letterSpacing:'0.1px'}},`${now.getMonth()+1}月${now.getDate()}日 ${days[now.getDay()]}`)),
-    h('div',{style:{paddingLeft:'20px'}},h('div',{style:{fontSize:csz+'px',fontWeight:cw,color:tc,lineHeight:1,letterSpacing:'-4px',fontVariantNumeric:'tabular-nums'}},`${pad(now.getHours())}:${pad(now.getMinutes())}`)),
+function LockScreen({wp,s,onUnlock}){
+  const [n,setN]=useState(new Date());
+  const [pin,setPin]=useState(''),[padOn,setPadOn]=useState(false),[shake,setShake]=useState(false),[out,setOut]=useState(false),[dy,setDy]=useState(0);
+  const g=useRef({on:false,y:0});
+  useEffect(()=>{const t=setInterval(()=>setN(new Date()),1000);return()=>clearInterval(t);},[]);
+  const wd=['周日','周一','周二','周三','周四','周五','周六'];
+  const il=wp&&wp.light;const tc=il?'rgba(0,0,0,.88)':'#fff';const tc2=il?'rgba(0,0,0,.5)':'rgba(255,255,255,.62)';
+  const cw=s.ckW==='thin'?200:s.ckW==='medium'?500:800;const csz=s.ckSz==='small'?72:s.ckSz==='medium'?90:106;
+  const lunar=(()=>{try{const p=new Intl.DateTimeFormat('zh-u-ca-chinese',{year:'numeric',month:'long',day:'numeric'}).formatToParts(n);const f=t=>(p.find(x=>x.type===t)||{}).value||'';const CN=['初一','初二','初三','初四','初五','初六','初七','初八','初九','初十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'],MN=['正','二','三','四','五','六','七','八','九','十','冬','腊'];const dm=/^\d+/.exec(f('day')),mm=/^\d+/.exec(f('month'));const dd=dm?CN[+dm[0]-1]:f('day'),mo=mm?MN[+mm[0]-1]+'月':f('month');return f('yearName')?f('yearName')+'年'+mo+dd:'';}catch(e){return '';}})();
+  const glass={background:il?'rgba(255,255,255,.45)':'rgba(255,255,255,.16)',backdropFilter:'blur(28px) saturate(170%)',WebkitBackdropFilter:'blur(28px) saturate(170%)',border:'1px solid '+(il?'rgba(255,255,255,.7)':'rgba(255,255,255,.26)'),boxShadow:'0 2px 14px rgba(0,0,0,.12)'};
+  const doUnlock=()=>{setOut(true);setTimeout(onUnlock,300);};
+  const down=e=>{if(padOn||out)return;g.current={on:true,y:e.clientY};try{e.currentTarget.setPointerCapture(e.pointerId);}catch(x){}};
+  const move=e=>{if(g.current.on)setDy(Math.max(0,g.current.y-e.clientY));};
+  const end=e=>{if(!g.current.on)return;g.current.on=false;const d=g.current.y-e.clientY;setDy(0);if(e.type==='pointerup'&&d>80){s.passOn?setPadOn(true):doUnlock();}};
+  const key=k=>{if(k==='del'){setPin(pin.slice(0,-1));return;}if(pin.length>=4)return;const np=pin+k;setPin(np);
+    if(np.length===4)setTimeout(()=>{if(np===(s.pass||'1111')){setPadOn(false);setPin('');doUnlock();}else{setShake(true);setTimeout(()=>{setShake(false);setPin('');},450);}},140);};
+  const circle=nm=>h('div',{style:{width:'50px',height:'50px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',color:tc,...glass}},h(Ic,{n:nm,size:22,sw:1.7}));
+  return h('div',{onPointerDown:down,onPointerMove:move,onPointerUp:end,onPointerCancel:end,
+    style:{position:'absolute',inset:0,zIndex:10,display:'flex',flexDirection:'column',background:(wp&&wp.css)||'#0b0b0c',touchAction:'none',overflow:'hidden',userSelect:'none',
+      opacity:out?0:1,transform:out?'translateY(-8%) scale(1.03)':dy>0?`translateY(${-dy*.55}px)`:'none',transition:out?'opacity .3s,transform .3s':dy>0?'none':'transform .25s'}},
+    h(StatusBar,{wp}),
+    h('div',{style:{textAlign:'center',color:tc,marginTop:'34px',opacity:padOn?0:1,transition:'opacity .2s'}},
+      h('div',{style:{fontSize:'17px',fontWeight:700,letterSpacing:'.2px'}},`${n.getMonth()+1}月${n.getDate()}日 ${wd[n.getDay()]}`+(lunar?' · '+lunar:'')),
+      h('div',{style:{fontSize:csz,fontWeight:cw,lineHeight:1.02,letterSpacing:'-4px',fontVariantNumeric:'tabular-nums',marginTop:'2px'}},pad(n.getHours())+':'+pad(n.getMinutes()))),
     h('div',{style:{flex:1}}),
-    h('div',{style:{display:'flex',justifyContent:'center',padding:'0 0 50px'}},
-      h('div',{style:{width:'148px',height:'44px',borderRadius:'22px',background:il?'rgba(0,0,0,0.11)':'rgba(255,255,255,0.14)',backdropFilter:'blur(32px) saturate(180%)',WebkitBackdropFilter:'blur(32px) saturate(180%)',border:`1px solid ${il?'rgba(0,0,0,0.1)':'rgba(255,255,255,0.26)'}`,display:'flex',alignItems:'center',justifyContent:'center',gap:'7px',boxShadow:'0 4px 20px rgba(0,0,0,0.12)'}},
-        h('svg',{width:13,height:13,viewBox:'0 0 14 14',fill:'none'},h('path',{d:'M7 1a3 3 0 0 1 3 3v1H4V4a3 3 0 0 1 3-3zM3 6h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm4 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2z',fill:tc,opacity:.82})),
-        h('span',{style:{fontSize:'14px',fontWeight:500,color:tc,opacity:.85,letterSpacing:'0.2px'}},'上滑解锁')
-      )
-    )
-  );
+    h('div',{style:{display:'flex',justifyContent:'space-between',padding:'0 44px 14px',opacity:padOn?0:1,transition:'opacity .2s'}},circle('torch'),circle('camera')),
+    h('div',{style:{textAlign:'center',color:tc2,fontSize:'13px',paddingBottom:'8px',opacity:padOn?0:1}},s.passOn?'向上滑动，输入密码解锁':'向上滑动解锁'),
+    h('div',{style:{display:'flex',justifyContent:'center',paddingBottom:'9px'}},h('div',{style:{width:'134px',height:'5px',borderRadius:'3px',background:tc,opacity:.85}})),
+    padOn&&h('div',{style:{position:'absolute',inset:0,background:'rgba(0,0,0,.4)',backdropFilter:'blur(30px)',WebkitBackdropFilter:'blur(30px)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'30px',color:'#fff'}},
+      h('div',{style:{fontSize:'19px',fontWeight:500}},shake?'密码错误，请重试':'输入密码'),
+      h('div',{style:{display:'flex',gap:'18px',animation:shake?'shake .42s':'none'}},...[0,1,2,3].map(i=>h('i',{key:i,style:{width:'13px',height:'13px',borderRadius:'50%',border:'1.5px solid #fff',background:i<pin.length?'#fff':'transparent',transition:'background .12s'}}))),
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(3,74px)',gap:'16px 22px'}},
+        ...['1','2','3','4','5','6','7','8','9'].map(k=>h('button',{key:k,className:'key',onClick:()=>key(k)},k)),
+        h('button',{className:'key txt',onClick:()=>{setPadOn(false);setPin('');}},'取消'),h('button',{className:'key',onClick:()=>key('0')},'0'),h('button',{className:'key txt',onClick:()=>key('del')},'删除'))));
 }
 
 function AppIcon({app,onOpen,dock,s}){
   const [pr,setPr]=useState(false);
-  const sz=dock?52:s?.iconSz==='large'?62:s?.iconSz==='small'?46:54;
-  const isz=sz*.44;
-  const go=useCallback(()=>{setPr(true);setTimeout(()=>{setPr(false);onOpen(app.id);},100);},[app.id,onOpen]);
-  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'4px',cursor:'pointer',userSelect:'none',minWidth:0},
-    onTouchStart:e=>{e.stopPropagation();setPr(true);},onTouchEnd:e=>{e.stopPropagation();go();},
-    onMouseDown:e=>{e.stopPropagation();setPr(true);},onMouseUp:e=>{e.stopPropagation();go();},onMouseLeave:()=>setPr(false)},
-    h('div',{style:{width:sz+'px',height:sz+'px',borderRadius:sz*.23+'px',background:'rgba(245,245,245,0.92)',display:'flex',alignItems:'center',justifyContent:'center',transform:pr?'scale(0.84)':'scale(1)',transition:'transform 0.1s cubic-bezier(0.34,1.8,0.64,1)',boxShadow:pr?'none':'0 1px 6px rgba(0,0,0,0.16)',flexShrink:0}},
-      h('svg',{width:isz,height:isz,viewBox:'0 0 16 16',fill:'none',stroke:'#2c2c2c',strokeWidth:'1.1',strokeLinecap:'round',strokeLinejoin:'round'},h('path',{d:app.svg}))
-    ),
-    !dock&&(s?.showLbl!==false)&&h('span',{style:{fontSize:'10px',color:'var(--text)',fontWeight:400,textAlign:'center',width:'60px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',opacity:.88,fontFamily:'var(--mf)'}},app.name)
-  );
+  const sz=dock?54:s&&s.iconSz==='large'?64:s&&s.iconSz==='small'?48:58;
+  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'5px',cursor:'pointer',userSelect:'none',minWidth:0},
+    onClick:()=>{if(DRAG.moved)return;onOpen(app.id);},
+    onPointerDown:()=>setPr(true),onPointerUp:()=>setPr(false),onPointerLeave:()=>setPr(false),onPointerCancel:()=>setPr(false)},
+    h('div',{style:{width:sz,height:sz,borderRadius:sz*.3,background:SQ,display:'flex',alignItems:'center',justifyContent:'center',
+      transform:pr?'scale(.86)':'scale(1)',transition:'transform .12s cubic-bezier(.34,1.8,.64,1)',
+      boxShadow:pr?'none':'0 1px 6px rgba(0,0,0,.18),0 4px 12px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,.9)',flexShrink:0}},
+      h(Gl,{id:app.id,size:sz*.48})),
+    !dock&&(!s||s.showLbl!==false)&&h('span',{style:{fontSize:'10.5px',color:'var(--text)',fontWeight:500,textAlign:'center',width:'62px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',opacity:.9}},app.name));
 }
 
 function Widget(){
-  const [now,setNow]=useState(new Date());
-  useEffect(()=>{const t=setInterval(()=>setNow(new Date()),30000);return()=>clearInterval(t);},[]);
-  const days=['日','一','二','三','四','五','六'];
-  return h('div',{style:{gridColumn:'span 4',background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'18px',padding:'14px 16px',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'4px'}},
+  const [n,setN]=useState(new Date());
+  useEffect(()=>{const t=setInterval(()=>setN(new Date()),60000);return()=>clearInterval(t);},[]);
+  const wd=['日','一','二','三','四','五','六'];
+  return h('div',{style:{background:'rgba(255,255,255,.08)',border:'1px solid rgba(255,255,255,.1)',borderRadius:'20px',padding:'14px 18px',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)',display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'14px'}},
     h('div',null,
-      h('div',{style:{fontSize:'11px',color:'var(--text3)',marginBottom:'3px',fontFamily:'var(--mf)'}},'今天'),
-      h('div',{style:{fontSize:'28px',fontWeight:700,color:'var(--text)',letterSpacing:'-1px',lineHeight:1,fontFamily:'var(--mf)'}},now.getDate()),
-      h('div',{style:{fontSize:'12px',color:'var(--text2)',marginTop:'2px',fontFamily:'var(--mf)'}},`周${days[now.getDay()]}`)
-    ),
+      h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'.3px'}},'今天'),
+      h('div',{style:{fontSize:'38px',fontWeight:700,color:'var(--text)',letterSpacing:'-1.5px',lineHeight:1.1,fontVariantNumeric:'tabular-nums'}},n.getDate()),
+      h('div',{style:{fontSize:'13px',color:'var(--text2)',marginTop:'1px'}},`星期${wd[n.getDay()]}`)),
     h('div',{style:{textAlign:'right'}},
-      h('div',{style:{fontSize:'13px',fontWeight:600,color:'var(--text)',fontFamily:'var(--mf)'}},'萌萌机'),
-      h('div',{style:{fontSize:'11px',color:'var(--text3)',marginTop:'3px',fontFamily:'var(--mf)'}},'V0.1 · 开发中'),
-      h('div',{style:{fontSize:'11px',color:'var(--text3)',marginTop:'2px',fontFamily:'var(--mf)'}},'更多功能即将上线')
-    )
-  );
+      h('div',{style:{fontSize:'14px',fontWeight:600,color:'var(--text)'}},'萌萌机'),
+      h('div',{style:{fontSize:'11px',color:'var(--text3)',marginTop:'3px'}},'V0.1 · 开发中'),
+      h('div',{style:{fontSize:'11px',color:'var(--text3)',marginTop:'2px'}},'更多功能即将上线')));
 }
 
 function HomeGrid({onOpen,s}){
-  const pages=[P1,P2];
-  const [pg,setPg]=useState(0);
-  const [dx,setDx]=useState(0);
-  const [drag,setDrag]=useState(false);
-  const sx=useRef(0),sy=useRef(0),lk=useRef(null);
-  const W=useRef(Math.min(window.innerWidth,390));
-  const go=p=>{setPg(Math.max(0,Math.min(1,p)));setDx(0);setDrag(false);};
-  const onTS=useCallback(e=>{sx.current=e.touches[0].clientX;sy.current=e.touches[0].clientY;lk.current=null;setDrag(true);},[]);
-  const onTM=useCallback(e=>{
-    if(!drag)return;
-    const ddx=e.touches[0].clientX-sx.current,da=Math.abs(ddx),db=Math.abs(e.touches[0].clientY-sy.current);
-    if(!lk.current){if(da>5||db>5)lk.current=da>db?'h':'v';}
-    if(lk.current==='h'){e.preventDefault();let c=ddx;if(pg===0&&ddx>0)c=ddx*.12;if(pg===1&&ddx<0)c=ddx*.12;setDx(c);}
-  },[drag,pg]);
-  const onTE=useCallback(()=>{
-    if(lk.current==='h'){if(dx<-50)go(pg+1);else if(dx>50)go(pg-1);else{setDx(0);setDrag(false);}}
-    else{setDx(0);setDrag(false);}lk.current=null;
-  },[dx,pg]);
-  return h('div',{style:{flex:1,overflow:'hidden',position:'relative',touchAction:'pan-y'},onTouchStart:onTS,onTouchMove:onTM,onTouchEnd:onTE},
-    h('div',{style:{display:'flex',width:'200%',height:'100%',transform:`translateX(${(-pg*W.current)+dx}px)`,transition:!drag?'transform 0.26s cubic-bezier(0.25,0.46,0.45,0.94)':'none',willChange:'transform'}},
-      h('div',{style:{width:W.current+'px',flexShrink:0,display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'18px 4px',padding:'14px 12px 8px',alignContent:'start'}},
-        ...P1.map(app=>h('div',{key:app.id,style:{display:'flex',justifyContent:'center'}},h(AppIcon,{app,onOpen,s})))
-      ),
-      h('div',{style:{width:W.current+'px',flexShrink:0,padding:'14px 12px 8px',display:'flex',flexDirection:'column',gap:'0'}},
-        h(Widget),
-        h('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'18px 4px'}},
-          ...P2.map(app=>h('div',{key:app.id,style:{display:'flex',justifyContent:'center'}},h(AppIcon,{app,onOpen,s})))
-        )
-      )
-    ),
+  const [pg,setPg]=useState(0),[dx,setDx]=useState(0),[drag,setDrag]=useState(false);
+  const r=useRef({id:null,x:0,y:0,lk:null,dx:0});
+  const down=e=>{r.current={id:e.pointerId,x:e.clientX,y:e.clientY,lk:null,dx:0};DRAG.moved=false;};
+  const move=e=>{const c=r.current;if(c.id!==e.pointerId)return;const ddx=e.clientX-c.x,ddy=e.clientY-c.y;
+    if(!c.lk&&(Math.abs(ddx)>6||Math.abs(ddy)>6)){c.lk=Math.abs(ddx)>Math.abs(ddy)?'h':'v';if(c.lk==='h'){setDrag(true);DRAG.moved=true;try{e.currentTarget.setPointerCapture(e.pointerId);}catch(x){}}}
+    if(c.lk==='h'){let v=ddx;if(pg===0&&v>0)v*=.15;if(pg===1&&v<0)v*=.15;c.dx=v;setDx(v);}};
+  const up=e=>{const c=r.current;if(c.id!==e.pointerId)return;const was=c.lk==='h',v=c.dx;r.current={id:null,x:0,y:0,lk:null,dx:0};setDrag(false);setDx(0);
+    if(was){if(v<-50)setPg(1);else if(v>50)setPg(0);setTimeout(()=>{DRAG.moved=false;},80);}};
+  return h('div',{style:{flex:1,overflow:'hidden',position:'relative',touchAction:'pan-y'},onPointerDown:down,onPointerMove:move,onPointerUp:up,onPointerCancel:up},
+    h('div',{style:{display:'flex',width:'200%',height:'100%',transform:`translateX(calc(${-pg*50}% + ${dx}px))`,transition:drag?'none':'transform .28s cubic-bezier(.22,.8,.3,1)',willChange:'transform'}},
+      h('div',{style:{width:'50%',flexShrink:0,display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'22px 4px',padding:'18px 12px 8px',alignContent:'start'}},
+        ...GRID.map(a=>h('div',{key:a.id,style:{display:'flex',justifyContent:'center'}},h(AppIcon,{app:a,onOpen,s})))),
+      h('div',{style:{width:'50%',flexShrink:0,padding:'18px 16px 8px',overflowY:'auto'}},h(Widget))),
     h('div',{style:{position:'absolute',bottom:'10px',left:0,right:0,display:'flex',justifyContent:'center',gap:'5px',pointerEvents:'none'}},
-      ...[0,1].map(i=>h('div',{key:i,style:{width:i===pg?'16px':'5px',height:'5px',borderRadius:'3px',background:i===pg?'var(--text)':'var(--text3)',transition:'width 0.2s'}}))
-    )
-  );
+      ...[0,1].map(i=>h('div',{key:i,style:{width:i===pg?'16px':'5px',height:'5px',borderRadius:'3px',background:i===pg?'var(--text)':'var(--text3)',transition:'width .2s'}}))));
 }
 
 function Dock({onOpen,s}){
   const apps=DOCK_IDS.map(id=>APPS.find(a=>a.id===id)).filter(Boolean);
   const bg=s.dockSt==='solid'?'var(--bg2)':s.dockSt==='none'?'transparent':'var(--dock)';
-  const bf=s.dockSt==='glass'?'blur(28px)':'none';
-  return h('div',{style:{padding:'0 14px 14px',flexShrink:0}},
-    h('div',{style:{background:bg,backdropFilter:bf,WebkitBackdropFilter:bf,borderRadius:'26px',border:s.dockSt==='none'?'none':'1px solid var(--border2)',padding:'10px 10px',display:'flex',justifyContent:'space-around',alignItems:'center'}},
-      ...apps.map(a=>h(AppIcon,{key:a.id,app:a,onOpen,dock:true,s}))
-    )
-  );
+  const bf=s.dockSt==='glass'?'blur(28px) saturate(160%)':'none';
+  return h('div',{style:{padding:'0 16px 16px',flexShrink:0}},
+    h('div',{style:{background:bg,backdropFilter:bf,WebkitBackdropFilter:bf,borderRadius:'32px',border:s.dockSt==='none'?'none':'1px solid var(--border2)',padding:'12px',display:'flex',justifyContent:'space-around',alignItems:'center'}},
+      ...apps.map(a=>h(AppIcon,{key:a.id,app:a,onOpen,dock:true,s}))));
 }
 
-function HomeScreen({battery,onOpen,visible,wp,s}){
-  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',opacity:visible?1:0,transform:visible?'scale(1)':'scale(1.04)',transition:'opacity 0.26s,transform 0.26s',pointerEvents:visible?'auto':'none',background:wp?.css||'var(--bg)'}},
-    h(StatusBar,{battery,wp}),
-    h(HomeGrid,{onOpen,s}),
-    h(Dock,{onOpen,s})
-  );
+function HomeScreen({onOpen,visible,wp,s}){
+  const il=wp&&wp.light;
+  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',opacity:visible?1:0,transform:visible?'scale(1)':'scale(1.04)',transition:'opacity .26s,transform .26s',pointerEvents:visible?'auto':'none',background:(wp&&wp.css)||'var(--bg)',
+      '--text':il?'#1a1a1c':'#f4f4f6','--text2':il?'rgba(0,0,0,.55)':'rgba(255,255,255,.62)','--text3':il?'rgba(0,0,0,.32)':'rgba(255,255,255,.38)'}},
+    h(StatusBar,{wp}),h(HomeGrid,{onOpen,s}),h(Dock,{onOpen,s}));
 }
 
-function Toggle({v,on}){
-  return h('div',{onClick:()=>on(!v),style:{width:'44px',height:'24px',borderRadius:'12px',background:v?'var(--toggle)':'var(--card2)',border:'1px solid var(--border2)',position:'relative',cursor:'pointer',transition:'background 0.2s',flexShrink:0}},
-    h('div',{style:{position:'absolute',top:'2px',left:v?'20px':'2px',width:'18px',height:'18px',borderRadius:'50%',background:'var(--text)',boxShadow:'0 1px 3px rgba(0,0,0,0.3)',transition:'left 0.18s cubic-bezier(0.34,1.3,0.64,1)'}})
-  );
-}
-
-function SRow({icon,color,label,value,onPress,toggle,tv,onT,last,ch=true}){
-  return h('div',{onClick:toggle?undefined:onPress,style:{display:'flex',alignItems:'center',padding:'11px 16px',gap:'11px',borderBottom:last?'none':'1px solid var(--div)',cursor:toggle?'default':'pointer',fontFamily:'var(--mf)'}},
-    icon&&h('div',{style:{width:'28px',height:'28px',borderRadius:'7px',background:color||'var(--card2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'14px',flexShrink:0}},icon),
-    h('span',{style:{flex:1,fontSize:'15px',color:'var(--text)',fontWeight:400}},label),
-    toggle?h(Toggle,{v:tv,on:onT}):h('div',{style:{display:'flex',alignItems:'center',gap:'4px'}},
-      value&&h('span',{style:{fontSize:'13px',color:'var(--text3)'}},value),
-      ch&&h('svg',{width:6,height:11,viewBox:'0 0 7 12',fill:'none'},h('path',{d:'M1 1l5 5-5 5',stroke:'var(--text3)',strokeWidth:'1.6',strokeLinecap:'round',strokeLinejoin:'round'}))
-    )
-  );
-}
-
-function SubHdr({title,onBack}){
-  return h('div',{style:{display:'flex',alignItems:'center',padding:'10px 16px',borderBottom:'1px solid var(--div)',flexShrink:0,background:'var(--hbg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',fontFamily:'var(--mf)'}},
-    h('button',{onClick:onBack,style:{background:'none',border:'none',color:'var(--text2)',fontSize:'15px',cursor:'pointer',padding:'4px 12px 4px 0',display:'flex',alignItems:'center',gap:'5px',fontFamily:'var(--mf)'}},
-      h('svg',{width:8,height:13,viewBox:'0 0 8 13',fill:'none'},h('path',{d:'M7 1L1 6.5L7 12',stroke:'var(--text2)',strokeWidth:'1.7',strokeLinecap:'round',strokeLinejoin:'round'})),'返回'),
-    h('span',{style:{fontSize:'16px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.2px'}},title)
-  );
-}
-function Sc({children,style}){return h('div',{style:{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'14px',overflow:'hidden',...style}},children);}
-function Sec({title,children}){return h('div',{style:{marginBottom:'6px'}},title&&h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'0.6px',padding:'10px 4px 5px',fontFamily:'var(--mf)'}},title.toUpperCase()),h(Sc,null,children));}
-function Seg({opts,val,onV}){
-  return h('div',{style:{display:'flex',background:'var(--card2)',borderRadius:'9px',padding:'2px',gap:'2px'}},
-    ...opts.map(o=>h('div',{key:o.id,onClick:()=>onV(o.id),style:{flex:1,textAlign:'center',padding:'6px 0',borderRadius:'7px',background:val===o.id?'var(--bg2)':'transparent',fontSize:'13px',color:val===o.id?'var(--text)':'var(--text3)',fontWeight:val===o.id?600:400,cursor:'pointer',transition:'background 0.15s',fontFamily:'var(--mf)'}},o.l))
-  );
+const Tog=({v,on})=>h('div',{onClick:()=>on(!v),style:{width:'46px',height:'26px',borderRadius:'13px',background:v?'var(--tog)':'var(--card2)',border:'1px solid var(--border2)',position:'relative',cursor:'pointer',transition:'background .2s',flexShrink:0}},
+  h('div',{style:{position:'absolute',top:'3px',left:v?'21px':'3px',width:'20px',height:'20px',borderRadius:'50%',background:'var(--text)',boxShadow:'0 1px 4px rgba(0,0,0,.3)',transition:'left .18s cubic-bezier(.34,1.3,.64,1)'}}));
+const SRow=({icon,color,label,value,onPress,toggle,tv,onT,last,ch=true,danger,sub})=>
+  h('div',{onClick:toggle?undefined:onPress,style:{display:'flex',alignItems:'center',padding:'12px 16px',gap:'12px',borderBottom:last?'none':'1px solid var(--div)',cursor:toggle?'default':'pointer'}},
+    icon&&h('div',{style:{width:'30px',height:'30px',borderRadius:'8px',background:color||'var(--card2)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,color:'#fff'}},icon),
+    h('div',{style:{flex:1,minWidth:0}},
+      h('div',{style:{fontSize:'15px',color:danger?'#ff453a':'var(--text)',fontWeight:400}},label),
+      sub&&h('div',{style:{fontSize:'12px',color:'var(--text3)',marginTop:'2px'}},sub)),
+    toggle?h(Tog,{v:tv,on:onT}):h('div',{style:{display:'flex',alignItems:'center',gap:'4px'}},
+      value&&h('span',{style:{fontSize:'13px',color:'var(--text3)',flexShrink:0}},value),
+      ch&&!danger&&h(Ic,{n:'back',size:16,sw:2,style:{color:'var(--text3)',transform:'rotate(180deg)'}})));
+const BH=({title,onBack,right})=>h('div',{style:{display:'flex',alignItems:'center',padding:'10px 16px',borderBottom:'1px solid var(--div)',flexShrink:0,background:'var(--hbg)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)'}},
+  h('button',{onClick:onBack,style:{background:'none',border:'none',color:'var(--text2)',cursor:'pointer',padding:'4px 12px 4px 0',display:'flex',alignItems:'center',gap:'4px',fontSize:'15px'}},h(Ic,{n:'back',size:18,sw:2}),'返回'),
+  h('span',{style:{flex:1,fontSize:'16px',fontWeight:600,color:'var(--text)',letterSpacing:'-.2px'}},title),
+  right||null);
+const Card=({children,style:st})=>h('div',{style:{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'14px',overflow:'hidden',...st}},children);
+const Sec=({title,children})=>h('div',{style:{marginBottom:'6px'}},
+  title&&h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'.6px',padding:'10px 4px 5px'}},title.toUpperCase()),
+  h(Card,null,children));
+const Seg=({opts,val,onV})=>h('div',{style:{display:'flex',background:'var(--card2)',borderRadius:'9px',padding:'2px',gap:'2px'}},
+  ...opts.map(o=>h('div',{key:o.id,onClick:()=>onV(o.id),style:{flex:1,textAlign:'center',padding:'7px 0',borderRadius:'7px',background:val===o.id?'var(--bg2)':'transparent',fontSize:'13px',color:val===o.id?'var(--text)':'var(--text3)',fontWeight:val===o.id?600:400,cursor:'pointer',transition:'background .15s'}},o.l)));
+const Av=({val,size=44,round=50,onClick})=>h('div',{onClick,style:{width:size,height:size,borderRadius:`${round}%`,background:'var(--card2)',border:'1px solid var(--border2)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,cursor:onClick?'pointer':'default',overflow:'hidden'}},
+  val&&(val.startsWith('data:')||val.startsWith('http'))?h('img',{src:val,style:{width:'100%',height:'100%',objectFit:'cover'}}):h(Ic,{n:'profile',size:size*.5,sw:1.6,style:{color:'var(--text3)'}}));
+function ChatMenu({contact,cs,onUpdate,onClose,onDel,onBlock}){
+  const [tab,setTab]=useState('bg');const [cf,setCf]=useState(false);
+  const tabs=[{id:'bg',l:'背景'},{id:'bubble',l:'气泡'},{id:'avatar',l:'头像'},{id:'more',l:'更多'}];
+  const upd=patch=>onUpdate({...cs,...patch});
+  const ar=cs.avatarRound==null?50:cs.avatarRound;
+  const btn=(t,f)=>h('div',{onClick:f,style:{fontSize:'12px',color:'var(--text2)',cursor:'pointer',padding:'4px 10px',borderRadius:'8px',border:'1px solid var(--border2)'}},t);
+  return h('div',{style:{position:'absolute',inset:0,zIndex:60,display:'flex',flexDirection:'column'}},
+    h('div',{onClick:onClose,style:{flex:'0 0 60px',background:'rgba(0,0,0,.4)'}}),
+    h('div',{style:{flex:1,background:'var(--bg)',borderRadius:'22px 22px 0 0',display:'flex',flexDirection:'column',overflow:'hidden'}},
+      h('div',{style:{padding:'12px 16px 0',borderBottom:'1px solid var(--div)',flexShrink:0}},
+        h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'10px'}},
+          h('span',{style:{fontSize:'16px',fontWeight:600,color:'var(--text)'}},'聊天设置'),
+          h('button',{onClick:onClose,style:{background:'var(--card2)',border:'none',borderRadius:'50%',width:'28px',height:'28px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'var(--text2)'}},h(Ic,{n:'close',size:14,sw:2}))),
+        h('div',{style:{display:'flex',gap:'4px',paddingBottom:'10px'}},
+          ...tabs.map(t=>h('div',{key:t.id,onClick:()=>setTab(t.id),style:{flex:1,textAlign:'center',padding:'7px 0',borderRadius:'8px',background:tab===t.id?'var(--card2)':'transparent',fontSize:'13px',color:tab===t.id?'var(--text)':'var(--text3)',fontWeight:tab===t.id?600:400,cursor:'pointer'}},t.l)))),
+      h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px 20px'}},
+        tab==='bg'&&h('div',{style:{display:'flex',flexDirection:'column',gap:'10px'}},
+          cs.chatBg&&h('div',{style:{height:'80px',borderRadius:'12px',background:`url(${cs.chatBg}) center/cover`,border:'1px solid var(--border2)'}}),
+          h('div',{style:{display:'flex',gap:'8px'}},
+            h('div',{onClick:()=>pick(1200,({url})=>upd({chatBg:url})),style:{flex:1,padding:'10px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px'}},cs.chatBg?'更换背景':'选取背景图'),
+            cs.chatBg&&h('div',{onClick:()=>upd({chatBg:null}),style:{padding:'10px 14px',borderRadius:'10px',border:'1.5px solid var(--border2)',cursor:'pointer',color:'var(--text3)',fontSize:'14px'}},'移除'))),
+        tab==='bubble'&&h('div',{style:{display:'flex',flexDirection:'column',gap:'12px'}},
+          h('div',null,
+            h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px'}},'自定义气泡 CSS（类名 .bubble-me / .bubble-them）'),
+            h('textarea',{value:cs.bubbleCSS||'',onChange:e=>upd({bubbleCSS:e.target.value}),placeholder:'.bubble-me { background:#1d1d20; border-radius:18px 18px 4px 18px }\n.bubble-them { background:rgba(255,255,255,.1) }',rows:5,style:{width:'100%',background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'10px',padding:'10px 12px',color:'var(--text)',fontSize:'13px',outline:'none',fontFamily:'monospace',lineHeight:1.5,resize:'vertical'}})),
+          h(Card,null,
+            h(SRow,{label:'气泡磨砂效果',toggle:true,tv:cs.bubbleFrost,onT:v=>upd({bubbleFrost:v})}),
+            h(SRow,{label:'显示消息时间',toggle:true,tv:cs.showTime!==false,onT:v=>upd({showTime:v}),last:true}))),
+        tab==='avatar'&&h('div',{style:{display:'flex',flexDirection:'column',gap:'16px'}},
+          h('div',{style:{display:'flex',gap:'28px',alignItems:'flex-start'}},
+            h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'8px'}},h(Av,{val:cs.myAvatar,size:60,round:ar}),h('div',{style:{fontSize:'12px',color:'var(--text3)'}},'我'),btn('更换',()=>pick(400,({url})=>upd({myAvatar:url})))),
+            h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'8px'}},h(Av,{val:cs.theirAvatar||contact.avatar,size:60,round:ar}),h('div',{style:{fontSize:'12px',color:'var(--text3)'}},'对方'),btn('更换',()=>pick(400,({url})=>upd({theirAvatar:url}))))),
+          h('div',null,
+            h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px'}},'头像圆角'),
+            h('input',{type:'range',min:0,max:50,value:ar,onChange:e=>upd({avatarRound:+e.target.value}),style:{width:'100%',accentColor:'var(--text)'}}),
+            h('div',{style:{fontSize:'12px',color:'var(--text3)',marginTop:'3px'}},`${ar}% · ${ar>=45?'圆形':ar>=20?'圆角':'方形'}`))),
+        tab==='more'&&h('div',{style:{display:'flex',flexDirection:'column',gap:'8px'}},
+          h('div',{style:{fontSize:'12px',color:'var(--text3)',lineHeight:1.6,padding:'0 4px 4px'}},'以下两个开关目前只保存设置，主动发消息、发朋友圈需要后续版本接入 API 后才会生效。'),
+          h(Card,null,
+            h(SRow,{label:'允许角色主动发消息',toggle:true,tv:cs.allowPush,onT:v=>upd({allowPush:v})}),
+            h(SRow,{label:'允许角色发朋友圈',toggle:true,tv:cs.allowMoments,onT:v=>upd({allowMoments:v}),last:true})),
+          h(Card,null,h(SRow,{label:contact.blocked?'解除拉黑':'拉黑好友',danger:!contact.blocked,ch:false,onPress:onBlock,last:true})),
+          h(Card,null,h(SRow,{label:cf?'再点一次确认删除':'删除好友',danger:true,ch:false,onPress:()=>{if(cf)onDel();else setCf(true);},last:true}))))));
 }
 
 function ChatWin({contact,s,onUpdate,onBack}){
-  const msgs=(s.chats&&s.chats[contact.id])||[];
+  const cs=((s.chatSettings||{})[contact.id])||{};
+  const msgs=(s.chats||{})[contact.id]||[];
   const [input,setInput]=useState('');
   const [tools,setTools]=useState(false);
+  const [menu,setMenu]=useState(false);
+  const [thinking,setThinking]=useState(false);
   const bottomRef=useRef();
-  useEffect(()=>{bottomRef.current?.scrollIntoView({behavior:'smooth'});},[msgs]);
-  const send=()=>{
-    const t=input.trim();if(!t)return;
-    const now=new Date();
-    const m={id:Date.now(),me:true,text:t,time:`${pad(now.getHours())}:${pad(now.getMinutes())}`};
-    onUpdate({chats:{...s.chats,[contact.id]:[...msgs,m]}});
-    setInput('');
+  useEffect(()=>{if(bottomRef.current&&bottomRef.current.scrollIntoView)bottomRef.current.scrollIntoView({behavior:'smooth'});},[msgs.length,thinking]);
+  const updCS=patch=>onUpdate(p=>({chatSettings:{...(p.chatSettings||{}),[contact.id]:patch}}));
+  const addMsg=m=>onUpdate(p=>({chats:{...(p.chats||{}),[contact.id]:[...((p.chats||{})[contact.id]||[]),m]}}));
+  const send=async()=>{
+    const t=input.trim();if(!t||thinking)return;
+    const me={id:Date.now(),me:true,text:t,time:ft(new Date())};
+    addMsg(me);setInput('');
+    const api=(s.apis||[]).find(a=>a.id===s.defaultApi)||(s.apis||[])[0];
+    if(!api){addMsg({id:Date.now()+1,me:false,sys:true,text:'[提示] 还没有配置 AI API，对方不会回复。到 设置 > AI API 添加后即可聊天。',time:ft(new Date())});return;}
+    setThinking(true);
+    try{const reply=await callAI(api,contact.persona||contact.bio||'',[...msgs,me].filter(m=>!m.sys));addMsg({id:Date.now()+2,me:false,text:reply,time:ft(new Date())});}
+    catch(e){addMsg({id:Date.now()+2,me:false,sys:true,text:'[错误] '+e.message,time:ft(new Date())});}
+    setThinking(false);
   };
-  const frost=s.bubbleFrost;
-  const ar=s.avatarRound??50;
-  const TOOLS=[{icon:'📷',label:'相机'},{icon:'🖼️',label:'图片'},{icon:'🎵',label:'音频'},{icon:'📂',label:'文件'},{icon:'📍',label:'位置'},{icon:'💰',label:'转账'}];
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',fontFamily:'var(--mf)',background:s.chatBg?`url(${s.chatBg}) center/cover`:'var(--bg)'}},
+  const del=()=>{onUpdate(p=>{const ch={...(p.chats||{})};delete ch[contact.id];return{contacts:(p.contacts||[]).filter(c=>c.id!==contact.id),chats:ch};});onBack();};
+  const block=()=>{onUpdate(p=>({contacts:(p.contacts||[]).map(c=>c.id===contact.id?{...c,blocked:!c.blocked}:c)}));setMenu(false);};
+  const ar=cs.avatarRound==null?50:cs.avatarRound;
+  const myAv=cs.myAvatar||s.myAvatar||null,theirAv=cs.theirAvatar||contact.avatar||null;
+  const TOOLS=[{n:'camera',l:'相机'},{n:'image',l:'图片'},{n:'moments',l:'朋友圈'},{n:'wallet',l:'红包'},{n:'file',l:'文件'},{n:'bell',l:'提醒'}];
+  return h('div',{className:cs.bubbleFrost?'frost':'',style:{display:'flex',flexDirection:'column',height:'100%',background:cs.chatBg?`url(${cs.chatBg}) center/cover`:'var(--bg)',position:'relative'}},
+    cs.bubbleCSS&&h('style',null,cs.bubbleCSS),
     h('div',{style:{display:'flex',alignItems:'center',padding:'10px 14px',gap:'10px',flexShrink:0,background:'var(--hbg)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderBottom:'1px solid var(--div)'}},
-      h('button',{onClick:onBack,style:{background:'none',border:'none',color:'var(--text2)',cursor:'pointer',padding:'4px',display:'flex',alignItems:'center',gap:'4px',fontSize:'15px',fontFamily:'var(--mf)'}},
-        h('svg',{width:8,height:13,viewBox:'0 0 8 13',fill:'none'},h('path',{d:'M7 1L1 6.5L7 12',stroke:'var(--text2)',strokeWidth:'1.7',strokeLinecap:'round',strokeLinejoin:'round'})),'消息'),
-      h('div',{style:{width:'32px',height:'32px',borderRadius:ar+'%',background:'var(--card2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'17px',flexShrink:0}},contact.avatar||'👤'),
-      h('div',{style:{flex:1}},
-        h('div',{style:{fontSize:'15px',fontWeight:600,color:'var(--text)'}},contact.name),
-        contact.online&&h('div',{style:{fontSize:'11px',color:'#34c759',marginTop:'1px'}},'在线')
-      )
-    ),
-    h('div',{style:{flex:1,overflowY:'auto',padding:'10px 14px',display:'flex',flexDirection:'column',gap:'8px'}},
+      h('button',{onClick:onBack,style:{background:'none',border:'none',color:'var(--text2)',cursor:'pointer',padding:'4px',display:'flex',alignItems:'center',gap:'4px',fontSize:'15px'}},h(Ic,{n:'back',size:18,sw:2}),'消息'),
+      h(Av,{val:theirAv,size:34,round:ar}),
+      h('div',{style:{flex:1}},h('div',{style:{fontSize:'15px',fontWeight:600,color:'var(--text)'}},contact.name),contact.online&&!contact.blocked&&h('div',{style:{fontSize:'11px',color:'#34c759',marginTop:'1px'}},'在线')),
+      h('button',{onClick:()=>setMenu(true),style:{background:'none',border:'none',color:'var(--text2)',cursor:'pointer',padding:'4px',display:'flex'}},h(Ic,{n:'menu',size:20,sw:2}))),
+    contact.blocked&&h('div',{style:{background:'rgba(255,59,48,.1)',borderBottom:'1px solid rgba(255,59,48,.2)',padding:'8px 16px',textAlign:'center',fontSize:'13px',color:'#ff453a',flexShrink:0}},'已拉黑此联系人'),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'10px 14px',display:'flex',flexDirection:'column',gap:'10px'}},
       msgs.length===0&&h('div',{style:{textAlign:'center',color:'var(--text3)',fontSize:'13px',marginTop:'40px'}},'发消息开始聊天'),
-      ...msgs.map(m=>h('div',{key:m.id,style:{display:'flex',flexDirection:'column',alignItems:m.me?'flex-end':'flex-start',gap:'2px'}},
-        h('div',{style:{display:'flex',alignItems:'flex-end',gap:'6px',flexDirection:m.me?'row-reverse':'row'}},
-          !m.me&&h('div',{style:{width:'30px',height:'30px',borderRadius:ar+'%',background:'var(--card2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'15px',flexShrink:0}},contact.avatar||'👤'),
-          h('div',{style:{maxWidth:'70%',padding:'9px 13px',borderRadius:m.me?'18px 18px 4px 18px':'18px 18px 18px 4px',background:m.me?'#1c1c1e':frost?'rgba(255,255,255,0.12)':'var(--bthem)',color:m.me?'#fff':'var(--text)',fontSize:'15px',lineHeight:1.45,boxShadow:'0 1px 3px var(--shad)',border:m.me?'none':'1px solid var(--border)',backdropFilter:frost?'blur(12px)':'none',WebkitBackdropFilter:frost?'blur(12px)':'none'}},m.text)
-        ),
-        s.showTime!==false&&h('div',{style:{fontSize:'10px',color:'var(--text3)',paddingInline:'36px'}},m.time)
-      )),
-      h('div',{ref:bottomRef})
-    ),
-    tools&&h('div',{style:{background:'var(--hbg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',borderTop:'1px solid var(--div)',padding:'14px 20px',display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'12px',flexShrink:0}},
-      ...TOOLS.map(t=>h('div',{key:t.label,style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'5px',cursor:'pointer'}},
-        h('div',{style:{width:'44px',height:'44px',borderRadius:'14px',background:'var(--card2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'20px'}},t.icon),
-        h('span',{style:{fontSize:'10px',color:'var(--text3)',fontFamily:'var(--mf)'}},t.label)
-      ))
-    ),
-    h('div',{style:{padding:'8px 12px 20px',borderTop:'1px solid var(--div)',background:'var(--hbg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',display:'flex',gap:'8px',alignItems:'flex-end',flexShrink:0}},
-      h('button',{onClick:()=>setTools(v=>!v),style:{width:'34px',height:'34px',borderRadius:'50%',border:'none',background:'var(--card2)',color:'var(--text3)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,fontSize:'20px',lineHeight:1}},tools?'✕':'+'),
-      h('div',{style:{flex:1,background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'20px',padding:'7px 14px',display:'flex',alignItems:'center'}},
-        h('input',{value:input,onChange:e=>setInput(e.target.value),onKeyDown:e=>{if(e.key==='Enter')send();},placeholder:'发消息...',style:{background:'transparent',border:'none',outline:'none',width:'100%',color:'var(--text)',fontSize:'15px',fontFamily:'var(--mf)'}})
-      ),
-      h('button',{onClick:send,style:{width:'34px',height:'34px',borderRadius:'50%',border:'none',background:input.trim()?'var(--text)':'var(--card2)',color:input.trim()?'var(--bg)':'var(--text3)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,transition:'background 0.15s,color 0.15s'}},
-        h('svg',{width:14,height:14,viewBox:'0 0 14 14',fill:'none'},h('path',{d:'M7 12V2M7 2L2 7M7 2l5 5',stroke:'currentColor',strokeWidth:'1.8',strokeLinecap:'round',strokeLinejoin:'round'}))
-      )
-    )
-  );
+      ...msgs.map(m=>m.sys?h('div',{key:m.id,style:{textAlign:'center',fontSize:'12px',color:'var(--text3)',padding:'4px 20px',lineHeight:1.5}},m.text):h('div',{key:m.id,style:{display:'flex',flexDirection:'column',alignItems:m.me?'flex-end':'flex-start',gap:'2px'}},
+        h('div',{style:{display:'flex',alignItems:'flex-end',gap:'7px',flexDirection:m.me?'row-reverse':'row'}},
+          h(Av,{val:m.me?myAv:theirAv,size:30,round:ar}),
+          h('div',{className:'bubble '+(m.me?'bubble-me':'bubble-them')},m.text)),
+        cs.showTime!==false&&h('div',{style:{fontSize:'10px',color:'var(--text3)',paddingInline:'37px'}},m.time))),
+      thinking&&h('div',{style:{display:'flex',alignItems:'flex-end',gap:'7px'}},h(Av,{val:theirAv,size:30,round:ar}),h('div',{className:'bubble bubble-them'},h('div',{className:'dots'},h('i'),h('i'),h('i')))),
+      h('div',{ref:bottomRef})),
+    !contact.blocked&&h('div',null,
+      tools&&h('div',{style:{background:'var(--hbg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',borderTop:'1px solid var(--div)',padding:'14px 20px',display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'14px',flexShrink:0}},
+        ...TOOLS.map(t=>h('div',{key:t.l,style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'5px'}},
+          h('div',{style:{width:'46px',height:'46px',borderRadius:'14px',background:'var(--card2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--text2)'}},h(Ic,{n:t.n,size:22,sw:1.6})),
+          h('span',{style:{fontSize:'10px',color:'var(--text3)'}},t.l+'（待做）')))),
+      h('div',{style:{padding:'8px 12px 20px',borderTop:'1px solid var(--div)',background:'var(--hbg)',backdropFilter:'blur(16px)',WebkitBackdropFilter:'blur(16px)',display:'flex',gap:'8px',alignItems:'flex-end',flexShrink:0}},
+        h('button',{onClick:()=>setTools(v=>!v),style:{width:'36px',height:'36px',borderRadius:'50%',border:'none',background:'var(--card2)',color:'var(--text3)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0}},h(Ic,{n:tools?'close':'plus',size:18,sw:2})),
+        h('div',{style:{flex:1,background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'22px',padding:'8px 16px',display:'flex',alignItems:'center'}},
+          h('input',{value:input,onChange:e=>setInput(e.target.value),onKeyDown:e=>{if(e.key==='Enter'){e.preventDefault();send();}},placeholder:'发消息...',style:{background:'transparent',border:'none',outline:'none',width:'100%',color:'var(--text)',fontSize:'15px'}})),
+        h('button',{onClick:send,style:{width:'36px',height:'36px',borderRadius:'50%',border:'none',background:input.trim()&&!thinking?'var(--text)':'var(--card2)',color:input.trim()&&!thinking?'var(--bg)':'var(--text3)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,transition:'background .15s,color .15s'}},h(Ic,{n:'send',size:16,sw:2})))),
+    menu&&h(ChatMenu,{contact,cs,onUpdate:updCS,onClose:()=>setMenu(false),onDel:del,onBlock:block}));
+}
+
+function MomentsPage({s,onUpdate,onBack}){
+  const moments=s.moments||[];
+  const [compose,setCompose]=useState(false);
+  const [txt,setTxt]=useState('');const [img,setImg]=useState(null);
+  const post=()=>{if(!txt.trim()&&!img)return;onUpdate({moments:[{id:Date.now(),avatar:s.myAvatar,name:s.myName||'我',text:txt.trim(),img,time:ft(new Date()),date:new Date().toLocaleDateString('zh-CN')},...moments]});setTxt('');setImg(null);setCompose(false);};
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h(BH,{title:'朋友圈',onBack,right:h('button',{onClick:()=>setCompose(true),style:{background:'none',border:'none',color:'var(--text2)',cursor:'pointer',padding:'4px',display:'flex'}},h(Ic,{n:'plus',size:22,sw:2}))}),
+    compose&&h('div',{style:{background:'var(--bg2)',borderBottom:'1px solid var(--div)',padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px',flexShrink:0}},
+      h('textarea',{value:txt,onChange:e=>setTxt(e.target.value),placeholder:'分享点什么...',rows:3,autoFocus:true,style:{width:'100%',background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'10px',padding:'10px 12px',color:'var(--text)',fontSize:'15px',outline:'none',resize:'none'}}),
+      img&&h('img',{src:img,style:{width:'80px',height:'80px',borderRadius:'8px',objectFit:'cover'}}),
+      h('div',{style:{display:'flex',gap:'8px'}},
+        h('div',{onClick:()=>pick(1080,({url})=>setImg(url)),style:{padding:'8px 12px',borderRadius:'8px',border:'1px solid var(--border2)',cursor:'pointer',color:'var(--text2)',fontSize:'13px',display:'flex',alignItems:'center',gap:'5px'}},h(Ic,{n:'image',size:14,sw:1.5}),'图片'),
+        h('div',{onClick:post,style:{padding:'8px 16px',borderRadius:'8px',background:'var(--text)',color:'var(--bg)',fontSize:'13px',cursor:'pointer',fontWeight:500}},'发布'),
+        h('div',{onClick:()=>{setCompose(false);setTxt('');setImg(null);},style:{padding:'8px 12px',borderRadius:'8px',border:'1px solid var(--border2)',cursor:'pointer',color:'var(--text3)',fontSize:'13px'}},'取消'))),
+    h('div',{style:{flex:1,overflowY:'auto'}},
+      moments.length===0&&h('div',{style:{textAlign:'center',color:'var(--text3)',fontSize:'14px',marginTop:'60px'}},'暂无动态，点右上角 + 发布'),
+      ...moments.map(m=>h('div',{key:m.id,style:{padding:'14px 16px',borderBottom:'1px solid var(--div)',display:'flex',gap:'10px'}},
+        h(Av,{val:m.avatar,size:40,round:50}),
+        h('div',{style:{flex:1}},
+          h('div',{style:{fontSize:'14px',fontWeight:600,color:'var(--text2)',marginBottom:'4px'}},m.name),
+          m.text&&h('div',{style:{fontSize:'15px',color:'var(--text)',lineHeight:1.5}},m.text),
+          m.img&&h('img',{src:m.img,style:{marginTop:'8px',width:'140px',height:'140px',borderRadius:'8px',objectFit:'cover',display:'block'}}),
+          h('div',{style:{fontSize:'11px',color:'var(--text3)',marginTop:'8px'}},m.date+' '+m.time))))));
+}
+
+function ProfilePage({s,onUpdate,onBack}){
+  const [name,setName]=useState(s.myName||'我');const [sign,setSign]=useState(s.mySign||'');const [saved,setSaved]=useState(false);
+  const save=()=>{onUpdate({myName:name,mySign:sign});setSaved(true);setTimeout(()=>setSaved(false),1500);};
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h(BH,{title:'个人资料',onBack}),
+    h('div',{style:{flex:1,padding:'20px 16px',display:'flex',flexDirection:'column',gap:'20px'}},
+      h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'10px'}},
+        h(Av,{val:s.myAvatar,size:80,round:50,onClick:()=>pick(400,({url})=>onUpdate({myAvatar:url}))}),
+        h('div',{style:{fontSize:'13px',color:'var(--text3)'}},'点击更换头像')),
+      h(Card,null,
+        h('div',{style:{padding:'12px 16px',borderBottom:'1px solid var(--div)'}},h('div',{style:{fontSize:'11px',color:'var(--text3)',marginBottom:'6px'}},'昵称'),h('input',{value:name,onChange:e=>setName(e.target.value),style:{width:'100%',background:'transparent',border:'none',outline:'none',fontSize:'15px',color:'var(--text)'}})),
+        h('div',{style:{padding:'12px 16px'}},h('div',{style:{fontSize:'11px',color:'var(--text3)',marginBottom:'6px'}},'个性签名'),h('input',{value:sign,onChange:e=>setSign(e.target.value),placeholder:'写点什么...',style:{width:'100%',background:'transparent',border:'none',outline:'none',fontSize:'14px',color:'var(--text2)'}}))),
+      h('button',{onClick:save,style:{width:'100%',padding:'13px',borderRadius:'12px',background:'var(--text)',color:'var(--bg)',fontSize:'15px',fontWeight:600,border:'none',cursor:'pointer',opacity:saved?.65:1,transition:'opacity .2s'}},saved?'已保存':'保存')));
 }
 
 function ChatApp({s,onUpdate}){
   const [view,setView]=useState('list');
-  const [aid,setAid]=useState(null);
+  const [activeId,setActiveId]=useState(null);
   const [showAdd,setShowAdd]=useState(false);
-  const [newName,setNewName]=useState('');
+  const [nm,setNm]=useState('');const [ps,setPs]=useState('');
   const contacts=s.contacts||[];
-  const addContact=()=>{if(!newName.trim())return;onUpdate({contacts:[...contacts,{id:'c'+Date.now(),name:newName.trim(),avatar:'🤖',bio:'',online:false}]});setNewName('');setShowAdd(false);};
-  if(view==='chat'&&aid){const c=contacts.find(x=>x.id===aid);if(c)return h(ChatWin,{contact:c,s,onUpdate,onBack:()=>setView('list')});}
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)',fontFamily:'var(--mf)'}},
-    h('div',{style:{padding:'16px 20px 10px',borderBottom:'1px solid var(--div)',display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexShrink:0}},
-      h('h1',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-0.5px'}},'消息'),
-      h('button',{onClick:()=>setShowAdd(v=>!v),style:{background:'var(--card2)',border:'1px solid var(--border2)',borderRadius:'50%',width:'28px',height:'28px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'var(--text2)',fontSize:'18px',lineHeight:1}},'+')
-    ),
-    showAdd&&h('div',{style:{padding:'10px 16px',borderBottom:'1px solid var(--div)',display:'flex',gap:'8px',flexShrink:0}},
-      h('input',{value:newName,onChange:e=>setNewName(e.target.value),onKeyDown:e=>{if(e.key==='Enter')addContact();},placeholder:'角色名称',autoFocus:true,style:{flex:1,background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'10px',padding:'8px 12px',color:'var(--text)',fontSize:'14px',outline:'none',fontFamily:'var(--mf)'}}),
-      h('button',{onClick:addContact,style:{padding:'8px 14px',borderRadius:'10px',background:'var(--card2)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:'14px',cursor:'pointer',fontFamily:'var(--mf)'}},'添加'),
-      h('button',{onClick:()=>setShowAdd(false),style:{padding:'8px 10px',borderRadius:'10px',background:'transparent',border:'none',color:'var(--text3)',fontSize:'14px',cursor:'pointer'}},'取消')
-    ),
+  const add=()=>{if(!nm.trim())return;onUpdate(p=>({contacts:[...(p.contacts||[]),{id:'c'+Date.now(),name:nm.trim(),avatar:null,persona:ps.trim(),bio:ps.trim().slice(0,30),online:true,blocked:false}]}));setNm('');setPs('');setShowAdd(false);};
+  if(view==='chat'&&activeId){const c=contacts.find(x=>x.id===activeId);if(c)return h(ChatWin,{contact:c,s,onUpdate,onBack:()=>setView('list')});}
+  if(view==='moments')return h(MomentsPage,{s,onUpdate,onBack:()=>setView('list')});
+  if(view==='profile')return h(ProfilePage,{s,onUpdate,onBack:()=>setView('list')});
+  const ib=(n,f)=>h('button',{onClick:f,style:{background:'none',border:'none',cursor:'pointer',color:'var(--text2)',padding:'2px',display:'flex'}},h(Ic,{n,size:22,sw:1.7}));
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h('div',{style:{padding:'14px 20px 10px',borderBottom:'1px solid var(--div)',display:'flex',justifyContent:'space-between',alignItems:'center',flexShrink:0}},
+      h('h1',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-.5px'}},'消息'),
+      h('div',{style:{display:'flex',gap:'14px',alignItems:'center'}},ib('moments',()=>setView('moments')),ib('profile',()=>setView('profile')),ib('plus',()=>setShowAdd(v=>!v)))),
+    showAdd&&h('div',{style:{padding:'10px 16px',borderBottom:'1px solid var(--div)',display:'flex',flexDirection:'column',gap:'8px',flexShrink:0}},
+      h('input',{value:nm,onChange:e=>setNm(e.target.value),placeholder:'角色名称',autoFocus:true,style:{background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'10px',padding:'9px 12px',color:'var(--text)',fontSize:'14px',outline:'none'}}),
+      h('textarea',{value:ps,onChange:e=>setPs(e.target.value),placeholder:'角色设定（性格、说话方式、和你的关系），AI 会按这个扮演',rows:3,style:{background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'10px',padding:'9px 12px',color:'var(--text)',fontSize:'14px',outline:'none',resize:'none'}}),
+      h('div',{style:{display:'flex',gap:'8px',justifyContent:'flex-end'}},
+        h('button',{onClick:()=>setShowAdd(false),style:{padding:'8px 14px',borderRadius:'10px',background:'transparent',border:'none',color:'var(--text3)',fontSize:'14px',cursor:'pointer'}},'取消'),
+        h('button',{onClick:add,style:{padding:'8px 18px',borderRadius:'10px',background:'var(--text)',border:'none',color:'var(--bg)',fontSize:'14px',fontWeight:600,cursor:'pointer'}},'添加好友'))),
     h('div',{style:{flex:1,overflowY:'auto'}},
-      contacts.length===0&&h('div',{style:{textAlign:'center',color:'var(--text3)',fontSize:'14px',marginTop:'60px'}},'点 + 添加角色开始聊天'),
-      contacts.map(c=>h('div',{key:c.id,onClick:()=>{setAid(c.id);setView('chat');},style:{display:'flex',alignItems:'center',gap:'12px',padding:'12px 20px',borderBottom:'1px solid var(--div)',cursor:'pointer'}},
-        h('div',{style:{width:'46px',height:'46px',borderRadius:'23px',background:'var(--card2)',border:'1px solid var(--border2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'22px',flexShrink:0,position:'relative'}},
-          c.avatar||'👤',
-          c.online&&h('div',{style:{position:'absolute',bottom:'1px',right:'1px',width:'10px',height:'10px',borderRadius:'50%',background:'#34c759',border:'2px solid var(--bg)'}})
-        ),
+      contacts.length===0&&h('div',{style:{textAlign:'center',color:'var(--text3)',fontSize:'14px',marginTop:'60px'}},'点右上角 + 添加好友'),
+      ...contacts.map(c=>h('div',{key:c.id,onClick:()=>{setActiveId(c.id);setView('chat');},style:{display:'flex',alignItems:'center',gap:'12px',padding:'12px 20px',borderBottom:'1px solid var(--div)',cursor:'pointer',opacity:c.blocked?.6:1}},
+        h('div',{style:{position:'relative',flexShrink:0}},h(Av,{val:c.avatar,size:46,round:50}),
+          c.online&&!c.blocked&&h('div',{style:{position:'absolute',bottom:'1px',right:'1px',width:'11px',height:'11px',borderRadius:'50%',background:'#34c759',border:'2.5px solid var(--bg)'}})),
         h('div',{style:{flex:1,minWidth:0}},
-          h('div',{style:{fontSize:'15px',fontWeight:600,color:'var(--text)',marginBottom:'2px'}},c.name),
-          h('div',{style:{fontSize:'13px',color:'var(--text3)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},(s.chats?.[c.id]?.slice(-1)[0]?.text)||c.bio||'暂无消息')
-        )
-      ))
-    )
-  );
+          h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'2px'}},h('span',{style:{fontSize:'15px',fontWeight:600,color:'var(--text)'}},c.name),c.blocked&&h('span',{style:{fontSize:'10px',color:'#ff453a'}},'已拉黑')),
+          h('div',{style:{fontSize:'13px',color:'var(--text3)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},(((s.chats||{})[c.id]||[]).filter(m=>!m.sys).slice(-1)[0]||{}).text||c.bio||'暂无消息'))))));
 }
-
-function WPPage({s,upd,onBack}){
-  const fr=useRef();
-  const hf=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=ev=>upd({cwp:ev.target.result,wp:-1});r.readAsDataURL(f);};
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
-    h(SubHdr,{title:'壁纸',onBack}),
-    h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
-      h(Sec,{title:'自定义'},h('div',{style:{padding:'12px 16px'}},
-        s.cwp&&h('div',{onClick:()=>upd({wp:-1}),style:{width:'100%',height:'60px',borderRadius:'10px',background:`url(${s.cwp}) center/cover`,marginBottom:'10px',border:s.wp===-1?'2px solid var(--text)':'2px solid transparent',cursor:'pointer'}}),
-        h('div',{onClick:()=>fr.current?.click(),style:{padding:'9px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px',fontFamily:'var(--mf)'}},s.cwp?'重新选取':'从相册选取图片'),
-        h('input',{ref:fr,type:'file',accept:'image/*',style:{display:'none'},onChange:hf})
-      )),
-      h('div',null,
-        h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'0.6px',padding:'4px 4px 8px',fontFamily:'var(--mf)'}},'预设'),
-        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px'}},
-          ...WPS.map((wp,i)=>h('div',{key:i,onClick:()=>upd({wp:i,cwp:null}),style:{height:'70px',borderRadius:'12px',background:wp.css,border:(s.wp===i&&!s.cwp)?'2px solid var(--text)':'1.5px solid var(--border)',cursor:'pointer',display:'flex',alignItems:'flex-end',padding:'7px',position:'relative',overflow:'hidden'}},
-            h('span',{style:{fontSize:'11px',fontWeight:500,color:wp.light?'rgba(0,0,0,0.55)':'rgba(255,255,255,0.6)',fontFamily:'var(--mf)'}},wp.name),
-            (s.wp===i&&!s.cwp)&&h('div',{style:{position:'absolute',top:'6px',right:'6px',width:'14px',height:'14px',borderRadius:'50%',background:'var(--text)',display:'flex',alignItems:'center',justifyContent:'center'}},h('svg',{width:8,height:7,viewBox:'0 0 10 8',fill:'none'},h('path',{d:'M1 4l3 3 5-6',stroke:wp.light?'#fff':'#111',strokeWidth:'1.5',strokeLinecap:'round',strokeLinejoin:'round'})))
-          ))
-        )
-      )
-    )
-  );
-}
-
-function ThemePg({cur,onSel,onBack}){
-  const opts=[{id:'dark',label:'深色',desc:'深色背景，沉静克制'},{id:'light',label:'浅色',desc:'浅色背景，干净清爽'},{id:'auto',label:'跟随系统',desc:'随手机自动切换'}];
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
-    h(SubHdr,{title:'外观',onBack}),
-    h('div',{style:{flex:1,padding:'12px 16px',display:'flex',flexDirection:'column',gap:'8px'}},
-      ...opts.map(o=>h('div',{key:o.id,onClick:()=>onSel(o.id),style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'13px 16px',borderRadius:'13px',cursor:'pointer',background:cur===o.id?'var(--card2)':'var(--card)',border:cur===o.id?'1.5px solid var(--border2)':'1.5px solid var(--border)',fontFamily:'var(--mf)'}},
-        h('div',null,h('div',{style:{color:'var(--text)',fontSize:'15px',fontWeight:500}},o.label),h('div',{style:{color:'var(--text3)',fontSize:'12px',marginTop:'2px'}},o.desc)),
-        cur===o.id&&h('div',{style:{width:'18px',height:'18px',borderRadius:'50%',border:'2px solid var(--text)',display:'flex',alignItems:'center',justifyContent:'center'}},h('div',{style:{width:'8px',height:'8px',borderRadius:'50%',background:'var(--text)'}}))
-      ))
-    )
-  );
-}
-
-function ChatBeauty({s,upd,onBack}){
-  const fr=useRef();
-  const hf=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=ev=>upd({chatBg:ev.target.result});r.readAsDataURL(f);};
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
-    h(SubHdr,{title:'聊天美化',onBack}),
-    h('div',{style:{flex:1,overflowY:'auto',padding:'10px 16px 20px'}},
-      h(Sec,{title:'聊天背景'},h('div',{style:{padding:'12px 16px'}},
-        s.chatBg&&h('div',{style:{width:'100%',height:'70px',borderRadius:'10px',background:`url(${s.chatBg}) center/cover`,marginBottom:'10px',border:'1.5px solid var(--border2)'}}),
-        h('div',{style:{display:'flex',gap:'8px'}},
-          h('div',{onClick:()=>fr.current?.click(),style:{flex:1,padding:'9px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px',fontFamily:'var(--mf)'}},s.chatBg?'更换背景':'选取背景图'),
-          s.chatBg&&h('div',{onClick:()=>upd({chatBg:null}),style:{padding:'9px 12px',borderRadius:'10px',border:'1.5px solid var(--border2)',cursor:'pointer',color:'var(--text3)',fontSize:'14px',fontFamily:'var(--mf)'}},'移除')
-        ),
-        h('input',{ref:fr,type:'file',accept:'image/*',style:{display:'none'},onChange:hf})
-      )),
-      h(Sec,{title:'气泡与头像'},
-        h(SRow,{label:'气泡磨砂效果',toggle:true,tv:s.bubbleFrost,onT:v=>upd({bubbleFrost:v})}),
-        h(SRow,{label:'显示消息时间',toggle:true,tv:s.showTime!==false,onT:v=>upd({showTime:v})}),
-        h('div',{style:{padding:'12px 16px',borderTop:'1px solid var(--div)'}},
-          h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px',fontFamily:'var(--mf)'}},'头像圆角'),
-          h('input',{type:'range',min:0,max:50,value:s.avatarRound??50,onChange:e=>upd({avatarRound:+e.target.value}),style:{width:'100%',accentColor:'var(--text)'}}),
-          h('div',{style:{fontSize:'12px',color:'var(--text3)',marginTop:'4px',fontFamily:'var(--mf)'}},`${s.avatarRound??50}% — ${(s.avatarRound??50)>=45?'圆形':(s.avatarRound??50)>=20?'圆角':'方形'}`)
-        )
-      )
-    )
-  );
-}
+const API_TPLS=[
+ {id:'openai',name:'OpenAI',url:'https://api.openai.com/v1',model:'gpt-4o-mini',hint:'填入 sk- 开头的 Key'},
+ {id:'claude',name:'Claude',url:'https://api.anthropic.com',model:'claude-sonnet-4-6',hint:'填入 Anthropic API Key'},
+ {id:'deepseek',name:'DeepSeek',url:'https://api.deepseek.com/v1',model:'deepseek-chat',hint:'填入 DeepSeek API Key'},
+ {id:'gemini',name:'Gemini',url:'https://generativelanguage.googleapis.com/v1beta/openai',model:'gemini-2.0-flash',hint:'填入 Google AI Studio Key'},
+ {id:'custom',name:'自定义',url:'',model:'',hint:'填写 Base URL 和 Key，需兼容 OpenAI 格式（中转站通常可用）'}];
 
 function APIPage({s,upd,onBack}){
-  const [form,setForm]=useState({name:'',url:'',key:'',model:''});
-  const [testRes,setTestRes]=useState({});
-  const [testing,setTesting]=useState(null);
+  const [tpl,setTpl]=useState('openai');
+  const [form,setForm]=useState({name:'OpenAI',url:API_TPLS[0].url,key:'',model:API_TPLS[0].model});
+  const [res,setRes]=useState({});const [busy,setBusy]=useState(null);
   const apis=s.apis||[];
-  const add=()=>{if(!form.url||!form.key)return;upd({apis:[...apis,{id:'a'+Date.now(),...form}]});setForm({name:'',url:'',key:'',model:''});};
-  const del=id=>upd({apis:apis.filter(a=>a.id!==id)});
+  const t=API_TPLS.find(x=>x.id===tpl)||API_TPLS[0];
+  const choose=id=>{const x=API_TPLS.find(v=>v.id===id);setTpl(id);setForm(f=>({...f,name:x.name,url:x.url,model:x.model}));};
+  const add=()=>{if(!form.url||!form.key||!form.model)return;const id='a'+Date.now();upd(p=>({apis:[...(p.apis||[]),{id,...form,tpl}],defaultApi:p.defaultApi||id}));setForm(f=>({...f,key:''}));};
+  const del=id=>upd(p=>({apis:(p.apis||[]).filter(a=>a.id!==id),defaultApi:p.defaultApi===id?null:p.defaultApi}));
   const test=async a=>{
-    setTesting(a.id);setTestRes(r=>({...r,[a.id]:'测试中...'}));
-    try{const r=await fetch(`${a.url.replace(/\/$/,'')}/models`,{headers:{'Authorization':`Bearer ${a.key}`},signal:AbortSignal.timeout(8000)});setTestRes(r2=>({...r2,[a.id]:r.ok?'✓ 连接成功':'✕ 失败 ('+r.status+')'}));}
-    catch(e){setTestRes(r=>({...r,[a.id]:'✕ '+e.message.slice(0,28)}));}
-    setTesting(null);
-  };
-  const inp=(ph,k,t='text')=>h('input',{value:form[k],onChange:e=>setForm(f=>({...f,[k]:e.target.value})),placeholder:ph,type:t,style:{width:'100%',background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'10px',padding:'9px 12px',color:'var(--text)',fontSize:'14px',outline:'none',fontFamily:'var(--mf)',marginBottom:'8px'}});
+    setBusy(a.id);setRes(r=>({...r,[a.id]:'测试中...'}));
+    const claude=a.tpl==='claude'||/anthropic\.com/.test(a.url);const base=a.url.replace(/\/$/,'');
+    try{
+      const headers=claude?{'x-api-key':a.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'}:{'Authorization':'Bearer '+a.key};
+      const url=claude?(/\/v1$/.test(base)?base:base+'/v1')+'/models':base+'/models';
+      const r=await fetch(url,{headers,signal:AbortSignal.timeout(10000)});
+      const m={401:'Key 无效',403:'无权限',404:'地址不对'}[r.status];
+      setRes(x=>({...x,[a.id]:r.ok?'✓ 连接成功':'✕ '+(m||'失败 '+r.status)}));
+    }catch(e){setRes(x=>({...x,[a.id]:'✕ '+(e.name==='TimeoutError'?'超时':'网络错误或被跨域拦截')}));}
+    setBusy(null);};
+  const inp=(ph,k,ty)=>h('input',{value:form[k],onChange:e=>setForm(f=>({...f,[k]:e.target.value})),placeholder:ph,type:ty||'text',style:{width:'100%',background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'10px',padding:'9px 12px',color:'var(--text)',fontSize:'14px',outline:'none',marginBottom:'8px'}});
+  const tb=(txt,f,c)=>h('button',{onClick:f,style:{fontSize:'12px',color:c||'var(--text2)',background:'none',border:'none',cursor:'pointer'}},txt);
   return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
-    h(SubHdr,{title:'AI API',onBack}),
+    h(BH,{title:'AI API 管理',onBack}),
     h('div',{style:{flex:1,overflowY:'auto',padding:'10px 16px 20px'}},
-      h(Sec,{title:'添加 API'},h('div',{style:{padding:'12px 16px'}},
-        inp('名称（选填）','name'),inp('Base URL','url'),inp('API Key','key','password'),inp('模型名称','model'),
-        h('button',{onClick:add,style:{width:'100%',padding:'10px',borderRadius:'10px',background:'var(--card2)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:'14px',cursor:'pointer',fontFamily:'var(--mf)'}},'添加')
-      )),
+      h(Sec,{title:'服务商'},h('div',{style:{padding:'10px 12px',display:'flex',gap:'6px',flexWrap:'wrap'}},
+        ...API_TPLS.map(tp=>h('div',{key:tp.id,onClick:()=>choose(tp.id),style:{padding:'6px 14px',borderRadius:'20px',background:tpl===tp.id?'var(--text)':'var(--card2)',color:tpl===tp.id?'var(--bg)':'var(--text2)',fontSize:'13px',fontWeight:tpl===tp.id?600:400,cursor:'pointer',border:'1px solid var(--border2)'}},tp.name)))),
+      h(Sec,{title:'填写信息'},h('div',{style:{padding:'12px 16px'}},
+        h('div',{style:{fontSize:'12px',color:'var(--text3)',marginBottom:'10px',padding:'8px 10px',background:'var(--card2)',borderRadius:'8px',lineHeight:1.5}},t.hint+'。Key 只保存在这台手机的浏览器里。'),
+        tpl==='custom'&&inp('名称（选填）','name'),
+        tpl==='custom'&&inp('Base URL，如 https://api.openai.com/v1','url'),
+        inp('API Key','key','password'),
+        inp('模型名称','model'),
+        h('button',{onClick:add,style:{width:'100%',padding:'11px',borderRadius:'10px',background:'var(--text)',color:'var(--bg)',fontSize:'14px',fontWeight:600,border:'none',cursor:'pointer'}},'添加'))),
       apis.length>0&&h(Sec,{title:'已配置'},
         ...apis.map((a,i)=>h('div',{key:a.id,style:{padding:'12px 16px',borderBottom:i<apis.length-1?'1px solid var(--div)':'none'}},
           h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'3px'}},
-            h('span',{style:{fontSize:'14px',fontWeight:600,color:'var(--text)',fontFamily:'var(--mf)'}},a.name||a.url.slice(8,36)),
-            h('div',{style:{display:'flex',gap:'10px'}},
-              a.id===s.defaultApi?h('span',{style:{fontSize:'11px',color:'#34c759',fontFamily:'var(--mf)'}},'默认'):h('button',{onClick:()=>upd({defaultApi:a.id}),style:{fontSize:'11px',color:'var(--text3)',background:'none',border:'none',cursor:'pointer',fontFamily:'var(--mf)'}},'设默认'),
-              h('button',{onClick:()=>test(a),disabled:testing===a.id,style:{fontSize:'11px',color:'var(--text2)',background:'none',border:'none',cursor:'pointer',fontFamily:'var(--mf)'}},'测试'),
-              h('button',{onClick:()=>del(a.id),style:{fontSize:'11px',color:'#ff453a',background:'none',border:'none',cursor:'pointer',fontFamily:'var(--mf)'}},'删除')
-            )
-          ),
-          h('div',{style:{fontSize:'12px',color:'var(--text3)',fontFamily:'var(--mf)'}},a.model||'未指定模型'),
-          testRes[a.id]&&h('div',{style:{fontSize:'11px',color:testRes[a.id].includes('✓')?'#34c759':'#ff453a',marginTop:'4px',fontFamily:'var(--mf)'}},testRes[a.id])
-        ))
-      )
-    )
-  );
+            h('div',{style:{display:'flex',alignItems:'center',gap:'7px'}},h('span',{style:{fontSize:'14px',fontWeight:600,color:'var(--text)'}},a.name||a.url.slice(8,30)),
+              a.id===s.defaultApi&&h('span',{style:{fontSize:'10px',color:'#34c759',padding:'2px 6px',borderRadius:'4px',border:'1px solid rgba(52,199,89,.4)'}},'默认')),
+            h('div',{style:{display:'flex',gap:'12px'}},a.id!==s.defaultApi&&tb('设默认',()=>upd({defaultApi:a.id}),'var(--text3)'),tb('测试',()=>test(a)),tb('删除',()=>del(a.id),'#ff453a'))),
+          h('div',{style:{fontSize:'12px',color:'var(--text3)'}},a.model),
+          res[a.id]&&h('div',{style:{fontSize:'11px',color:res[a.id].includes('✓')?'#34c759':res[a.id].includes('...')?'var(--text3)':'#ff453a',marginTop:'3px'}},res[a.id]))))));
+}
+
+function WPPage({s,upd,onBack}){
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h(BH,{title:'壁纸',onBack}),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
+      h(Sec,{title:'自定义'},h('div',{style:{padding:'12px 16px'}},
+        s.cwp&&h('div',{onClick:()=>upd({wp:-1}),style:{width:'100%',height:'64px',borderRadius:'10px',background:`url(${s.cwp}) center/cover`,marginBottom:'10px',border:s.wp===-1?'2px solid var(--text)':'2px solid transparent',cursor:'pointer'}}),
+        h('div',{onClick:()=>pick(1600,({url,lum})=>upd({cwp:url,cwpLight:lum>128,wp:-1})),style:{padding:'10px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px'}},s.cwp?'重新选取':'从相册选取图片'))),
+      h('div',null,
+        h('div',{style:{fontSize:'11px',color:'var(--text3)',letterSpacing:'.6px',padding:'4px 4px 8px'}},'预设'),
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px'}},
+          ...WPS.map((wp,i)=>h('div',{key:i,onClick:()=>upd({wp:i,cwp:null}),style:{height:'72px',borderRadius:'12px',background:wp.css,border:(s.wp===i&&!s.cwp)?'2.5px solid var(--text)':'1.5px solid var(--border)',cursor:'pointer',display:'flex',alignItems:'flex-end',padding:'8px',position:'relative',overflow:'hidden'}},
+            h('span',{style:{fontSize:'11px',fontWeight:500,color:wp.light?'rgba(0,0,0,.6)':'rgba(255,255,255,.7)'}},wp.name)))))));
+}
+
+function PassPage({s,upd,onBack}){
+  const [cur,setCur]=useState('');const [n1,setN1]=useState('');const [n2,setN2]=useState('');const [msg,setMsg]=useState('');
+  const save=()=>{
+    if(s.passOn&&cur!==s.pass){setMsg('当前密码错误');return;}
+    if(!/^\d{4}$/.test(n1)){setMsg('新密码须为 4 位数字');return;}
+    if(n1!==n2){setMsg('两次输入不一致');return;}
+    upd({pass:n1,passOn:true});setMsg('密码已更新');setCur('');setN1('');setN2('');};
+  const ii=(v,set,ph)=>h('input',{value:v,onChange:e=>set(e.target.value.replace(/\D/g,'').slice(0,4)),placeholder:ph,type:'password',inputMode:'numeric',style:{width:'100%',background:'var(--ibg)',border:'1px solid var(--border2)',borderRadius:'10px',padding:'10px 14px',color:'var(--text)',fontSize:'15px',outline:'none',textAlign:'center',marginBottom:'10px'}});
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h(BH,{title:'锁屏密码',onBack}),
+    h('div',{style:{flex:1,overflowY:'auto',padding:'12px 16px 20px'}},
+      h(Sec,{title:'开关'},h(SRow,{label:'启用密码',sub:'关闭后上滑即可解锁',toggle:true,tv:s.passOn,onT:v=>upd({passOn:v}),last:true})),
+      h(Sec,{title:s.passOn?'修改密码':'设置密码'},h('div',{style:{padding:'14px 16px'}},
+        s.passOn&&ii(cur,setCur,'当前密码'),ii(n1,setN1,'新密码（4 位数字）'),ii(n2,setN2,'再输入一次'),
+        msg&&h('div',{style:{fontSize:'13px',color:msg.includes('更新')?'#34c759':'#ff453a',marginBottom:'8px',textAlign:'center'}},msg),
+        h('button',{onClick:save,style:{width:'100%',padding:'11px',borderRadius:'10px',background:'var(--text)',color:'var(--bg)',fontSize:'14px',fontWeight:600,border:'none',cursor:'pointer'}},'保存'))),
+      h('div',{style:{fontSize:'12px',color:'var(--text3)',lineHeight:1.7,padding:'8px 6px'}},'默认密码 1111。忘记密码：在网址末尾加上 ?resetpass 打开一次，即可重置为 1111，聊天记录不会丢。')));
 }
 
 function PersonalPg({s,upd,onBack}){
-  const [msg,setMsg]=useState('');const [ld,setLd]=useState(false);const fr=useRef();
-  const hf=async e=>{
-    const f=e.target.files?.[0];if(!f)return;setLd(true);setMsg('');
-    try{const db=await getFDB();await dbSet(db,'font',await f.arrayBuffer());const ok=await applyFont();if(ok){upd({hasFont:true});setMsg('字体已应用 ✓');}else setMsg('加载失败');}
-    catch{setMsg('导入出错');}setLd(false);
-  };
-  const clr=async()=>{const db=await getFDB();await dbDel(db,'font');document.documentElement.style.removeProperty('--mf');upd({hasFont:false});setMsg('已恢复默认');};
+  const [msg,setMsg]=useState('');const [ld,setLd]=useState(false);
+  const hf=()=>pickFile('.ttf,.otf,.woff,.woff2',async f=>{setLd(true);setMsg('');try{await fset(await f.arrayBuffer());const ok=await applyFont();if(ok){upd({hasFont:true});setMsg('字体已应用 ✓');}else setMsg('加载失败，请换个文件');}catch(e){setMsg('导入出错');}setLd(false);});
+  const clr=async()=>{await fset(null);document.documentElement.style.removeProperty('--mf');upd({hasFont:false});setMsg('已恢复默认字体');};
+  const lab=t=>h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px'}},t);
   return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
-    h(SubHdr,{title:'个性化',onBack}),
+    h(BH,{title:'个性化',onBack}),
     h('div',{style:{flex:1,overflowY:'auto',padding:'10px 16px 20px'}},
       h(Sec,{title:'字体'},h('div',{style:{padding:'12px 16px',display:'flex',flexDirection:'column',gap:'10px'}},
-        h('div',{style:{fontSize:'13px',color:'var(--text2)',fontFamily:'var(--mf)'}},s.hasFont?'已使用自定义字体':'支持 .ttf / .otf，导入后全局生效'),
+        h('div',{style:{fontSize:'13px',color:'var(--text2)'}},s.hasFont?'已使用自定义字体':'支持 .ttf / .otf，导入后全局立即生效'),
         h('div',{style:{display:'flex',gap:'8px'}},
-          h('div',{onClick:()=>fr.current?.click(),style:{flex:1,padding:'9px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px',fontFamily:'var(--mf)'}},ld?'导入中...':'导入字体文件'),
-          s.hasFont&&h('div',{onClick:clr,style:{padding:'9px 12px',borderRadius:'10px',border:'1.5px solid var(--border2)',cursor:'pointer',color:'var(--text3)',fontSize:'14px',fontFamily:'var(--mf)'}},'恢复默认')
-        ),
-        msg&&h('div',{style:{fontSize:'12px',color:msg.includes('✓')?'#34c759':'var(--text3)',fontFamily:'var(--mf)'}},msg),
-        h('input',{ref:fr,type:'file',accept:'.ttf,.otf,.woff,.woff2',style:{display:'none'},onChange:hf})
-      )),
+          h('div',{onClick:hf,style:{flex:1,padding:'9px',borderRadius:'10px',border:'1.5px dashed var(--border2)',textAlign:'center',cursor:'pointer',color:'var(--text2)',fontSize:'14px'}},ld?'导入中...':'导入字体文件'),
+          s.hasFont&&h('div',{onClick:clr,style:{padding:'9px 12px',borderRadius:'10px',border:'1.5px solid var(--border2)',cursor:'pointer',color:'var(--text3)',fontSize:'14px'}},'恢复默认')),
+        msg&&h('div',{style:{fontSize:'12px',color:msg.includes('✓')?'#34c759':'var(--text3)'}},msg))),
       h(Sec,{title:'图标'},h('div',{style:{padding:'12px 16px',display:'flex',flexDirection:'column',gap:'12px'}},
-        h('div',null,h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px',fontFamily:'var(--mf)'}},'大小'),h(Seg,{opts:[{id:'small',l:'小'},{id:'normal',l:'标准'},{id:'large',l:'大'}],val:s.iconSz,onV:v=>upd({iconSz:v})})),
-        h(SRow,{label:'显示图标名称',toggle:true,tv:s.showLbl,onT:v=>upd({showLbl:v}),last:true,ch:false})
-      )),
+        h('div',null,lab('图标大小'),h(Seg,{opts:[{id:'small',l:'小'},{id:'normal',l:'标准'},{id:'large',l:'大'}],val:s.iconSz,onV:v=>upd({iconSz:v})})),
+        h(SRow,{label:'显示图标名称',toggle:true,tv:s.showLbl,onT:v=>upd({showLbl:v}),last:true}))),
       h(Sec,{title:'Dock'},h('div',{style:{padding:'12px 16px'}},h(Seg,{opts:[{id:'glass',l:'毛玻璃'},{id:'solid',l:'纯色'},{id:'none',l:'透明'}],val:s.dockSt,onV:v=>upd({dockSt:v})}))),
       h(Sec,{title:'锁屏时钟'},h('div',{style:{padding:'12px 16px',display:'flex',flexDirection:'column',gap:'12px'}},
-        h('div',null,h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px',fontFamily:'var(--mf)'}},'字重'),h(Seg,{opts:[{id:'thin',l:'细体'},{id:'medium',l:'中等'},{id:'bold',l:'粗体'}],val:s.ckW,onV:v=>upd({ckW:v})})),
-        h('div',null,h('div',{style:{fontSize:'13px',color:'var(--text2)',marginBottom:'8px',fontFamily:'var(--mf)'}},'大小'),h(Seg,{opts:[{id:'small',l:'小'},{id:'medium',l:'中'},{id:'large',l:'大'}],val:s.ckSz,onV:v=>upd({ckSz:v})}))
-      ))
-    )
-  );
+        h('div',null,lab('字重'),h(Seg,{opts:[{id:'thin',l:'细体'},{id:'medium',l:'中等'},{id:'bold',l:'粗体'}],val:s.ckW,onV:v=>upd({ckW:v})})),
+        h('div',null,lab('大小'),h(Seg,{opts:[{id:'small',l:'小'},{id:'medium',l:'中'},{id:'large',l:'大'}],val:s.ckSz,onV:v=>upd({ckSz:v})}))))));
+}
+
+function ThemePg({cur,onSel,onBack}){
+  const opts=[{id:'dark',label:'深色',desc:'深色背景，沉静克制'},{id:'light',label:'浅色',desc:'浅色背景，干净清爽'},{id:'auto',label:'跟随系统',desc:'随手机主题自动切换'}];
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h(BH,{title:'外观',onBack}),
+    h('div',{style:{flex:1,padding:'12px 16px',display:'flex',flexDirection:'column',gap:'8px'}},
+      ...opts.map(o=>h('div',{key:o.id,onClick:()=>onSel(o.id),style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 16px',borderRadius:'13px',cursor:'pointer',background:cur===o.id?'var(--card2)':'var(--card)',border:cur===o.id?'1.5px solid var(--border2)':'1.5px solid var(--border)'}},
+        h('div',null,h('div',{style:{color:'var(--text)',fontSize:'15px',fontWeight:500}},o.label),h('div',{style:{color:'var(--text3)',fontSize:'12px',marginTop:'2px'}},o.desc)),
+        cur===o.id&&h('div',{style:{width:'18px',height:'18px',borderRadius:'50%',border:'2px solid var(--text)',display:'flex',alignItems:'center',justifyContent:'center'}},h('div',{style:{width:'8px',height:'8px',borderRadius:'50%',background:'var(--text)'}}))))));
 }
 
 function SettingsApp({s,upd}){
   const [sub,setSub]=useState(null);
-  if(sub==='wp')return h(WPPage,{s,upd,onBack:()=>setSub(null)});
-  if(sub==='theme')return h(ThemePg,{cur:s.theme,onSel:t=>{upd({theme:t});setSub(null);},onBack:()=>setSub(null)});
-  if(sub==='personal')return h(PersonalPg,{s,upd,onBack:()=>setSub(null)});
-  if(sub==='chatBeauty')return h(ChatBeauty,{s,upd,onBack:()=>setSub(null)});
-  if(sub==='api')return h(APIPage,{s,upd,onBack:()=>setSub(null)});
+  const back=()=>setSub(null);
+  if(sub==='wp')return h(WPPage,{s,upd,onBack:back});
+  if(sub==='theme')return h(ThemePg,{cur:s.theme,onSel:t=>{upd({theme:t});back();},onBack:back});
+  if(sub==='personal')return h(PersonalPg,{s,upd,onBack:back});
+  if(sub==='api')return h(APIPage,{s,upd,onBack:back});
+  if(sub==='pass')return h(PassPage,{s,upd,onBack:back});
   if(sub==='about')return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
-    h(SubHdr,{title:'关于',onBack:()=>setSub(null)}),
+    h(BH,{title:'关于',onBack:back}),
     h('div',{style:{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'18px',padding:'32px'}},
-      h('div',{style:{fontSize:'52px'}},'📱'),
-      h('div',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',fontFamily:'var(--mf)'}},'萌萌机'),
-      h(Sc,{style:{width:'100%'}},...[['版本','V0.1'],['阶段','开发中'],['作者','rainj5435-wq'],['框架','React 18']].map(([k,v],i,arr)=>h('div',{key:k,style:{display:'flex',justifyContent:'space-between',padding:'11px 16px',borderBottom:i<arr.length-1?'1px solid var(--div)':'none',fontFamily:'var(--mf)'}},h('span',{style:{color:'var(--text3)',fontSize:'14px'}},k),h('span',{style:{color:'var(--text)',fontSize:'14px',fontWeight:500}},v)))),
-      h('div',{style:{color:'var(--text3)',fontSize:'12px',textAlign:'center',lineHeight:1.8,fontFamily:'var(--mf)'}},'你的 AI 小手机\n更多功能持续开发中')
-    )
-  );
+      h('div',{style:{width:'72px',height:'72px',borderRadius:'22px',background:SQ,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 4px 16px var(--shad)'}},h(Gl,{id:'chat',size:36})),
+      h('div',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)'}},'萌萌机'),
+      h(Card,{style:{width:'100%'}},...[['版本','0.5 测试版'],['作者','rainj5435-wq'],['框架','React 18 · PWA']].map(([k,v],i,a)=>h('div',{key:k,style:{display:'flex',justifyContent:'space-between',padding:'11px 16px',borderBottom:i<a.length-1?'1px solid var(--div)':'none'}},h('span',{style:{color:'var(--text3)',fontSize:'14px'}},k),h('span',{style:{color:'var(--text)',fontSize:'14px',fontWeight:500}},v)))),
+      h('div',{style:{color:'var(--text3)',fontSize:'12px',textAlign:'center',lineHeight:1.8}},'你的 AI 小手机，持续开发中')));
+  const ic=n=>h(Ic,{n,size:16});
   const tl={dark:'深色',light:'浅色',auto:'跟随系统'}[s.theme];
-  const wl=s.cwp?'自定义':(WPS[s.wp]?.name||'默认');
-  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)',fontFamily:'var(--mf)'}},
-    h('div',{style:{padding:'18px 20px 10px',flexShrink:0,borderBottom:'1px solid var(--div)'}},h('h1',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-0.5px',margin:0,fontFamily:'var(--mf)'}},'设置')),
+  const wl=s.cwp?'自定义':(WPS[s.wp]||WPS[0]).name;
+  const na=(s.apis||[]).length;
+  return h('div',{style:{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg)'}},
+    h('div',{style:{padding:'18px 20px 10px',flexShrink:0,borderBottom:'1px solid var(--div)'}},h('h1',{style:{fontSize:'22px',fontWeight:700,color:'var(--text)',letterSpacing:'-.5px'}},'设置')),
     h('div',{style:{flex:1,overflowY:'auto',padding:'8px 16px 20px'}},
-      h(Sec,{title:'外观'},h(SRow,{icon:'🌓',color:'#444',label:'外观',value:tl,onPress:()=>setSub('theme')}),h(SRow,{icon:'🖼️',color:'#3a3a3a',label:'壁纸',value:wl,onPress:()=>setSub('wp')}),h(SRow,{icon:'✨',color:'#333',label:'个性化',value:'字体·图标·时钟',onPress:()=>setSub('personal'),last:true})),
-      h(Sec,{title:'AI'},h(SRow,{icon:'🤖',color:'#2a2a2a',label:'AI API',value:s.apis?.length?s.apis.length+'个':'未配置',onPress:()=>setSub('api'),last:true})),
-      h(Sec,{title:'聊天'},h(SRow,{icon:'💬',color:'#3a3a3a',label:'聊天美化',value:'背景·气泡·头像',onPress:()=>setSub('chatBeauty'),last:true})),
-      h(Sec,{title:'通知与声音'},h(SRow,{icon:'🔔',color:'#3a3a3a',label:'通知',toggle:true,tv:s.notif,onT:v=>upd({notif:v})}),h(SRow,{icon:'🔊',color:'#333',label:'声音',toggle:true,tv:s.sound,onT:v=>upd({sound:v})}),h(SRow,{icon:'🌙',color:'#2a2a2a',label:'勿扰',toggle:true,tv:s.dnd,onT:v=>upd({dnd:v}),last:true})),
-      h(Sec,{title:'其他'},h(SRow,{icon:'ℹ️',color:'#383838',label:'关于萌萌机',value:'V0.1',onPress:()=>setSub('about'),last:true}))
-    )
-  );
+      h(Sec,{title:'外观'},
+        h(SRow,{icon:ic('theme'),color:'#636366',label:'外观',value:tl,onPress:()=>setSub('theme')}),
+        h(SRow,{icon:ic('image'),color:'#48484a',label:'壁纸',value:wl,onPress:()=>setSub('wp')}),
+        h(SRow,{icon:ic('sparkle'),color:'#3a3a3c',label:'个性化',sub:'字体 · 图标 · 时钟',onPress:()=>setSub('personal'),last:true})),
+      h(Sec,{title:'AI'},h(SRow,{icon:ic('chip'),color:'#3a3a3c',label:'AI API',sub:na?na+' 个已配置':'未配置，点此添加',onPress:()=>setSub('api'),last:true})),
+      h(Sec,{title:'安全'},h(SRow,{icon:ic('lock'),color:'#48484a',label:'锁屏密码',sub:s.passOn?'已启用':'未启用',onPress:()=>setSub('pass'),last:true})),
+      h(Sec,{title:'通知与声音'},
+        h(SRow,{icon:ic('bell'),color:'#636366',label:'通知',toggle:true,tv:s.notif,onT:v=>upd({notif:v})}),
+        h(SRow,{icon:ic('volume'),color:'#48484a',label:'声音',toggle:true,tv:s.sound,onT:v=>upd({sound:v})}),
+        h(SRow,{icon:ic('moon'),color:'#3a3a3c',label:'勿扰',toggle:true,tv:s.dnd,onT:v=>upd({dnd:v}),last:true})),
+      h(Sec,{title:'其他'},h(SRow,{icon:ic('info'),color:'#48484a',label:'关于萌萌机',value:'0.5',onPress:()=>setSub('about'),last:true}))));
 }
 
 function Soon({app}){
-  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',gap:'12px',padding:'40px',background:'var(--bg)',fontFamily:'var(--mf)'}},
-    h('div',{style:{width:'66px',height:'66px',borderRadius:'20px',background:'rgba(245,245,245,0.92)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 4px 16px var(--shad)'}},h('svg',{width:30,height:30,viewBox:'0 0 16 16',fill:'none',stroke:'#2a2a2a',strokeWidth:'1.1',strokeLinecap:'round',strokeLinejoin:'round'},h('path',{d:app.svg}))),
-    h('div',{style:{fontSize:'19px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.3px'}},app.name),
-    h('div',{style:{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'12px',padding:'11px 20px',color:'var(--text3)',fontSize:'14px',textAlign:'center'}},'此 App 即将开放')
-  );
+  return h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',gap:'14px',padding:'40px',background:'var(--bg)'}},
+    h('div',{style:{width:'68px',height:'68px',borderRadius:'21px',background:SQ,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 4px 16px var(--shad)'}},h(Gl,{id:app.id,size:32})),
+    h('div',{style:{fontSize:'19px',fontWeight:600,color:'var(--text)',letterSpacing:'-.3px'}},app.name),
+    h('div',{style:{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'12px',padding:'11px 20px',color:'var(--text3)',fontSize:'14px'}},'此 App 即将开放'));
 }
 
-function AppWin({app,battery,s,upd,onClose}){
-  const [vis,setVis]=useState(false);const [mnt,setMnt]=useState(false);
-  useEffect(()=>{if(app){setMnt(true);const t=setTimeout(()=>setVis(true),10);return()=>clearTimeout(t);}},[app]);
-  const close=()=>{setVis(false);setTimeout(()=>{setMnt(false);onClose();},250);};
-  if(!mnt)return null;
-  const wp=s.cwp?{css:`url(${s.cwp}) center/cover`,light:false}:(WPS[s.wp]||WPS[0]);
-  const getC=()=>{if(!app)return null;if(app.id==='settings')return h(SettingsApp,{s,upd});if(app.id==='chat')return h(ChatApp,{s,onUpdate:upd});return h(Soon,{app});};
-  return h('div',{style:{position:'absolute',inset:0,display:'flex',flexDirection:'column',transform:vis?'scale(1)':'scale(0.95)',opacity:vis?1:0,transformOrigin:'center bottom',transition:'transform 0.24s cubic-bezier(0.34,1.1,0.64,1),opacity 0.2s',overflow:'hidden',borderRadius:'inherit',background:'var(--bg)',fontFamily:'var(--mf)'}},
-    h('div',{style:{flexShrink:0,background:'var(--hbg)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderBottom:'1px solid var(--div)'}},
-      h(StatusBar,{battery,wp}),
+function AppWin({app,s,upd,onClose}){
+  const [vis,setVis]=useState(false);
+  useEffect(()=>{const t=setTimeout(()=>setVis(true),10);return()=>clearTimeout(t);},[]);
+  const close=()=>{setVis(false);setTimeout(onClose,250);};
+  const wp=s.cwp?{css:`url(${s.cwp}) center/cover`,light:!!s.cwpLight}:(WPS[s.wp]||WPS[0]);
+  const body=app.id==='settings'?h(SettingsApp,{s,upd}):app.id==='chat'?h(ChatApp,{s,onUpdate:upd}):h(Soon,{app});
+  return h('div',{style:{position:'absolute',inset:0,zIndex:5,display:'flex',flexDirection:'column',transform:vis?'scale(1)':'scale(.95)',opacity:vis?1:0,transformOrigin:'center bottom',transition:'transform .24s cubic-bezier(.34,1.1,.64,1),opacity .2s',overflow:'hidden',borderRadius:'inherit',background:'var(--bg)'}},
+    h('div',{style:{flexShrink:0,background:'var(--hbg)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderBottom:'1px solid var(--div)',color:'var(--text)'}},
+      h(StatusBar,{wp:{light:document.documentElement.getAttribute('data-theme')==='light'}}),
       h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'2px 16px 10px'}},
-        h('span',{style:{fontSize:'17px',fontWeight:600,color:'var(--text)',letterSpacing:'-0.3px',fontFamily:'var(--mf)'}},app?.name),
-        h('button',{onClick:close,style:{background:'var(--card2)',border:'1px solid var(--border)',borderRadius:'50%',width:'26px',height:'26px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'var(--text3)',fontSize:'12px',flexShrink:0}},'✕')
-      )
-    ),
-    h('div',{style:{flex:1,overflow:'hidden',position:'relative'}},getC()),
-    h('div',{style:{padding:'7px 0 5px',display:'flex',justifyContent:'center',flexShrink:0,background:'var(--hbg)'}},h('div',{onClick:close,style:{width:'100px',height:'4px',background:'var(--text3)',borderRadius:'2px',cursor:'pointer'}}))
-  );
+        h('span',{style:{fontSize:'17px',fontWeight:600,color:'var(--text)',letterSpacing:'-.3px'}},app.name),
+        h('button',{onClick:close,style:{background:'var(--card2)',border:'1px solid var(--border)',borderRadius:'50%',width:'26px',height:'26px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'var(--text3)',flexShrink:0}},h(Ic,{n:'close',size:13,sw:2})))),
+    h('div',{style:{flex:1,overflow:'hidden',position:'relative'}},body),
+    h('div',{style:{padding:'7px 0 5px',display:'flex',justifyContent:'center',flexShrink:0,background:'var(--hbg)'}},h('div',{onClick:close,style:{width:'100px',height:'4px',background:'var(--text3)',borderRadius:'2px',cursor:'pointer'}})));
+}
+
+function PWABar(){
+  const [show,setShow]=useState(false);
+  useEffect(()=>{const t=setTimeout(()=>{if(installEvt)setShow(true);},1500);return()=>clearTimeout(t);},[]);
+  if(!show)return null;
+  const install=async()=>{if(!installEvt)return;installEvt.prompt();try{await installEvt.userChoice;}catch(e){}installEvt=null;setShow(false);};
+  return h('div',{style:{position:'absolute',bottom:'100px',left:'12px',right:'12px',zIndex:8,background:'var(--hbg)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',border:'1px solid var(--border2)',borderRadius:'16px',padding:'12px 14px',display:'flex',alignItems:'center',gap:'12px',boxShadow:'0 4px 20px var(--shad)',color:'var(--text)'}},
+    h(Ic,{n:'download',size:24,sw:1.6}),
+    h('div',{style:{flex:1}},h('div',{style:{fontSize:'14px',fontWeight:600}},'安装萌萌机'),h('div',{style:{fontSize:'12px',color:'var(--text3)',marginTop:'2px'}},'添加到桌面，像 App 一样使用')),
+    h('button',{onClick:install,style:{padding:'7px 14px',borderRadius:'10px',background:'var(--text)',color:'var(--bg)',fontSize:'13px',fontWeight:600,border:'none',cursor:'pointer'}},'安装'),
+    h('button',{onClick:()=>setShow(false),style:{background:'none',border:'none',color:'var(--text3)',cursor:'pointer',padding:'4px',display:'flex'}},h(Ic,{n:'close',size:16,sw:2})));
 }
 
 function PhoneShell(){
   const [s,setS]=useState(getS);
-  const [scr,setScr]=useState('lock');
+  const [locked,setLocked]=useState(true);
   const [aid,setAid]=useState(null);
-  const [hv,setHv]=useState(false);
-  const battery=82;
-  const upd=useCallback(patch=>setS(prev=>{const n={...prev,...patch};LS.s(n);applyTheme(n.theme);return n;}),[]);
-  useEffect(()=>{applyTheme(s.theme);if(s.hasFont)applyFont();},[]);
+  const upd=useCallback(p=>setS(prev=>{const n={...prev,...(typeof p==='function'?p(prev):p)};LS.s(n);return n;}),[]);
+  useEffect(()=>{if(s.hasFont)applyFont();},[]);
   useEffect(()=>{applyTheme(s.theme);},[s.theme]);
-  const wp=useMemo(()=>s.cwp?{css:`url(${s.cwp}) center/cover no-repeat`,light:false}:(WPS[s.wp]||WPS[0]),[s.wp,s.cwp]);
-  const unlock=useCallback(()=>{setScr('home');setTimeout(()=>setHv(true),10);},[]);
-  const open=useCallback(id=>{setAid(id);setScr('app');},[]);
-  const close=useCallback(()=>{setAid(null);setScr('home');},[]);
-  const app=aid?APPS.find(a=>a.id===aid)||null:null;
+  const wp=useMemo(()=>s.cwp?{css:`url(${s.cwp}) center/cover no-repeat`,light:!!s.cwpLight}:(WPS[s.wp]||WPS[0]),[s.wp,s.cwp,s.cwpLight]);
+  const app=aid?APPS.find(a=>a.id===aid):null;
   return h('div',{style:{width:'100%',height:'100%',position:'relative',borderRadius:'inherit',overflow:'hidden'}},
-    scr==='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:10}},h(LockScreen,{battery,wp,s,onUnlock:unlock})),
-    scr!=='lock'&&h('div',{style:{position:'absolute',inset:0,zIndex:1}},h(HomeScreen,{battery,onOpen:open,visible:scr==='home'&&hv,wp,s})),
-    (scr==='app'||aid)&&h('div',{style:{position:'absolute',inset:0,zIndex:5}},h(AppWin,{app,battery,s,upd,onClose:close}))
-  );
+    h(HomeScreen,{onOpen:setAid,visible:!app,wp,s}),
+    !locked&&!app&&h(PWABar),
+    app&&h(AppWin,{key:app.id,app,s,upd,onClose:()=>setAid(null)}),
+    locked&&h(LockScreen,{wp,s,onUnlock:()=>setLocked(false)}));
 }
 
-function App(){
-  useEffect(()=>{applyTheme(getS().theme);},[]);
-  return h('div',{style:{minHeight:'100dvh',display:'flex',alignItems:'center',justifyContent:'center',background:'#000'}},h('div',{className:'po'},h(PhoneShell)));
-}
+function App(){return h('div',{style:{minHeight:'100dvh',display:'flex',alignItems:'center',justifyContent:'center',background:'#000'}},h('div',{className:'po'},h(PhoneShell)));}
 ReactDOM.createRoot(document.getElementById('root')).render(h(App));
 </script>
 </body>
