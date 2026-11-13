@@ -794,10 +794,9 @@ function W_Profile({s,item,upd}){
       h('div',{style:{marginTop:'-44px',display:'flex',justifyContent:'center',position:'relative',zIndex:1}},
         h('div',{onClick:()=>choose('avatar'),title:'点击更换头像',style:{width:'88px',height:'88px',borderRadius:'50%',border:'4px solid #fff',background:'#e5e5e8',boxShadow:'0 5px 16px rgba(0,0,0,.16)',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',color:'#9a9aa0',cursor:'pointer'}},
           s.myAvatar?h('img',{src:s.myAvatar,style:{width:'100%',height:'100%',objectFit:'cover'}}):h(Ic,{n:'profile',size:42,sw:1.4}))),
-      h('button',{onClick:()=>edit('name','昵称',s.myName||'我'),style:{...txt,fontSize:'22px',fontWeight:800,marginTop:'9px'}},s.myName||'我'),
-      h('button',{onClick:()=>edit('id','账号',((s.wdata||{}).profileId)||'mochi'),style:{...txt,fontSize:'13px',color:'#999',fontStyle:'italic'}},'@'+(((s.wdata||{}).profileId)||'mochi')),
-      h('button',{onClick:()=>edit('sign','个性签名',s.mySign||''),style:{...txt,fontSize:'14px',fontWeight:600,color:'#626267',marginTop:'5px',maxWidth:'100%',whiteSpace:'normal'}},s.mySign||'点击编辑个性签名'),
-      h('div',{style:{fontSize:'11px',color:'#aaa',marginTop:5}},'点击昵称、账号或签名即可编辑')));
+      h('button',{onClick:()=>edit('name','昵称',s.myName||'我'),style:{...txt,display:'block',margin:'9px auto 0',fontSize:'23px',fontWeight:800,lineHeight:1.35}},s.myName||'我'),
+      h('button',{onClick:()=>edit('id','账号',((s.wdata||{}).profileId)||'mochi'),style:{...txt,display:'block',margin:'2px auto 0',fontSize:'13px',color:'#999',fontStyle:'italic',lineHeight:1.35}},'@'+(((s.wdata||{}).profileId)||'mochi')),
+      h('button',{onClick:()=>edit('sign','个性签名',s.mySign||''),style:{...txt,display:'block',margin:'8px auto 0',fontSize:'14px',fontWeight:600,color:'#626267',maxWidth:'100%',whiteSpace:'normal',lineHeight:1.45}},s.mySign||'点击编辑个性签名')));
 }
 function W_Cal({il}){const n=useNow(60000);const y=n.getFullYear(),m=n.getMonth(),first=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate();
   const cells=[];for(let i=0;i<first;i++)cells.push(null);for(let d=1;d<=dim;d++)cells.push(d);while(cells.length%7)cells.push(null);
