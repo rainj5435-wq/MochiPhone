@@ -776,17 +776,25 @@ function W_Note({item,s,upd,il}){const v=(s.wdata||{})[item.id];const [t,setT]=u
     h('textarea',{value:t,onChange:e=>setT(e.target.value),onBlur:()=>upd(p=>({wdata:{...(p.wdata||{}),[item.id]:t}})),style:{flex:1,width:'100%',background:'transparent',border:'none',outline:'none',resize:'none',color:'var(--text)',fontSize:'14px',lineHeight:1.55}}));}
 function W_Profile({s,item,upd}){
   const bg=(s.wdata||{}).profileBg;
+  const edit=(field,label,current)=>{
+    if(DRAG.moved)return;
+    const v=window.prompt('编辑'+label,current||'');
+    if(v===null)return;
+    upd(field==='name'?{myName:v.trim()||'我'}:field==='sign'?{mySign:v.trim()}:{wdata:{...(s.wdata||{}),profileId:v.trim()}});
+  };
   const choose=(kind)=>{if(DRAG.moved)return;pick(1200,({url})=>upd(p=>kind==='avatar'?{myAvatar:url}:{wdata:{...(p.wdata||{}),profileBg:url}}));};
-  return h('div',{style:{flex:1,borderRadius:34,overflow:'hidden',background:'#fff',boxShadow:'0 8px 24px rgba(0,0,0,.14)',display:'flex',flexDirection:'column',minHeight:0}},
-    h('div',{onClick:()=>choose('background'),title:'点击更换背景图片',style:{height:'42%',minHeight:70,background:bg?'url('+bg+') center/cover no-repeat':'#efeff2',backgroundImage:bg?'url('+bg+')':'radial-gradient(#cdcdd2 3px,transparent 3.6px)',backgroundSize:bg?'cover':'26px 26px',flexShrink:0,cursor:'pointer',position:'relative'}},
-      h('span',{style:{position:'absolute',right:9,bottom:7,fontSize:10,color:bg?'#fff':'#85858a',background:'rgba(255,255,255,.72)',borderRadius:10,padding:'3px 7px'}},'更换背景')),
-    h('div',{style:{flex:1,textAlign:'center',padding:'0 18px',color:'#222',minHeight:0}},
-      h('div',{style:{marginTop:'-46px',display:'flex',justifyContent:'center',position:'relative',zIndex:1}},
-        h('div',{onClick:()=>choose('avatar'),title:'点击更换头像',style:{width:'92px',height:'92px',borderRadius:'50%',border:'4px solid #fff',background:'#e5e5e8',boxShadow:'0 4px 14px rgba(0,0,0,.18)',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',color:'#9a9aa0',cursor:'pointer'}},
-          s.myAvatar?h('img',{src:s.myAvatar,style:{width:'100%',height:'100%',objectFit:'cover'}}):h(Ic,{n:'profile',size:44,sw:1.4}))),
-      h('div',{style:{fontSize:'23px',fontWeight:800,marginTop:'10px'}},s.myName||'我'),
-      h('div',{style:{fontSize:'13px',color:'#9a9aa0',fontStyle:'italic',marginTop:'2px'}},'@mochi'),
-      h('div',{style:{fontSize:'14px',fontWeight:600,color:'#55555a',marginTop:'8px'}},s.mySign||'')));
+  const txt={background:'transparent',border:0,color:'#222',cursor:'pointer',padding:'3px 6px',borderRadius:8};
+  return h('div',{style:{flex:1,borderRadius:30,overflow:'hidden',background:'rgba(255,255,255,.94)',boxShadow:'0 10px 28px rgba(0,0,0,.13)',display:'flex',flexDirection:'column',minHeight:0,position:'relative'}},
+    h('div',{onClick:()=>choose('background'),title:'点击更换背景图片',style:{height:'42%',minHeight:70,background:bg?'url('+bg+') center/cover no-repeat':'#ededf0',backgroundImage:bg?'url('+bg+')':'radial-gradient(#d0d0d4 3px,transparent 3.6px)',backgroundSize:bg?'cover':'26px 26px',flexShrink:0,cursor:'pointer',position:'relative'}},
+      h('span',{style:{position:'absolute',right:9,bottom:7,fontSize:10,color:bg?'#fff':'#777',background:'rgba(255,255,255,.78)',borderRadius:10,padding:'4px 8px'}},'更换背景')),
+    h('div',{style:{flex:1,textAlign:'center',padding:'0 14px',color:'#222',minHeight:0,position:'relative'}},
+      h('div',{style:{marginTop:'-44px',display:'flex',justifyContent:'center',position:'relative',zIndex:1}},
+        h('div',{onClick:()=>choose('avatar'),title:'点击更换头像',style:{width:'88px',height:'88px',borderRadius:'50%',border:'4px solid #fff',background:'#e5e5e8',boxShadow:'0 5px 16px rgba(0,0,0,.16)',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',color:'#9a9aa0',cursor:'pointer'}},
+          s.myAvatar?h('img',{src:s.myAvatar,style:{width:'100%',height:'100%',objectFit:'cover'}}):h(Ic,{n:'profile',size:42,sw:1.4}))),
+      h('button',{onClick:()=>edit('name','昵称',s.myName||'我'),style:{...txt,fontSize:'22px',fontWeight:800,marginTop:'9px'}},s.myName||'我'),
+      h('button',{onClick:()=>edit('id','账号',((s.wdata||{}).profileId)||'mochi'),style:{...txt,fontSize:'13px',color:'#999',fontStyle:'italic'}},'@'+(((s.wdata||{}).profileId)||'mochi')),
+      h('button',{onClick:()=>edit('sign','个性签名',s.mySign||''),style:{...txt,fontSize:'14px',fontWeight:600,color:'#626267',marginTop:'5px',maxWidth:'100%',whiteSpace:'normal'}},s.mySign||'点击编辑个性签名'),
+      h('div',{style:{fontSize:'11px',color:'#aaa',marginTop:5}},'点击昵称、账号或签名即可编辑')));
 }
 function W_Cal({il}){const n=useNow(60000);const y=n.getFullYear(),m=n.getMonth(),first=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate();
   const cells=[];for(let i=0;i<first;i++)cells.push(null);for(let d=1;d<=dim;d++)cells.push(d);while(cells.length%7)cells.push(null);
@@ -819,25 +827,19 @@ function normLayout(s){
 }
 function HomeGrid({onOpen,s,upd,il}){
   const L=normLayout(s),np=L.length;
-  const [pg,setPg]=useState(0),[dx,setDx]=useState(0),[drag,setDrag]=useState(false);
-  const r=useRef({id:null,x:0,y:0,lk:null,dx:0});
-  const cur=Math.min(pg,np-1);
-  const down=e=>{r.current={id:e.pointerId,x:e.clientX,y:e.clientY,lk:null,dx:0};DRAG.moved=false;};
-  const move=e=>{const c=r.current;if(c.id!==e.pointerId)return;const ddx=e.clientX-c.x,ddy=e.clientY-c.y;
-    if(!c.lk&&(Math.abs(ddx)>7||Math.abs(ddy)>7)){c.lk=Math.abs(ddx)>Math.abs(ddy)?'h':'v';if(c.lk==='h'){setDrag(true);DRAG.moved=true;try{e.currentTarget.setPointerCapture(e.pointerId);}catch(x){}}}
-    if(c.lk==='h'){let v=ddx;if((cur===0&&v>0)||(cur===np-1&&v<0))v*=.18;c.dx=v;setDx(v);}};
-  const up=e=>{const c=r.current;if(c.id!==e.pointerId)return;const was=c.lk==='h',v=c.dx;r.current={id:null,x:0,y:0,lk:null,dx:0};setDrag(false);setDx(0);
-    if(was){const threshold=Math.max(42,Math.min(76,window.innerWidth*.12));if(v<-threshold&&cur<np-1)setPg(cur+1);else if(v>threshold&&cur>0)setPg(cur-1);setTimeout(()=>{DRAG.moved=false;},180);}else DRAG.moved=false;};
-  return h('div',{style:{flex:1,overflow:'hidden',position:'relative',touchAction:'pan-y'},onPointerDown:down,onPointerMove:move,onPointerUp:up,onPointerCancel:up},
-    h('div',{style:{display:'flex',width:np*100+'%',height:'100%',transform:`translateX(calc(${-cur*100/np}% + ${dx}px))`,transition:drag?'none':'transform .28s cubic-bezier(.22,.8,.3,1)',willChange:'transform'}},
-      ...L.map((page,pi)=>h('div',{key:pi,style:{width:(100/np)+'%',flexShrink:0,height:'100%',overflowY:'auto',display:'grid',gridTemplateColumns:'repeat(4,1fr)',gridAutoRows:'86px',gap:'8px 4px',gridAutoFlow:'row dense',padding:'14px 12px 28px',alignContent:'start'}},
-        ...page.map((it,i)=>{
-          if(it.k==='w')return h(WidgetCell,{key:it.id,item:it,s,upd,il});
-          const a=APPS.find(x=>x.id===it.id);if(!a)return null;
-          return h('div',{key:'a'+it.id,style:{display:'flex',justifyContent:'center',alignItems:'flex-start',paddingTop:'4px'}},h(AppIcon,{app:a,onOpen,s}));
-        })))),
-    h('div',{style:{position:'absolute',bottom:'8px',left:0,right:0,display:'flex',justifyContent:'center',gap:'5px',pointerEvents:'none'}},
-      ...L.map((_,i)=>h('div',{key:i,style:{width:i===cur?'16px':'5px',height:'5px',borderRadius:'3px',background:i===cur?'var(--text)':'var(--text3)',transition:'width .2s'}}))));
+  const [pg,setPg]=useState(0);
+  const sc=useRef(null);
+  const onScroll=e=>{const el=e.currentTarget;const n=Math.round(el.scrollLeft/Math.max(1,el.clientWidth));if(n!==pg)setPg(Math.max(0,Math.min(np-1,n)));};
+  const go=i=>{const el=sc.current;if(!el)return;el.scrollTo({left:i*el.clientWidth,behavior:'smooth'});};
+  return h('div',{style:{flex:1,minHeight:0,overflowX:'auto',overflowY:'hidden',position:'relative',display:'flex',scrollSnapType:'x mandatory',WebkitOverflowScrolling:'touch',overscrollBehaviorX:'contain',scrollbarWidth:'none',touchAction:'pan-x pan-y'},ref:sc,onScroll},
+    ...L.map((page,pi)=>h('div',{key:pi,style:{width:'100%',height:'100%',flex:'0 0 100%',scrollSnapAlign:'start',overflowY:'auto',overflowX:'hidden',display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gridAutoRows:'86px',gap:'10px 5px',gridAutoFlow:'row dense',padding:'14px 12px 38px',alignContent:'start',overscrollBehaviorY:'contain'}},
+      ...page.map((it,i)=>{
+        if(it.k==='w')return h(WidgetCell,{key:it.id,item:it,s,upd,il});
+        const a=APPS.find(x=>x.id===it.id);if(!a)return null;
+        return h('div',{key:'a'+it.id,style:{display:'flex',justifyContent:'center',alignItems:'flex-start',paddingTop:'4px'}},h(AppIcon,{app:a,onOpen,s}));
+      }))),
+    h('div',{style:{position:'absolute',bottom:'8px',left:0,right:0,display:'flex',justifyContent:'center',gap:'6px',pointerEvents:'auto'}},
+      ...L.map((_,i)=>h('button',{key:i,onClick:()=>go(i),'aria-label':'第'+(i+1)+'页',style:{width:i===pg?'18px':'6px',height:'6px',padding:0,border:0,borderRadius:'8px',background:i===pg?'var(--text)':'var(--text3)',transition:'width .2s',cursor:'pointer'}}))));
 }
 function HomeScreen({onOpen,visible,wp,s,upd}){
   const il=wp&&wp.light;
