@@ -757,10 +757,10 @@ function W_Battery({il}){const b=MB.bat,r=18,C=2*Math.PI*r;
 function W_Clock1({il}){const n=useNow(10000);return tile(il,h('span',{style:{fontSize:'15px',fontWeight:700,color:'var(--text)',letterSpacing:'-.3px',fontVariantNumeric:'tabular-nums'}},pad(n.getHours())+':'+pad(n.getMinutes())));}
 function W_Date1({il}){const n=useNow(60000);return tile(il,[h('span',{key:1,style:{fontSize:'10px',color:'var(--text2)',lineHeight:1.1}},'周'+WD[n.getDay()]),h('span',{key:2,style:{fontSize:'25px',fontWeight:700,color:'var(--text)',lineHeight:1.1,letterSpacing:'-1px'}},n.getDate())]);}
 function W_Date2({il}){const n=useNow(60000);
-  return h('div',{style:{flex:1,borderRadius:28,padding:'14px 16px',display:'flex',flexDirection:'column',justifyContent:'space-between',...glassBox(il)}},
-    h('div',{style:{fontSize:'13px',fontWeight:600,color:'var(--text2)'}},(n.getMonth()+1)+'月 · 星期'+WD[n.getDay()]),
-    h('div',{style:{fontSize:'66px',fontWeight:800,color:'var(--text)',letterSpacing:'-3px',lineHeight:1,fontVariantNumeric:'tabular-nums'}},n.getDate()),
-    h('div',{style:{fontSize:'12px',color:'var(--text3)'}},n.getFullYear()+'年'));}
+  return h('div',{style:{flex:1,borderRadius:28,padding:'16px 17px',display:'flex',flexDirection:'column',justifyContent:'space-between',background:il?'rgba(255,255,255,.88)':'rgba(255,255,255,.12)',border:'1px solid '+(il?'rgba(255,255,255,.9)':'var(--border)'),boxShadow:'0 8px 24px rgba(0,0,0,.08)',backdropFilter:'blur(18px)',WebkitBackdropFilter:'blur(18px)'}},
+    h('div',{style:{fontSize:'12px',fontWeight:650,color:il?'#777':'var(--text2)',letterSpacing:'.3px'}},(n.getMonth()+1)+'月 · 星期'+WD[n.getDay()]),
+    h('div',{style:{fontSize:'68px',fontWeight:800,color:il?'#222':'var(--text)',letterSpacing:'-4px',lineHeight:'.98',fontVariantNumeric:'tabular-nums'}},n.getDate()),
+    h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',fontSize:'11px',color:il?'#999':'var(--text3)'}},h('span',null,n.getFullYear()+'年'),h('span',{style:{letterSpacing:2}},'✦  MOCHI')));}
 function W_Clock2({il}){const n=useNow(1000);const hh=(n.getHours()%12)*30+n.getMinutes()*.5,mm=n.getMinutes()*6+n.getSeconds()*.1,ss=n.getSeconds()*6;
   const hand=(a,len,w,col)=>h('line',{x1:50,y1:50,x2:50,y2:50-len,stroke:col,strokeWidth:w,strokeLinecap:'round',transform:`rotate(${a} 50 50)`});
   return h('div',{style:{flex:1,borderRadius:28,display:'flex',alignItems:'center',justifyContent:'center',...glassBox(il)}},
@@ -768,12 +768,15 @@ function W_Clock2({il}){const n=useNow(1000);const hh=(n.getHours()%12)*30+n.get
       ...Array.from({length:12},(_,i)=>h('line',{key:i,x1:50,y1:i%3===0?9:11,x2:50,y2:i%3===0?17:15,stroke:'var(--text2)',strokeWidth:i%3===0?2.4:1.4,strokeLinecap:'round',transform:`rotate(${i*30} 50 50)`})),
       hand(hh,24,4,'var(--text)'),hand(mm,35,3,'var(--text)'),hand(ss,38,1.4,'#ff6b6b'),h('circle',{cx:50,cy:50,r:3.2,fill:'var(--text)'})));}
 function W_Photo({item,s,upd,il,big}){const url=(s.wdata||{})[item.id];
-  return h('div',{onClick:()=>{if(DRAG.moved)return;pick(900,({url})=>upd(p=>({wdata:{...(p.wdata||{}),[item.id]:url}})));},style:{flex:1,borderRadius:big?32:26,overflow:'hidden',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',...(url?{background:`url(${url}) center/cover`,boxShadow:'0 6px 18px rgba(0,0,0,.18)'}:glassBox(il))}},
-    !url&&h('div',{style:{color:'var(--text2)',fontSize:'12px',textAlign:'center',lineHeight:1.7,display:'flex',flexDirection:'column',alignItems:'center'}},h(Ic,{n:'image',size:26,sw:1.4}),'点击选择图片'));}
+  return h('div',{onClick:()=>{if(DRAG.moved)return;pick(900,({url})=>upd(p=>({wdata:{...(p.wdata||{}),[item.id]:url}})));},style:{flex:1,minHeight:0,borderRadius:big?25:22,overflow:'hidden',cursor:'pointer',display:'flex',flexDirection:'column',padding:big?9:7,background:il?'rgba(255,255,255,.94)':'rgba(255,255,255,.88)',border:'1px solid rgba(255,255,255,.8)',boxShadow:'0 8px 22px rgba(0,0,0,.13)'}},
+    h('div',{style:{flex:1,minHeight:0,borderRadius:big?17:15,overflow:'hidden',background:url?`url(${url}) center/cover`:'linear-gradient(145deg,#e5e5e8,#f7f7f8)',display:'flex',alignItems:'center',justifyContent:'center'}},
+      !url&&h('div',{style:{color:'#9b9ba0',fontSize:12,textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',gap:6}},h(Ic,{n:'image',size:27,sw:1.4}),'添加照片')),
+    h('div',{style:{height:big?30:25,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 5px',color:'#777',fontSize:big?10:9,letterSpacing:1}},h('span',null,'MOCHI MOMENTS'),h('span',null,'✧')));}
 const W_Photo4=p=>h(W_Photo,{...p,big:true});
-function W_Note({item,s,upd,il}){const v=(s.wdata||{})[item.id];const [t,setT]=useState(v==null?'点这里写点什么':v);
-  return h('div',{style:{flex:1,borderRadius:26,padding:'12px 14px',display:'flex',...glassBox(il)}},
-    h('textarea',{value:t,onChange:e=>setT(e.target.value),onBlur:()=>upd(p=>({wdata:{...(p.wdata||{}),[item.id]:t}})),style:{flex:1,width:'100%',background:'transparent',border:'none',outline:'none',resize:'none',color:'var(--text)',fontSize:'14px',lineHeight:1.55}}));}
+function W_Note({item,s,upd,il}){const v=(s.wdata||{})[item.id];const [t,setT]=useState(v==null?'写下一点今天的心情…':v);
+  return h('div',{style:{flex:1,minHeight:0,borderRadius:24,padding:'13px 14px',display:'flex',flexDirection:'column',gap:7,background:il?'rgba(255,255,255,.9)':'rgba(255,255,255,.12)',border:'1px solid var(--border)',boxShadow:'0 7px 20px rgba(0,0,0,.07)',backdropFilter:'blur(18px)',WebkitBackdropFilter:'blur(18px)'}},
+    h('div',{style:{fontSize:10,fontWeight:700,letterSpacing:1.4,color:il?'#999':'var(--text3)'}},'A LITTLE NOTE'),
+    h('textarea',{value:t,onChange:e=>setT(e.target.value),onBlur:()=>upd(p=>({wdata:{...(p.wdata||{}),[item.id]:t}})),placeholder:'写下一点今天的心情…',style:{flex:1,minHeight:0,width:'100%',background:'transparent',border:'none',outline:'none',resize:'none',color:il?'#333':'var(--text)',fontSize:'13px',lineHeight:1.6}}));}
 function W_Profile({s,item,upd}){
   const bg=(s.wdata||{}).profileBg;
   const edit=(field,label,current)=>{
