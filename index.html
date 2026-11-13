@@ -610,10 +610,6 @@ function SettingsApp({s,upd}){
         h(SRow,{icon:ic('sparkle'),color:'#3a3a3c',label:'个性化',sub:'字体 · 图标 · 时钟',onPress:()=>setSub('personal'),last:true})),
       h(Sec,{title:'AI'},h(SRow,{icon:ic('chip'),color:'#3a3a3c',label:'AI API',sub:na?na+' 个已配置':'未配置，点此添加',onPress:()=>setSub('api'),last:true})),
       h(Sec,{title:'安全'},h(SRow,{icon:ic('lock'),color:'#48484a',label:'锁屏密码',sub:s.passOn?'已启用':'未启用',onPress:()=>setSub('pass'),last:true})),
-      h(Sec,{title:'通知与声音'},
-        h(SRow,{icon:ic('bell'),color:'#636366',label:'通知',toggle:true,tv:s.notif,onT:v=>upd({notif:v})}),
-        h(SRow,{icon:ic('volume'),color:'#48484a',label:'声音',toggle:true,tv:s.sound,onT:v=>upd({sound:v})}),
-        h(SRow,{icon:ic('moon'),color:'#3a3a3c',label:'勿扰',toggle:true,tv:s.dnd,onT:v=>upd({dnd:v}),last:true})),
       h(Sec,{title:'其他'},h(SRow,{icon:ic('info'),color:'#48484a',label:'关于萌萌机',value:'0.5',onPress:()=>setSub('about'),last:true}))));
 }
 
@@ -778,16 +774,20 @@ const W_Photo4=p=>h(W_Photo,{...p,big:true});
 function W_Note({item,s,upd,il}){const v=(s.wdata||{})[item.id];const [t,setT]=useState(v==null?'点这里写点什么':v);
   return h('div',{style:{flex:1,borderRadius:26,padding:'12px 14px',display:'flex',...glassBox(il)}},
     h('textarea',{value:t,onChange:e=>setT(e.target.value),onBlur:()=>upd(p=>({wdata:{...(p.wdata||{}),[item.id]:t}})),style:{flex:1,width:'100%',background:'transparent',border:'none',outline:'none',resize:'none',color:'var(--text)',fontSize:'14px',lineHeight:1.55}}));}
-function W_Profile({s}){
-  return h('div',{style:{flex:1,borderRadius:34,overflow:'hidden',background:'#fff',boxShadow:'0 8px 24px rgba(0,0,0,.14)',display:'flex',flexDirection:'column'}},
-    h('div',{style:{height:'42%',background:'#efeff2',backgroundImage:'radial-gradient(#cdcdd2 3px,transparent 3.6px)',backgroundSize:'26px 26px',flexShrink:0}}),
-    h('div',{style:{flex:1,textAlign:'center',padding:'0 18px',color:'#222'}},
-      h('div',{style:{marginTop:'-46px',display:'flex',justifyContent:'center'}},
-        h('div',{style:{width:'92px',height:'92px',borderRadius:'50%',border:'4px solid #fff',background:'#e5e5e8',boxShadow:'0 4px 14px rgba(0,0,0,.18)',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',color:'#9a9aa0'}},
+function W_Profile({s,item,upd}){
+  const bg=(s.wdata||{}).profileBg;
+  const choose=(kind)=>{if(DRAG.moved)return;pick(1200,({url})=>upd(p=>kind==='avatar'?{myAvatar:url}:{wdata:{...(p.wdata||{}),profileBg:url}}));};
+  return h('div',{style:{flex:1,borderRadius:34,overflow:'hidden',background:'#fff',boxShadow:'0 8px 24px rgba(0,0,0,.14)',display:'flex',flexDirection:'column',minHeight:0}},
+    h('div',{onClick:()=>choose('background'),title:'点击更换背景图片',style:{height:'42%',minHeight:70,background:bg?'url('+bg+') center/cover no-repeat':'#efeff2',backgroundImage:bg?'url('+bg+')':'radial-gradient(#cdcdd2 3px,transparent 3.6px)',backgroundSize:bg?'cover':'26px 26px',flexShrink:0,cursor:'pointer',position:'relative'}},
+      h('span',{style:{position:'absolute',right:9,bottom:7,fontSize:10,color:bg?'#fff':'#85858a',background:'rgba(255,255,255,.72)',borderRadius:10,padding:'3px 7px'}},'更换背景')),
+    h('div',{style:{flex:1,textAlign:'center',padding:'0 18px',color:'#222',minHeight:0}},
+      h('div',{style:{marginTop:'-46px',display:'flex',justifyContent:'center',position:'relative',zIndex:1}},
+        h('div',{onClick:()=>choose('avatar'),title:'点击更换头像',style:{width:'92px',height:'92px',borderRadius:'50%',border:'4px solid #fff',background:'#e5e5e8',boxShadow:'0 4px 14px rgba(0,0,0,.18)',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',color:'#9a9aa0',cursor:'pointer'}},
           s.myAvatar?h('img',{src:s.myAvatar,style:{width:'100%',height:'100%',objectFit:'cover'}}):h(Ic,{n:'profile',size:44,sw:1.4}))),
       h('div',{style:{fontSize:'23px',fontWeight:800,marginTop:'10px'}},s.myName||'我'),
       h('div',{style:{fontSize:'13px',color:'#9a9aa0',fontStyle:'italic',marginTop:'2px'}},'@mochi'),
-      h('div',{style:{fontSize:'14px',fontWeight:600,color:'#55555a',marginTop:'8px'}},s.mySign||'')));}
+      h('div',{style:{fontSize:'14px',fontWeight:600,color:'#55555a',marginTop:'8px'}},s.mySign||'')));
+}
 function W_Cal({il}){const n=useNow(60000);const y=n.getFullYear(),m=n.getMonth(),first=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate();
   const cells=[];for(let i=0;i<first;i++)cells.push(null);for(let d=1;d<=dim;d++)cells.push(d);while(cells.length%7)cells.push(null);
   return h('div',{style:{flex:1,borderRadius:32,padding:'16px 14px',display:'flex',flexDirection:'column',...glassBox(il)}},
@@ -799,7 +799,7 @@ function W_Cal({il}){const n=useNow(60000);const y=n.getFullYear(),m=n.getMonth(
 const WDG={
   battery1:{name:'电量',cols:1,rows:1,C:W_Battery},clock1:{name:'时钟',cols:1,rows:1,C:W_Clock1},date1:{name:'日期',cols:1,rows:1,C:W_Date1},
   date2:{name:'日期',cols:2,rows:2,C:W_Date2},clock2:{name:'模拟时钟',cols:2,rows:2,C:W_Clock2},photo2:{name:'相框',cols:2,rows:2,C:W_Photo},note2:{name:'便签',cols:2,rows:2,C:W_Note},
-  profile4:{name:'名片',cols:4,rows:4,C:W_Profile},cal4:{name:'月历',cols:4,rows:4,C:W_Cal},photo4:{name:'大相框',cols:4,rows:4,C:W_Photo4}};
+  profile4:{name:'个人主页',cols:4,rows:4,C:W_Profile},cal4:{name:'月历',cols:4,rows:4,C:W_Cal},photo4:{name:'大相框',cols:4,rows:4,C:W_Photo4}};
 function WidgetCell({item,s,upd,il}){
   const d=WDG[item.w];if(!d)return null;const small=d.cols===1&&d.rows===1;
   return h('div',{style:{gridColumn:'span '+d.cols,gridRow:'span '+d.rows,minWidth:0,minHeight:0,display:'flex',flexDirection:'column',alignItems:small?'center':'stretch',paddingTop:small?'4px':0}},
@@ -824,10 +824,10 @@ function HomeGrid({onOpen,s,upd,il}){
   const cur=Math.min(pg,np-1);
   const down=e=>{r.current={id:e.pointerId,x:e.clientX,y:e.clientY,lk:null,dx:0};DRAG.moved=false;};
   const move=e=>{const c=r.current;if(c.id!==e.pointerId)return;const ddx=e.clientX-c.x,ddy=e.clientY-c.y;
-    if(!c.lk&&(Math.abs(ddx)>6||Math.abs(ddy)>6)){c.lk=Math.abs(ddx)>Math.abs(ddy)?'h':'v';if(c.lk==='h'){setDrag(true);DRAG.moved=true;try{e.currentTarget.setPointerCapture(e.pointerId);}catch(x){}}}
-    if(c.lk==='h'){let v=ddx;if((cur===0&&v>0)||(cur===np-1&&v<0))v*=.15;c.dx=v;setDx(v);}};
+    if(!c.lk&&(Math.abs(ddx)>7||Math.abs(ddy)>7)){c.lk=Math.abs(ddx)>Math.abs(ddy)?'h':'v';if(c.lk==='h'){setDrag(true);DRAG.moved=true;try{e.currentTarget.setPointerCapture(e.pointerId);}catch(x){}}}
+    if(c.lk==='h'){let v=ddx;if((cur===0&&v>0)||(cur===np-1&&v<0))v*=.18;c.dx=v;setDx(v);}};
   const up=e=>{const c=r.current;if(c.id!==e.pointerId)return;const was=c.lk==='h',v=c.dx;r.current={id:null,x:0,y:0,lk:null,dx:0};setDrag(false);setDx(0);
-    if(was){if(v<-50&&cur<np-1)setPg(cur+1);else if(v>50&&cur>0)setPg(cur-1);setTimeout(()=>{DRAG.moved=false;},80);}};
+    if(was){const threshold=Math.max(42,Math.min(76,window.innerWidth*.12));if(v<-threshold&&cur<np-1)setPg(cur+1);else if(v>threshold&&cur>0)setPg(cur-1);setTimeout(()=>{DRAG.moved=false;},180);}else DRAG.moved=false;};
   return h('div',{style:{flex:1,overflow:'hidden',position:'relative',touchAction:'pan-y'},onPointerDown:down,onPointerMove:move,onPointerUp:up,onPointerCancel:up},
     h('div',{style:{display:'flex',width:np*100+'%',height:'100%',transform:`translateX(calc(${-cur*100/np}% + ${dx}px))`,transition:drag?'none':'transform .28s cubic-bezier(.22,.8,.3,1)',willChange:'transform'}},
       ...L.map((page,pi)=>h('div',{key:pi,style:{width:(100/np)+'%',flexShrink:0,height:'100%',overflowY:'auto',display:'grid',gridTemplateColumns:'repeat(4,1fr)',gridAutoRows:'86px',gap:'8px 4px',gridAutoFlow:'row dense',padding:'14px 12px 28px',alignContent:'start'}},
