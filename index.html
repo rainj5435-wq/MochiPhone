@@ -779,6 +779,8 @@ function W_Note({item,s,upd,il}){const v=(s.wdata||{})[item.id];const [t,setT]=u
     h('textarea',{value:t,onChange:e=>setT(e.target.value),onBlur:()=>upd(p=>({wdata:{...(p.wdata||{}),[item.id]:t}})),placeholder:'写下一点今天的心情…',style:{flex:1,minHeight:0,width:'100%',background:'transparent',border:'none',outline:'none',resize:'none',color:il?'#333':'var(--text)',fontSize:'13px',lineHeight:1.6}}));}
 function W_Profile({s,item,upd}){
   const bg=(s.wdata||{}).profileBg;
+  const bgMode=(s.wdata||{}).profileBgMode||'full';
+  const setBgMode=(mode)=>upd(p=>({wdata:{...(p.wdata||{}),profileBgMode:mode}}));
   const edit=(field,label,current)=>{
     if(DRAG.moved)return;
     const v=window.prompt('编辑'+label,current||'');
@@ -788,7 +790,9 @@ function W_Profile({s,item,upd}){
   const choose=(kind)=>{if(DRAG.moved)return;pick(1200,({url})=>upd(p=>kind==='avatar'?{myAvatar:url}:{wdata:{...(p.wdata||{}),profileBg:url}}));};
   const txt={background:'transparent',border:0,color:'#222',cursor:'pointer',padding:'3px 6px',borderRadius:8};
   return h('div',{style:{flex:1,borderRadius:30,overflow:'hidden',background:'rgba(255,255,255,.94)',boxShadow:'0 10px 28px rgba(0,0,0,.13)',display:'flex',flexDirection:'column',minHeight:0,position:'relative'}},
-    h('div',{onClick:()=>choose('background'),title:'点击更换背景图片',style:{height:'42%',minHeight:70,background:bg?'url('+bg+') center/cover no-repeat':'#ededf0',backgroundImage:bg?'url('+bg+')':'radial-gradient(#d0d0d4 3px,transparent 3.6px)',backgroundSize:bg?'cover':'26px 26px',flexShrink:0,cursor:'pointer',position:'relative'}},
+    h('div',{onClick:()=>choose('background'),title:'点击更换背景图片',style:{height:'42%',minHeight:70,background:bg?'url('+bg+') center/cover no-repeat':'#ededf0',backgroundImage:bg?(bgMode==='fade'?'linear-gradient(to bottom,rgba(255,255,255,0) 35%,rgba(255,255,255,.28) 63%,#fff 100%),url('+bg+')':'url('+bg+')'):'radial-gradient(#d0d0d4 3px,transparent 3.6px)',backgroundSize:bg?'cover':'26px 26px',backgroundPosition:'center',flexShrink:0,cursor:'pointer',position:'relative'}},
+      h('div',{onClick:e=>e.stopPropagation(),style:{position:'absolute',left:9,bottom:7,display:'flex',gap:4,padding:3,borderRadius:12,background:'rgba(255,255,255,.78)',backdropFilter:'blur(8px)'}},
+        ...[['full','全展示'],['fade','半渐变']].map(([mode,label])=>h('button',{key:mode,onClick:()=>setBgMode(mode),style:{border:0,borderRadius:9,padding:'4px 8px',fontSize:10,fontWeight:600,color:bgMode===mode?'#fff':'#666',background:bgMode===mode?'#666':'transparent',cursor:'pointer'}},label))),
       h('span',{style:{position:'absolute',right:9,bottom:7,fontSize:10,color:bg?'#fff':'#777',background:'rgba(255,255,255,.78)',borderRadius:10,padding:'4px 8px'}},'更换背景')),
     h('div',{style:{flex:1,textAlign:'center',padding:'0 14px',color:'#222',minHeight:0,position:'relative'}},
       h('div',{style:{marginTop:'-44px',display:'flex',justifyContent:'center',position:'relative',zIndex:1}},
